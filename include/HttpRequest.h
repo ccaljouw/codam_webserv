@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/03 16:08:25 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/03 17:21:15 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,11 @@
 # define HTTPREQUEST_H
 
 #include "Uri.h"
+#include "webServ.h"
+
 
 #include <string>
 #include <map>
-
-#define LINE_END "\r\n"
-#define WHITE_SPACE " \t\n\v\f\r"
 
 class HttpRequest {
 
@@ -37,13 +36,20 @@ class HttpRequest {
 		std::string		serializeHeaders(void) const;
 		std::string		getBody(void) const;
 		std::string		getUri(void);
-	
-	private:
+		int				getEventStatus(void) const;
+		
+	// ============ Setter ===================
+		void			setEventStatus(int status);
+		
+		
+		private:
 		std::string								_method;
 		std::string								_protocol;
 		std::multimap<std::string, std::string>	_headers;
 		std::string								_body;
 		Uri										_uri;
+		int										_eventStatus;
+		
 };
 
 #endif

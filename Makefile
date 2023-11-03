@@ -6,7 +6,7 @@
 #    By: wingessoracle <wingessoracle@student.co      +#+                      #
 #                                                    +#+                       #
 #    Created: 2023/06/21 08:27:49 by wingessorac   #+#    #+#                  #
-#    Updated: 2023/11/03 16:30:18 by carlo         ########   odam.nl          #
+#    Updated: 2023/11/03 17:09:23 by carlo         ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ include common.mk
 .DEFAULT_GOAL	:= all
 
 TARGET	 	=	webserv
-OBJ_FILES	=	$(addprefix obj/, main.o Uri.o HttpRequest.o \
+OBJ_FILES	=	$(addprefix obj/, main.o Uri.o HttpRequest.o HttpResponse.o\
 				tests/HttpClassTests.o)
 
 
