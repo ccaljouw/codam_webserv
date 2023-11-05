@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/03 17:21:15 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/05 09:55:59 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 
 #include "Uri.h"
 #include "webServ.h"
-
 
 #include <string>
 #include <map>
@@ -49,7 +48,6 @@ class HttpRequest {
 		std::string								_body;
 		Uri										_uri;
 		int										_eventStatus;
-		
 };
 
 #endif

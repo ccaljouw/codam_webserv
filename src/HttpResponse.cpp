@@ -14,14 +14,17 @@
 #include	"webServ.h"	
 
 #include <iostream>
-//#include <sstream>
 //#include <exception>
-//#include <algorithm>
 
 
-HttpResponse::HttpResponse(void) : _protocol(HTTP_PROTOCOL), _statusCode(), _headers(), _body() {
-// add standard headers: date, ... ... .. 
+HttpResponse::HttpResponse(void) : _protocol(HTTP_PROTOCOL), _statusCode(200), _headers(), _body() {
+	//add standard headers status code, 
 }
+
+// HttpResponse::HttpResponse(const HttpRequest& request) {
+
+// }
+
 
 HttpResponse::HttpResponse(const HttpResponse& origin) {
 		this->_protocol		= origin._protocol;
@@ -47,20 +50,40 @@ HttpResponse::~HttpResponse(void) {
 
 // ============= Setters ================
 void HttpResponse::setProtocol(const std::string& protocol)						{ _protocol 	= protocol;	}
-void HttpResponse::setStatusCode(const int& status) 							{ _statusCode	= status;	}
+void HttpResponse::setStatusCode(int status) 									{ _statusCode	= status;	}
 void HttpResponse::setBody(const std::string& body)								{ _body			= body;	}
 void HttpResponse::addHeader(const std::string& key, const std::string& value)	{
 	_headers.insert(std::make_pair(key, value));
-//check WHITE_SPACE
-//check capitalseensitivity
 }
+
+// ============= Getters ================
+int HttpResponse::getStatusCode() const {
+	return this->_statusCode;
+}
+
+
+std::string HttpResponse::serializeHeaders(const std::multimap<std::string, std::string>& headers) {
+	std::string serializedHeaders;
+	for(const auto& pair : headers) {
+		serializedHeaders += pair.first + ": " + pair.second + LINE_END;
+	}
+	return serializedHeaders;
+}
+
 
 std::string HttpResponse::serializeResponse(void) {
 	std::string serializedResponse;
 
-	//add stuff
-
+	serializedResponse += _protocol + " " + std::to_string(_statusCode) + LINE_END + serializeHeaders(_headers) + LINE_END + _body;
 	return serializedResponse;
 }
 
-
+//status code to map
+//checks before sending (status code set, stc)
+//check WHITE_SPACE
+//check capitalseensitivity
+//check duplicate headers
+//check valid status code
+//add content type
+//add content_lenght
+//add data

@@ -6,11 +6,12 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 16:29:48 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/03 16:29:50 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/05 20:52:26 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HttpRequest.h"
+#include "HttpResponse.h"
 #include "Uri.h"
 
 #include <cassert>
@@ -71,3 +72,21 @@ void testUri(void) {
 
     std::cout << "All tests passed." << std::endl;
  }
+
+
+void testHttpResponse() {
+    // Create an HttpResponse object
+    HttpResponse response;
+
+    // Set properties
+    response.setProtocol("HTTP/1.1");
+    response.setStatusCode(200);
+    response.addHeader("Content-Type", "text/html");
+    response.setBody("<html><body><h1>Hello, World!</h1></body></html>");
+
+    // Serialize the response
+    std::string serializedResponse = response.serializeResponse();
+
+    // Print the serialized response
+    std::cout << "Serialized Response:\n" << serializedResponse << "\n";
+}

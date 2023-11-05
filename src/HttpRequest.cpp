@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/03 17:22:57 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/05 09:57:47 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ HttpRequest::~HttpRequest(void) {
 std::string HttpRequest::getMethod(void) const		{	return _method;				}
 std::string HttpRequest::getProtocol(void) const	{	return _protocol;			}
 std::string HttpRequest::getBody(void) const		{	return _body;				}
-std::string HttpRequest::getUri(void) 				{	return _uri.serializeUri();	}
+std::string HttpRequest::getUri(void)				{	return _uri.serializeUri();	}
 int			HttpRequest::getEventStatus(void) const	{	return _eventStatus;		}
 
 

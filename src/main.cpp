@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/09/29 11:00:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/03 16:25:13 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/05 20:52:43 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 
 void testRequest(void);
 void testUri(void);
+void testHttpResponse();
+
 
 
 int	main(int argc, char **argv) {
@@ -36,8 +38,10 @@ int	main(int argc, char **argv) {
 	// std::cout << GREEN << "\n Config file:  "	<< argv[1] << RESET << std::endl;
 
 	testRequest();
+    std::cout << std::endl;
 	testUri();
-	
-	
+    std::cout << std::endl;
+	testHttpResponse();
+
 	return (0);
 }
