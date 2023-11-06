@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 16:57:19 by carlo             #+#    #+#             */
-/*   Updated: 2023/11/06 14:00:15 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/06 14:45:16 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,9 @@
 
 #include "HttpRequest.hpp"
 #include "HttpResponse.hpp"
+#include "CGI_Handler.hpp"
 #include <algorithm>
+#include <unistd.h>
 
 
 // Success 2xx /  Error 4xx, 5xx / Redirection 3xx 

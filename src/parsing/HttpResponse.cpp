@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include	"HttpResponse.hpp"
 #include	"webServ.hpp"	
 
 #include <iostream>

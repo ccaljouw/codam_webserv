@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/06 14:23:13 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/06 15:07:53 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,22 +51,30 @@ void handleRequest(int epollFd, connection *conn)
 	HttpRequest request(conn->request);
 	HttpResponse response(request);
 	// if (to CGI)
-		(void)epollFd;
-		// call CGI handler
-		// conn->state = GGI
+		cgiHandler(request.getUri(), response, epollFd);
+		conn->state = IN_CGI;
 	// else
-	{
-		conn->response = response.serializeResponse();
-		conn->request.clear();
-		std::cout << "Response ready" << std::endl;
-		conn->state = WRITING; // change to response ready status?
-	}
+	// {
+	// 	conn->response = response.serializeResponse();
+	// 	conn->request.clear();
+	// 	std::cout << "Response ready" << std::endl;
+	// 	conn->state = WRITING; // change to response ready status?
+	// }
 }
 
 void readCGI(connection *conn)
 {
+	char buffer[BUFFER_SIZE];
+    ssize_t bytesRead;
+	
 	// read CGI pipe and return string;
 	// conn->response = string;
+	
+	if ((bytesRead = recv(conn->fd, buffer, sizeof(buffer), 0)) > 0) 
+	{
+		conn->request.append(buffer, static_cast<long unsigned int>(bytesRead));
+		std::cout << "bytes read: " << bytesRead << std::endl;
+	}
 	conn->request.clear();
 	std::cout << "Response ready" << std::endl;
 	conn->state = WRITING; 
