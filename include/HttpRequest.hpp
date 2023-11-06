@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/06 16:27:25 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/06 21:59:58 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,9 @@ class HttpRequest {
 		const HttpRequest& operator=(const HttpRequest& rhs);
 		~HttpRequest(void);
 
+		Uri										uri;
+
+		
 	// ============= Getters ================
 		std::string									getMethod(void) const;
 		std::string									getProtocol(void) const;
@@ -37,6 +40,15 @@ class HttpRequest {
 		std::multimap<std::string, std::string>		getHeaders(void) const;
 		int											getRequestStatus(void) const;
 
+	// ============= Setters ================
+		void setMethod(const std::string& method);
+		void setProtocol(const std::string& protocol);
+		void setBody(const std::string& body);
+		void setUri(const std::string& str);
+		void addHeader(const std::string& key, const std::string& value);
+		void setRequestStatus(int value);	
+
+	// ============= exception ================
 		class parsingException : public std::exception {
 			public:
 				parsingException(int errorCode, const std::string& message) : _errorCode(errorCode), _message(message) {}
@@ -54,10 +66,9 @@ class HttpRequest {
 		std::string								_protocol;
 		std::multimap<std::string, std::string>	_headers;
 		std::string								_body;
-		Uri										_uri;
 		int										_requestStatus;
 
-		std::vector<std::string> supportedMethods = { "GET", "POST", "DELETE" };
+		std::vector<std::string> supportedMethods = { "GET", "POST", "DELETE" }; //todo: make configurable
 };
 
 #endif

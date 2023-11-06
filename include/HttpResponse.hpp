@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/06 14:03:05 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/06 21:59:03 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,17 +30,19 @@ class HttpResponse {
 	 	const HttpResponse& operator=(const HttpResponse& rhs);
 	 	~HttpResponse(void);
 
-	// ============= Setters ================
+		std::string serializeResponse(void);
+		std::string serializeHeaders(void);
+
+		
+		// ============= Getters ================
+		int getStatusCode() const;
+		
+		// ============= Setters ================
 		void setProtocol(const std::string& protocol);
 		void setStatusCode(int status);
 		void addHeader(const std::string& key, const std::string& value);
-		void setBody(const std::string& body);
+		void setBody(const std::string& filePath);
 
-	// ============= Getters ================
-		int getStatusCode() const;
-		
-		std::string serializeHeaders(void);
-		std::string serializeResponse(void);
 		
 	private:
 	 	std::string								_protocol;

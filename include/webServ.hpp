@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/06 16:37:03 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/06 21:19:03 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,6 @@
 
 #include "HttpRequest.hpp"
 #include "HttpResponse.hpp"
-
-
 
 // Success 2xx /  Error 4xx, 5xx / Redirection 3xx 
 // std::map<int, std::string> HttpStatusCodes = {

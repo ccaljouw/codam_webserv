@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/06 15:44:03 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/06 22:25:32 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,16 +45,51 @@ void readData(connection *conn)
 // TODO: a lot :)
 void handleRequest(int epollFd, connection *conn) 
 {
+	(void)epollFd;
+
+	try {
     // Process the request data
 	std::cout << "handle request" << std::endl;
 	HttpRequest request(conn->request);
-	HttpResponse response(request); // does not nee to be request
-		// if (to CGI)
-	(void)epollFd;
-		// call CGI handler
-		// conn->state = GGI
-	// else
-	{
+	
+	//case parsing error:
+	if (request.getRequestStatus() != 200) {
+		conn->response = HttpResponse(request).serializeResponse();
+		conn->request.clear();
+		std::cout << "Response ready" << std::endl;
+		conn->state = WRITING; // change to response ready status?		
+	
+	///case cgi
+	// } else {
+	// 	// if (request.uri.getPath() == "cgi-bin") { //todo:make configurable
+	// 	// call CGI handler
+	// 	//case error in cgi handler
+	// 	if (cgi_handler(conn->request) == 1 ) {
+	// 		HttpResponse respons(request);
+	// 		respons.setStatusCode(500);
+	// 		conn->response = respons.serializeResponse();
+	// 		conn->request.clear();
+	// 		std::cout << "Response ready" << std::endl;
+	// 		conn->state = WRITING; // change to response ready status?		
+	// 	} else {
+	// 	// cgi handles it from here?
+	// 	// conn->state = GGI	
+	// 	}
+		
+	//case handel self		
+	} else if (request.getMethod() == "GET") {
+			HttpResponse response(request);
+			response.setBody("." + request.uri.getPath()); //todo ugly solution maybe better parsing?
+			conn->response = response.serializeResponse();
+			conn->request.clear();
+			std::cout << "Response ready" << std::endl;
+			conn->state = WRITING; // change to response ready status?
+	}
+	//catch errors	
+	} catch (const HttpRequest::parsingException& exception) {
+		std::cout << "Error: " << exception.what() << std::endl;
+		HttpResponse response;
+		response.setStatusCode(exception.getErrorCode());
 		conn->response = response.serializeResponse();
 		conn->request.clear();
 		std::cout << "Response ready" << std::endl;

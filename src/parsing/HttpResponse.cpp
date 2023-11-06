@@ -11,9 +11,11 @@
 /* ************************************************************************** */
 
 #include "HttpResponse.hpp"
-#include "webServ.hpp"	
+#include "HttpRequest.hpp"
+#include "webServ.hpp"
 
 #include <iostream>
+#include <fstream>
 
 
 HttpResponse::HttpResponse(void) : _protocol(HTTP_PROTOCOL), _statusCode(200), _headers(), _body() {
@@ -55,15 +57,6 @@ HttpResponse::~HttpResponse(void) {
 	_headers.clear();
 }
 
-// ============= Setters ================
-void HttpResponse::setProtocol(const std::string& protocol)						{ _protocol 	= 	protocol;					}
-void HttpResponse::setStatusCode(int status) 									{ _statusCode	= 	status;						}
-void HttpResponse::setBody(const std::string& body)								{ _body			= 	body;						}
-void HttpResponse::addHeader(const std::string& key, const std::string& value)	{ _headers.insert(std::make_pair(key, value));	}
-
-// ============= Getters ================
-int HttpResponse::getStatusCode() const {	return _statusCode;	}
-
 
 std::string HttpResponse::serializeHeaders() {
 	std::string serializedHeaders;
@@ -80,6 +73,35 @@ std::string HttpResponse::serializeResponse(void) {
 	serializedResponse += _protocol + " " + std::to_string(_statusCode) + LINE_END + serializeHeaders() + LINE_END + _body;
 	return serializedResponse;
 }
+
+
+// ============= Getters ================
+int HttpResponse::getStatusCode() const {	return _statusCode;	}
+
+
+// ============= Setters ================
+void HttpResponse::setProtocol(const std::string& protocol)						{ _protocol 	= 	protocol;					}
+void HttpResponse::setStatusCode(int status) 									{ _statusCode	= 	status;						}
+void HttpResponse::addHeader(const std::string& key, const std::string& value)	{ _headers.insert(std::make_pair(key, value));	}
+
+void HttpResponse::setBody(const std::string& filePath) {
+	std::ifstream inputFile(filePath);
+
+	if (inputFile.is_open()) {
+		std::string line;
+		while(std::getline(inputFile, line)) {
+			_body += line;
+			_body += '\n';
+		}
+
+		inputFile.close();
+
+	} else { 
+		throw HttpRequest::parsingException(422, "Unprocessable Entity");
+	}
+}
+
+
 
 //todo:
 //check method protocol, some headers

@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/06 16:35:16 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/06 22:14:47 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@
 #include <algorithm>
 
 
-HttpRequest::HttpRequest() : _method(), _protocol(), _headers(), _body(), _uri(), _requestStatus(200) {};
+HttpRequest::HttpRequest() : uri(), _method(), _protocol(), _headers(), _body(), _requestStatus(200) {};
 
-HttpRequest::HttpRequest(const std::string& request) : _uri(), _requestStatus(200) {
+HttpRequest::HttpRequest(const std::string& request) : uri(), _requestStatus(200) {
 
 // 1. === parse request line === 
 try {
@@ -40,18 +40,18 @@ try {
 	}
 
 	// check method
-	bool match = false;
+	bool isMethodSupported = false;
 	for (const auto& target : this->supportedMethods) {
 		if (target == _method) {
-			match = true;
+			isMethodSupported = true;
 			break;
 		}
 	}
-	if (match == false) {
+	if (isMethodSupported == false) {
 		throw parsingException(405, "Method not Allowed");
 	}
 	
-	_uri = Uri(tempUriString);
+	uri = Uri(tempUriString);
 	
 
 // 2. === parse headers ===
@@ -86,18 +86,18 @@ try {
 // 3. === parse body ===
 	_body = request.substr(headersEnd + 4);
 	
-	}
+	
 	//catch errors	
-	catch (const parsingException& exception) {
+	} catch (const parsingException& exception) {
 		_requestStatus = exception.getErrorCode();
-		std::cout << exception.what() << std::endl;
+		std::cout << exception.what() << std::endl; 
 	}
 }
 
 
 HttpRequest::HttpRequest(const HttpRequest& origin) {
+	uri					= origin.uri;
 	_method				= origin._method;
-	_uri				= origin._uri;
 	_protocol			= origin._protocol;
 	_headers			= origin._headers;
 	_body				= origin._body;
@@ -106,8 +106,8 @@ HttpRequest::HttpRequest(const HttpRequest& origin) {
 
 const HttpRequest& HttpRequest::operator=(const HttpRequest& rhs) {
 	if (this != &rhs) {
+		uri				= rhs.uri;
 		_method			= rhs._method;
-		_uri			= rhs._uri;
 		_protocol		= rhs._protocol;
 		_headers.clear();
 		_headers		= rhs._headers;
@@ -126,7 +126,16 @@ HttpRequest::~HttpRequest(void) {
 std::string HttpRequest::getMethod(void) const								{	return _method;				}
 std::string HttpRequest::getProtocol(void) const							{	return _protocol;			}
 std::string HttpRequest::getBody(void) const								{	return _body;				}
-std::string HttpRequest::getUri(void)										{	return _uri.serializeUri();	}
+std::string HttpRequest::getUri(void)										{	return uri.serializeUri();	}
 std::multimap<std::string, std::string>	HttpRequest::getHeaders(void) const	{	return _headers; 			}
 int HttpRequest::getRequestStatus(void) const								{	return _requestStatus;		}
 
+//========= Setters ============
+void HttpRequest::setMethod(const std::string& method) 						{	_method = method;			}
+void HttpRequest::setProtocol(const std::string& protocol) 					{	_protocol = protocol;		}
+void HttpRequest::setBody(const std::string& body) 							{	_body = body; 				}
+void HttpRequest::setUri(const std::string& string) 						{	uri = Uri(string);			}		
+void HttpRequest::setRequestStatus(int value) 								{	_requestStatus = value;		}
+void HttpRequest::addHeader(const std::string& key, const std::string& value) {
+	_headers.insert(std::make_pair(key, value));
+}
