@@ -6,9 +6,12 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:12:15 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/06 10:06:50 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/06 12:36:45 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
+
+
+//todo: check multiple query handling
 
 #pragma once
 #ifndef URI_H
