@@ -6,13 +6,13 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/06 15:42:04 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/06 16:37:03 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 
-
 //todo :1: parse error and response  2:  when in cgi  3: cgi succes 4:handle not cgi
+
 #pragma once
 #ifndef WEBSERV_H
 # define WEBSERV_H

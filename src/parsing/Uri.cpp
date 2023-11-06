@@ -6,16 +6,17 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/06 14:11:28 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/06 16:28:27 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Uri.hpp"
+#include "HttpRequest.hpp"
 
 #include <regex>
 #include <exception>
 
-
+//todo:check multiple querie handeling
 
 Uri::Uri() : _scheme(), _authority(), _path(), _query(), _fragment(), _userinfo(), _host(), _port()  {}
 
@@ -32,9 +33,9 @@ Uri::Uri(const std::string& uri) {
 		_path 		= matches[5].str();
 		_query 		= matches[7].str();
 		_fragment 	= matches[9].str();
+
 	} else {
-		//infvalid uri format
-		throw std::invalid_argument("invalid URI format");
+		throw HttpRequest::parsingException(400, "bad request");
 	}
 
 	splitAuthority();
@@ -119,6 +120,3 @@ std::string	Uri::getUserInfo() const	{	return _userinfo;	}
 std::string	Uri::getHost() const		{	return _host;		}
 int			Uri::getPort() const		{	return _port;		}
 
-
-//todo:
-// check multiple querie handeling

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   handlers.cpp                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/06 13:26:47 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   handlers.cpp                                       :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
+/*   Updated: 2023/11/06 15:44:03 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,8 @@ void handleRequest(int epollFd, connection *conn)
     // Process the request data
 	std::cout << "handle request" << std::endl;
 	HttpRequest request(conn->request);
-	HttpResponse response(request);
-	// if (to CGI)
+	HttpResponse response(request); // does not nee to be request
+		// if (to CGI)
 	(void)epollFd;
 		// call CGI handler
 		// conn->state = GGI

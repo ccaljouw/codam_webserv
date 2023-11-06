@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/06 15:09:34 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/06 16:35:16 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,25 +18,25 @@
 #include <algorithm>
 
 
-HttpRequest::HttpRequest() : _method(), _protocol(), _headers(), _body(), _uri() {};
+HttpRequest::HttpRequest() : _method(), _protocol(), _headers(), _body(), _uri(), _requestStatus(200) {};
 
-HttpRequest::HttpRequest(const std::string& request) : _uri() {
+HttpRequest::HttpRequest(const std::string& request) : _uri(), _requestStatus(200) {
 
 // 1. === parse request line === 
-
+try {
 	std::size_t RequestLineEnd = request.find("\r\n");
 	if (RequestLineEnd == std::string::npos)
-		throw std::runtime_error("HttpRequest: first line error");
-	
+		throw parsingException(405, "Bad request");
+		
 	std::string RequestLine = request.substr(0, RequestLineEnd);
 	std::stringstream RequestLineStream(RequestLine);
 
 	std::string tempUriString;
 	RequestLineStream >> _method >> tempUriString >> _protocol;
 	
-	//check protocol:
+	//check protocol
 	if (_protocol != HTTP_PROTOCOL) {
-		//505 HTTP Version Not Supported"
+		throw parsingException(505, "Version not supported");
 	}
 
 	// check method
@@ -48,7 +48,7 @@ HttpRequest::HttpRequest(const std::string& request) : _uri() {
 		}
 	}
 	if (match == false) {
-	// 405 Method Not Allowed
+		throw parsingException(405, "Method not Allowed");
 	}
 	
 	_uri = Uri(tempUriString);
@@ -60,7 +60,8 @@ HttpRequest::HttpRequest(const std::string& request) : _uri() {
 	std::size_t headersStart = RequestLineEnd + 2;
 	std::size_t headersEnd = request.find("\r\n\r\n", headersStart);
 	if (headersEnd == std::string::npos)
-		throw std::runtime_error("HttpRequest: headers error");
+		throw parsingException(405, "Bad request");
+
 	std::string HeaderBlock = request.substr(headersStart, headersEnd - headersStart);
 
 	//split header block into seperate lines using a stream and seperating the key value pairs
@@ -83,28 +84,35 @@ HttpRequest::HttpRequest(const std::string& request) : _uri() {
 	}
 
 // 3. === parse body ===
-
-	this->_body = request.substr(headersEnd + 4);
+	_body = request.substr(headersEnd + 4);
+	
+	}
+	//catch errors	
+	catch (const parsingException& exception) {
+		_requestStatus = exception.getErrorCode();
+		std::cout << exception.what() << std::endl;
+	}
 }
 
 
 HttpRequest::HttpRequest(const HttpRequest& origin) {
-	this->_method		= origin._method;
-	this->_uri			= origin._uri;
-	this->_protocol		= origin._protocol;
-	this->_headers		= origin._headers;
-	this->_body			= origin._body;
-
+	_method				= origin._method;
+	_uri				= origin._uri;
+	_protocol			= origin._protocol;
+	_headers			= origin._headers;
+	_body				= origin._body;
+	_requestStatus		= origin._requestStatus;
 };
 
 const HttpRequest& HttpRequest::operator=(const HttpRequest& rhs) {
 	if (this != &rhs) {
-		this->_method		= rhs._method;
-		this->_uri			= rhs._uri;
-		this->_protocol		= rhs._protocol;
-		this->_headers.clear();
-		this->_headers		= rhs._headers;
-		this->_body			= rhs._body;
+		_method			= rhs._method;
+		_uri			= rhs._uri;
+		_protocol		= rhs._protocol;
+		_headers.clear();
+		_headers		= rhs._headers;
+		_body			= rhs._body;
+		_requestStatus	= rhs._requestStatus;
 	}
 	return *this;
 }
@@ -120,4 +128,5 @@ std::string HttpRequest::getProtocol(void) const							{	return _protocol;			}
 std::string HttpRequest::getBody(void) const								{	return _body;				}
 std::string HttpRequest::getUri(void)										{	return _uri.serializeUri();	}
 std::multimap<std::string, std::string>	HttpRequest::getHeaders(void) const	{	return _headers; 			}
+int HttpRequest::getRequestStatus(void) const								{	return _requestStatus;		}
 
