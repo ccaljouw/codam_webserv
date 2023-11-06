@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/06 12:06:07 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/06 16:28:59 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/06 17:30:07 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@
 class CGI
 {
 	public:
-		CGI() = delete;
 		~CGI();
+		CGI() = delete;
 		CGI(const CGI& other) = delete;
 		CGI& operator=(const CGI& other) = delete;
 		
@@ -32,6 +32,7 @@ class CGI
 		int getFdIn() const;
 		int getFdOut() const;
 		void	closeFds() const;
+		int		getStatus() const;
 		
 	private:
 		int		_fdIn;
@@ -40,6 +41,6 @@ class CGI
 		int		_status;
 };
 
-void cgiHandler(const Uri& uri, HttpResponse& response, int epollFd);
+int cgiHandler(const Uri& uri, connection *conn, int epollFd);
 
 #endif

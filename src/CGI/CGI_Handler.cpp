@@ -6,13 +6,12 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/06 16:30:48 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/06 17:31:25 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "CGI_Handler.hpp"
 #include "HttpRequest.hpp"
-#include "eventloop.hpp"
 
 CGI::CGI(int epollFd, connection *conn) : _epollFd(epollFd), _status(0)
 {
@@ -20,9 +19,8 @@ CGI::CGI(int epollFd, connection *conn) : _epollFd(epollFd), _status(0)
 	int	fd[2];
 	try
 	{
-		pipe(fd);
-		// if (pipe(fd) == -1)
-		// 	throw std::runtime_error("pipe failed");
+		if (pipe(fd) == -1)
+			throw std::runtime_error("pipe failed");
 		_fdIn = fd[0];
 		_fdOut = fd[1];
 		register_CGI(_epollFd, _fdIn, conn);
@@ -34,53 +32,50 @@ CGI::CGI(int epollFd, connection *conn) : _epollFd(epollFd), _status(0)
 	}
 }
 
-CGI::~CGI() {};
+void	CGI::closeFds() const
+{
+	close(_fdIn);
+	close(_fdOut);
+}
 
+CGI::~CGI() {};
 int CGI::getStatus() const	{ return (_status); }
 int CGI::getFdIn() const		{ return (_fdIn); }
 int CGI::getFdOut() const		{ return (_fdOut); }
 
-void	execChild(const Uri& uri, HttpResponse& response, CGI &cgi)
+void	execChild(const Uri& uri, CGI &cgi)
 {
-	
-	std::cout << "in execChild" << std::endl;
 	char	*program = const_cast<char *>(uri.getPath().c_str());
-	char	*argv[] = {const_cast<char *>("/bin/echo"), const_cast<char *>("hello")};
-	char		**env = NULL;
+	char	*argv[] = {const_cast<char *>("/bin/ls"), const_cast<char *>("-la"), NULL};
+	char	**env = NULL;
 	
-	if (dup2(cgi.getFdOut(), 1) == -1)
-	{
-		std::cout << "dup error" << std::endl;
-		response.setStatusCode(500);
-		return ;
-	}
-	close(cgi.getFdIn());
-	// close(cgi.getFdOut());
-	std::cout << "before execve" << std::endl;
-	execve(program, argv, env);
-	
+	(void)program;
+	std::cout << "exec child" << std::endl;
+	// if (dup2(cgi.getFdOut(), 1) == -1)
+	// {
+	// 	write(cgi.getFdOut(), "status: 500\r\n\r\n", 15);
+	// 	cgi.closeFds();
+	// 	return ;
+	// }
+	cgi.closeFds();
+	// execve(program, argv, env);
+	execve(argv[0], argv, env);
+
 }
 
 void cgiHandler(const Uri& uri, HttpResponse& response, int epollFd, connection *conn)
 {
 	CGI	cgi(epollFd, conn);
 
-	std::cout << "in cgi" << std::endl;
 	if (cgi.getStatus() == 1)
-	{
-		response.setStatusCode(500);
-		return ;
-	}
+		return 1;
 	
 	int pid = fork();
 	if (pid == -1)
-	{
-		std::cout << "PID == -1" << std::endl;
-		response.setStatusCode(500);
-		return;
-	}
+		return 1;
 	else if (pid == 0)
-		execChild(uri, response, cgi);
-	// else
-	// 	execParent(uri, response, cgi);
+		execChild(uri, cgi);
+	else
+		close(cgi.getFdIn());
+	return 0;
 }
