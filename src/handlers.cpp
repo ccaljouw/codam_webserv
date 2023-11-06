@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   handlers.cpp                                       :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: cariencaljouw <cariencaljouw@student.co      +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/06 09:46:45 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   handlers.cpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
+/*   Updated: 2023/11/06 12:13:56 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,12 @@ void readData(connection *conn)
 	std::cout << "read data" << std::endl;
 	conn->state = READING;
     if ((bytesRead = recv(conn->fd, buffer, sizeof(buffer), 0)) > 0) {
-        conn->client->append_requestData(buffer, static_cast<long unsigned int>(bytesRead));
+		conn->request.append(buffer, static_cast<long unsigned int>(bytesRead));
 		std::cout << "bytes read: " << bytesRead << std::endl;
 		if (bytesRead < BUFFER_SIZE)
 			conn->state = HANDLING;
     }
-   	else if (conn->client->get_request().empty()) {
+   	else if (conn->request.empty()) {
 		std::cout << "nothing to read" << std::endl;
 		conn->state = CLOSING;
     }
@@ -46,12 +46,10 @@ void handleRequest(connection *conn)
 {
     // Process the request data
 	std::cout << "handle request" << std::endl;
-	std::string request = conn->client->get_request();
-	int	length =  static_cast<int>(request.length()) + 22;
-	std::string response = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " \
-			+ std::to_string(length) + "\n\nmessage received:\n" + request + "\n\n";
-	conn->client->set_response(response);
-	conn->client->clear_request();
+	int	length =  static_cast<int>(conn->request.length()) + 22;
+	conn->response = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " \
+			+ std::to_string(length) + "\n\nmessage received:\n" + conn->request + "\n\n";
+	conn->request.clear();
 	std::cout << "Response ready" << std::endl;
 	conn->state = WRITING; // change to response ready status?
 }
@@ -64,9 +62,8 @@ void writeData(connection *conn)
     // Send the response
 	conn->state = WRITING;
 	std::cout << "write data" << std::endl;
-	std::string response = conn->client->get_response();
-    send(conn->fd, response.c_str(), response.length(), 0);
-	conn->client->clear_response();
+    send(conn->fd, conn->response.c_str(), conn->response.length(), 0);
+	conn->response.clear();
     std::cout << "Response sent" << std::endl;
 	conn->state = CONNECTED;
 }
@@ -75,9 +72,8 @@ void writeData(connection *conn)
 void	closeConnection(int epollFd, connection *conn)
 {
 	std::cout << "close connection" << std::endl;
-	epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->fd, NULL);
+	epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->fd, nullptr);
     close(conn->fd);
-	delete conn->client;
 	delete conn;
     std::cout << "Connection closed" << std::endl;
 }

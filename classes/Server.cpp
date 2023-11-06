@@ -32,6 +32,7 @@ Server::Server(uint16_t port, int epollFd)
     this->_serverAddr.sin_family = AF_INET;
 	this->_serverAddr.sin_addr.s_addr = INADDR_ANY;
 	this->_serverAddr.sin_port = htons(port);
+	this->_port = port; // remove?
 
 	assign_name();
 	set_to_listen(5);

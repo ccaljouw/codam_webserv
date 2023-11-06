@@ -1,12 +1,12 @@
 # **************************************************************************** #
 #                                                                              #
-#                                                         ::::::::             #
-#    Makefile                                           :+:    :+:             #
-#                                                      +:+                     #
-#    By: ccaljouw <ccaljouw@student.codam.nl>         +#+                      #
-#                                                    +#+                       #
-#    Created: 2023/08/30 10:48:44 by ccaljouw      #+#    #+#                  #
-#    Updated: 2023/11/04 00:25:55 by cariencaljo   ########   odam.nl          #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2023/08/30 10:48:44 by ccaljouw          #+#    #+#              #
+#    Updated: 2023/11/06 12:15:14 by ccaljouw         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ CFLAGS		= -Wall -Wextra -Werror -Wpedantic -Wshadow -Wnon-virtual-dtor -Wold-sty
 				-Wunused -Woverloaded-virtual -Wconversion -Wsign-conversion -Wfloat-conversion -Wformat=2 -Werror=vla \
 				-Wnull-dereference #-std=c++98
 INCLUDE		= -I include/ -I classes/
-CLASS_FILES = $(addprefix obj/, Server.o Client.o)
+CLASS_FILES = $(addprefix obj/, Server.o)
 OBJ_FILES	= $(addprefix obj/, main.o handlers.o registerEvents.o)
 
 all: $(NAME)

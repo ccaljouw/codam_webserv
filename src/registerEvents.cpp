@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   registerEvents.cpp                                 :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: cariencaljouw <cariencaljouw@student.co      +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/03 23:48:35 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/06 09:46:53 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   registerEvents.cpp                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/03 23:48:35 by cariencaljo       #+#    #+#             */
+/*   Updated: 2023/11/06 12:14:12 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	register_server(int epollFd, int fd)
 	struct epoll_event 	event;
 	connection			*conn;
 	
-	conn = new connection{fd, LISTENING, NULL};
+	conn = new connection{fd, LISTENING, "", ""};
     event.events = EPOLLIN | EPOLLET;
     event.data.ptr = conn;
     epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, &event);
@@ -34,8 +34,8 @@ void	register_client(int epollFd, int serverFd)
 	connection			*conn;
 	int					fd;
 	
-	fd = accept(serverFd, NULL, NULL);
-	conn = new connection{fd, CONNECTED, new Client()};
+	fd = accept(serverFd, nullptr, nullptr);
+	conn = new connection{fd, CONNECTED,  "", ""};
 	event.events = EPOLLIN | EPOLLOUT;   
     event.data.ptr = conn;
 	epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, &event);

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   eventloop.hpp                                      :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: cariencaljouw <cariencaljouw@student.co      +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/03 18:13:17 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/06 09:46:07 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   eventloop.hpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/03 18:13:17 by cariencaljo       #+#    #+#             */
+/*   Updated: 2023/11/06 12:15:01 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@
 # include <sys/epoll.h>
 
 # include <Server.hpp>
-# include <Client.hpp>
 
 # define MAX_EVENTS 10
 # define BUFFER_SIZE 1024
@@ -38,9 +37,10 @@ enum	states {
 
 struct connection
 {
-	int		fd;
-	states	state;
-	Client	*client;
+	int			fd;
+	states		state;
+	std::string	request;
+	std::string	response;
 };
 
 // handlers.cpp
