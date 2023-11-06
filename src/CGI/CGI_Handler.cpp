@@ -1,31 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   CGI_Handler.cpp                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/06 12:51:38 by bfranco           #+#    #+#             */
-/*   Updated: 2023/11/06 15:07:26 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   CGI_Handler.cpp                                    :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
+/*   Updated: 2023/11/06 17:10:37 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "CGI_Handler.hpp"
 #include "HttpRequest.hpp"
-#include "eventloop.hpp"
 
-CGI::CGI(int epollFd) : _epollFd(epollFd), _status(0)
+CGI::CGI(connection *conn, int epollFd) : _epollFd(epollFd), _status(0)
 {
 
 	int	fd[2];
 	try
 	{
-		pipe(fd);
-		// if (pipe(fd) == -1)
-		// 	throw std::runtime_error("pipe failed");
+		if (pipe(fd) == -1)
+			throw std::runtime_error("pipe failed");
 		_fdIn = fd[0];
 		_fdOut = fd[1];
-		register_CGI(_epollFd, _fdIn);
+		register_CGI(conn, _epollFd, _fdIn);
 	}
 	catch(const std::runtime_error& e)
 	{
@@ -34,53 +32,50 @@ CGI::CGI(int epollFd) : _epollFd(epollFd), _status(0)
 	}
 }
 
-CGI::~CGI() {};
+void	CGI::closeFds() const
+{
+	close(_fdIn);
+	close(_fdOut);
+}
 
+CGI::~CGI() {};
 int CGI::getStatus() const	{ return (_status); }
 int CGI::getFdIn() const		{ return (_fdIn); }
 int CGI::getFdOut() const		{ return (_fdOut); }
 
-void	execChild(const Uri& uri, HttpResponse& response, CGI &cgi)
+void	execChild(const Uri& uri, CGI &cgi)
 {
-	
-	std::cout << "in execChild" << std::endl;
 	char	*program = const_cast<char *>(uri.getPath().c_str());
-	char	*argv[] = {const_cast<char *>("/bin/echo"), const_cast<char *>("hello")};
-	char		**env = NULL;
+	char	*argv[] = {const_cast<char *>("/bin/ls"), const_cast<char *>("-la"), NULL};
+	char	**env = NULL;
 	
-	if (dup2(cgi.getFdOut(), 1) == -1)
-	{
-		std::cout << "dup error" << std::endl;
-		response.setStatusCode(500);
-		return ;
-	}
-	close(cgi.getFdIn());
-	// close(cgi.getFdOut());
-	std::cout << "before execve" << std::endl;
-	execve(program, argv, env);
-	
+	(void)program;
+	std::cout << "exec child" << std::endl;
+	// if (dup2(cgi.getFdOut(), 1) == -1)
+	// {
+	// 	write(cgi.getFdOut(), "status: 500\r\n\r\n", 15);
+	// 	cgi.closeFds();
+	// 	return ;
+	// }
+	cgi.closeFds();
+	// execve(program, argv, env);
+	execve(argv[0], argv, env);
+
 }
 
-void cgiHandler(const Uri& uri, HttpResponse& response, int epollFd)
+int cgiHandler(const Uri& uri, connection *conn, int epollFd)
 {
-	CGI	cgi(epollFd);
+	CGI	cgi(conn, epollFd);
 
-	std::cout << "in cgi" << std::endl;
 	if (cgi.getStatus() == 1)
-	{
-		response.setStatusCode(500);
-		return ;
-	}
+		return 1;
 	
 	int pid = fork();
 	if (pid == -1)
-	{
-		std::cout << "PID == -1" << std::endl;
-		response.setStatusCode(500);
-		return;
-	}
+		return 1;
 	else if (pid == 0)
-		execChild(uri, response, cgi);
-	// else
-	// 	execParent(uri, response, cgi);
+		execChild(uri, cgi);
+	else
+		close(cgi.getFdIn());
+	return 0;
 }

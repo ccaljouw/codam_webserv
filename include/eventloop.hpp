@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   eventloop.hpp                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 18:13:17 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/06 15:00:38 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   eventloop.hpp                                      :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 18:13:17 by cariencaljo   #+#    #+#                 */
+/*   Updated: 2023/11/06 16:28:05 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,6 @@ void	closeConnection(int epollFd, connection *conn);
 // registerEvents.cpp
 void	register_server(int epollFd, int fd);
 void	register_client(int epollFd, int serverFd);
-void	register_CGI(int epollFd, int serverFd);
+void	register_CGI(connection *conn, int epollFd, int serverFd);
 
 #endif

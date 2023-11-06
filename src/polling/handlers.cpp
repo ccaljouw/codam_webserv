@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   handlers.cpp                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/06 15:07:53 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   handlers.cpp                                       :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
+/*   Updated: 2023/11/06 16:35:49 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,8 @@ void handleRequest(int epollFd, connection *conn)
 	HttpRequest request(conn->request);
 	HttpResponse response(request);
 	// if (to CGI)
-		cgiHandler(request.getUri(), response, epollFd);
+		cgiHandler(request.getUri(), conn, epollFd);
+		std::cout << "CGI request" << std::endl;
 		conn->state = IN_CGI;
 	// else
 	// {

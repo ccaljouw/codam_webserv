@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   CGI_Handler.hpp                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/06 12:06:07 by bfranco           #+#    #+#             */
-/*   Updated: 2023/11/06 14:54:40 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   CGI_Handler.hpp                                    :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/06 12:06:07 by bfranco       #+#    #+#                 */
+/*   Updated: 2023/11/06 16:33:42 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,20 +17,21 @@
 #include "Uri.hpp"
 #include "HttpRequest.hpp"
 #include "HttpResponse.hpp"
+#include "eventloop.hpp"
 
 class CGI
 {
 	public:
-		CGI() = delete;
 		~CGI();
+		CGI() = delete;
 		CGI(const CGI& other) = delete;
 		CGI& operator=(const CGI& other) = delete;
 		
-		CGI(int epollFd);
-		int getStatus() const;
-		int getFdIn() const;
-		int getFdOut() const;
+		CGI(connection *con, int epollFd);
+		int		getFdIn() const;
+		int		getFdOut() const;
 		void	closeFds() const;
+		int		getStatus() const;
 		
 	private:
 		int		_fdIn;
@@ -39,6 +40,6 @@ class CGI
 		int		_status;
 };
 
-void cgiHandler(const Uri& uri, HttpResponse& response, int epollFd);
+int cgiHandler(const Uri& uri, connection *conn, int epollFd);
 
 #endif
