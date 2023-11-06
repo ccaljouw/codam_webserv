@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 14:21:11 by carlo             #+#    #+#             */
-/*   Updated: 2023/11/06 12:50:15 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/06 14:00:10 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,6 @@
 #include <iostream>
 #include <sstream>
 #include <exception>
-#include <algorithm>
-
 
 HttpRequest::HttpRequest() : _method(), _protocol(), _headers(), _body(), _uri(), _eventStatus() {};
 

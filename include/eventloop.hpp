@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 18:13:17 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/06 13:30:19 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/06 14:22:15 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 # include <Server.hpp>
 
 # define MAX_EVENTS 10
-# define BUFFER_SIZE 1024
+# define BUFFER_SIZE 5
 
 enum	states {
 	LISTENING,

@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/06 13:26:47 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/06 14:23:13 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,17 +29,18 @@ void readData(connection *conn)
     ssize_t bytesRead;
 	
 	std::cout << "read data" << std::endl;
-	conn->state = READING;
     if ((bytesRead = recv(conn->fd, buffer, sizeof(buffer), 0)) > 0) {
 		conn->request.append(buffer, static_cast<long unsigned int>(bytesRead));
 		std::cout << "bytes read: " << bytesRead << std::endl;
-		if (bytesRead < BUFFER_SIZE)
+		if (bytesRead < BUFFER_SIZE && !conn->request.empty())
 			conn->state = HANDLING;
     }
    	else if (conn->request.empty()) {
 		std::cout << "nothing to read" << std::endl;
 		conn->state = CLOSING;
     }
+	else
+		conn->state = READING;
 }
 
 // TODO: a lot :)
@@ -50,7 +51,7 @@ void handleRequest(int epollFd, connection *conn)
 	HttpRequest request(conn->request);
 	HttpResponse response(request);
 	// if (to CGI)
-	(void)epollFd;
+		(void)epollFd;
 		// call CGI handler
 		// conn->state = GGI
 	// else
@@ -64,26 +65,33 @@ void handleRequest(int epollFd, connection *conn)
 
 void readCGI(connection *conn)
 {
-	(void)conn;
-	// read CGI pipe and serializeRespons();
-	// conn->response = response.serializeResponse();
-	// conn->request.clear();
-	// std::cout << "Response ready" << std::endl;
-	// conn->state = WRITING; 
+	// read CGI pipe and return string;
+	// conn->response = string;
+	conn->request.clear();
+	std::cout << "Response ready" << std::endl;
+	conn->state = WRITING; 
 }
 
-// TODO: should only write buffer size?
 // TODO: check errors
-// TODO: set status CLOSING when response whas error
 void writeData(connection *conn) 
 {
-    // Send the response
+	size_t	len;
+	
 	conn->state = WRITING;
 	std::cout << "write data" << std::endl;
-    send(conn->fd, conn->response.c_str(), conn->response.length(), 0);
-	conn->response.clear();
-    std::cout << "Response sent" << std::endl;
-	conn->state = CONNECTED;
+	len = std::min(conn->response.length(), static_cast<size_t>(BUFFER_SIZE));
+    len = send(conn->fd, conn->response.c_str(), conn->response.length(), 0);
+	if (len < conn->response.length())
+	{
+		conn->response = conn->response.substr(len, conn->response.npos);
+		conn->state = WRITING;
+	}
+	else
+	{
+		conn->response.clear();
+		std::cout << "Response sent" << std::endl;
+		conn->state = CONNECTED;
+	}
 }
 
 // TODO: handle errors
