@@ -3,30 +3,42 @@
 /*                                                        ::::::::            */
 /*   main.cpp                                           :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: carlo <carlo@student.codam.nl>               +#+                     */
+/*   By: cariencaljouw <cariencaljouw@student.co      +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2023/09/29 11:00:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/01 08:39:01 by carlo         ########   odam.nl         */
+/*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
+/*   Updated: 2023/11/06 09:46:49 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#define RESET   "\033[0m"
-#define RED     "\033[31m"
-#define GREEN   "\033[32m"
+#include <eventloop.hpp>
 
-#include<iostream>
-
-
-int	main(int argc, char **argv) {
+int main() {
+    int 				epollFd = epoll_create(1);
+    struct epoll_event	events[MAX_EVENTS];
+    
+	// Create and init socket for the server
+	Server server(8080, epollFd);
 	
-	(void)argv;
-
-	if (argc != 2) {
-		std::cout << RED << "please pass one argument"	<< RESET << std::endl;
-		return 1;
-		}
-
-	std::cout << GREEN << "\n Config file:  "	<< argv[1] << RESET << std::endl;
-	
-	return (0);
+	// loop for events
+    while (true) {
+        int numEvents = epoll_wait(epollFd, events, MAX_EVENTS, 0);
+		
+        for (int i = 0; i < numEvents; i++) {
+			connection *conn = static_cast<connection *>(events[i].data.ptr);
+            if (conn->state == LISTENING && events[i].events & EPOLLIN)
+				newConnection(epollFd, conn->fd);
+			if ((conn->state == CONNECTED || conn->state == READING) \
+								&& events[i].events & EPOLLIN)
+				readData(conn);
+			if (conn->state == HANDLING)
+				handleRequest(conn);
+			if (conn->state == WRITING && events[i].events & EPOLLOUT)
+				writeData(conn);
+			if (events[i].events & EPOLLERR || events[i].events & EPOLLHUP)
+				handleError(conn);
+			if (conn->state == CLOSING)
+				closeConnection(epollFd, conn);
+        }
+    }
+    return 0;
 }

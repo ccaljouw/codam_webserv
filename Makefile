@@ -3,47 +3,55 @@
 #                                                         ::::::::             #
 #    Makefile                                           :+:    :+:             #
 #                                                      +:+                     #
-#    By: wingessoracle <wingessoracle@student.co      +#+                      #
+#    By: ccaljouw <ccaljouw@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
-#    Created: 2023/06/21 08:27:49 by wingessorac   #+#    #+#                  #
-#    Updated: 2023/11/01 08:37:35 by carlo         ########   odam.nl          #
+#    Created: 2023/08/30 10:48:44 by ccaljouw      #+#    #+#                  #
+#    Updated: 2023/11/04 00:25:55 by cariencaljo   ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
-include common.mk
+#//= Colors =//#
+BOLD	:= \033[1m
+GREEN	:= \033[32;1m
+BLUE	:= \033[34;1m
+RESET	:= \033[0m
 
-#==============================================================================#
+#//= Variables = //#
+NAME		= webserv
+CC			= c++
+CFLAGS		= -Wall -Wextra -Werror -Wpedantic -Wshadow -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Wzero-as-null-pointer-constant \
+				-Wunused -Woverloaded-virtual -Wconversion -Wsign-conversion -Wfloat-conversion -Wformat=2 -Werror=vla \
+				-Wnull-dereference #-std=c++98
+INCLUDE		= -I include/ -I classes/
+CLASS_FILES = $(addprefix obj/, Server.o Client.o)
+OBJ_FILES	= $(addprefix obj/, main.o handlers.o registerEvents.o)
 
-.DEFAULT_GOAL	:= all
+all: $(NAME)
+	
+$(NAME): $(CLASS_FILES) $(OBJ_FILES) 
+	@$(CC)  $(CLASS_FILES) $(OBJ_FILES) -o $(NAME) $(CFLAGS) $(INCLUDE)
 
-TARGET	 	=	webserv
-OBJ_FILES	=	$(addprefix obj/, main.o)
-
-
-#===============================================================================#
-
-all: $(TARGET)
-
-#=========Linking===============================================================#
-$(TARGET): $(OBJ_FILES)
-	@echo -e "$(GREEN)Linking $(TARGET)$(RESET)"
-	@$(CXX) $(LDLAGS) -o $@ $^
-
-
-#=======Compiling===============================================================#
-$(OBJ_FILES): $(OBJ_DIR)/%.o : $(SRC_DIR)/%.cpp
+$(CLASS_FILES): obj/%.o: classes/%.cpp 
 	@mkdir -p $(dir $@)
-	@echo -e "$(GREEN)Compiling $@ $(RESET) $(notdir $<)"
-	@$(CXX) $(CFLAGS) $(HEADERS) -c -o $@ $<
+	@echo "$(GREEN)$(BOLD)Compiling $(NAME):$(RESET) $(notdir $<)"
+	@$(CC) -c $(CFLAGS) $(INCLUDE) -o $@ $<
+	
+$(OBJ_FILES): obj/%.o: src/%.cpp 
+	@mkdir -p $(dir $@)
+	@echo "$(GREEN)$(BOLD)Compiling $(NAME):$(RESET) $(notdir $<)"
+	@$(CC) -c $(CFLAGS) $(INCLUDE) -o $@ $<
 
-
-#=======Cleaning================================================================#
 clean:
-	@echo -e "$(BLUE)Remoning OBJ files$(RESET)"
-	@rm -rf $(OBJ_DIR)
+	@echo "$(BLUE)Cleaning $(NAME) $(RESET)"
+	@rm -rf obj/
+	@rm -rf obj_builtin/
 
 fclean: clean
-	@echo -e "$(BLUE)Removing $(TARGET)$(RESET)"
-	@rm -rf $(TARGET)
+	@rm -rf $(NAME)
+
+debug: CFLAGS = -Wall -Wextra 
+debug: all
 
 re: fclean all
+
+.PHONY:	all bonus clean fclean re debug
