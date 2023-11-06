@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   HttpResponse.hpp                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 10:27:35 by carlo             #+#    #+#             */
-/*   Updated: 2023/11/06 12:56:28 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   HttpResponse.hpp                                   :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
+/*   Updated: 2023/11/06 14:03:05 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #ifndef HTTPRESPONSE_H
 # define HTTPRESPONSE_H
 
-#include "Uri.hpp"
 #include "webServ.hpp"
 
 #include <string>

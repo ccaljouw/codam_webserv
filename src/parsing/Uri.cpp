@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Uri.cpp                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 12:17:27 by carlo             #+#    #+#             */
-/*   Updated: 2023/11/06 12:50:27 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Uri.cpp                                            :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
+/*   Updated: 2023/11/06 14:11:28 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include <regex>
 #include <exception>
+
 
 
 Uri::Uri() : _scheme(), _authority(), _path(), _query(), _fragment(), _userinfo(), _host(), _port()  {}
@@ -117,3 +118,7 @@ std::string	Uri::getFragment() const	{	return _fragment;	}
 std::string	Uri::getUserInfo() const	{	return _userinfo;	}
 std::string	Uri::getHost() const		{	return _host;		}
 int			Uri::getPort() const		{	return _port;		}
+
+
+//todo:
+// check multiple querie handeling

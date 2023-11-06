@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   HttpRequest.cpp                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/01 14:21:11 by carlo             #+#    #+#             */
-/*   Updated: 2023/11/06 12:50:15 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   HttpRequest.cpp                                    :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
+/*   Updated: 2023/11/06 15:09:34 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include <algorithm>
 
 
-HttpRequest::HttpRequest() : _method(), _protocol(), _headers(), _body(), _uri(), _eventStatus() {};
+HttpRequest::HttpRequest() : _method(), _protocol(), _headers(), _body(), _uri() {};
 
 HttpRequest::HttpRequest(const std::string& request) : _uri() {
 
@@ -33,10 +33,26 @@ HttpRequest::HttpRequest(const std::string& request) : _uri() {
 
 	std::string tempUriString;
 	RequestLineStream >> _method >> tempUriString >> _protocol;
+	
+	//check protocol:
+	if (_protocol != HTTP_PROTOCOL) {
+		//505 HTTP Version Not Supported"
+	}
 
+	// check method
+	bool match = false;
+	for (const auto& target : this->supportedMethods) {
+		if (target == _method) {
+			match = true;
+			break;
+		}
+	}
+	if (match == false) {
+	// 405 Method Not Allowed
+	}
+	
 	_uri = Uri(tempUriString);
 	
-
 
 // 2. === parse headers ===
 
@@ -78,7 +94,6 @@ HttpRequest::HttpRequest(const HttpRequest& origin) {
 	this->_protocol		= origin._protocol;
 	this->_headers		= origin._headers;
 	this->_body			= origin._body;
-	this->_eventStatus	= origin._eventStatus;
 
 };
 
@@ -90,7 +105,6 @@ const HttpRequest& HttpRequest::operator=(const HttpRequest& rhs) {
 		this->_headers.clear();
 		this->_headers		= rhs._headers;
 		this->_body			= rhs._body;
-		this->_eventStatus	= rhs._eventStatus;
 	}
 	return *this;
 }
@@ -105,11 +119,5 @@ std::string HttpRequest::getMethod(void) const								{	return _method;				}
 std::string HttpRequest::getProtocol(void) const							{	return _protocol;			}
 std::string HttpRequest::getBody(void) const								{	return _body;				}
 std::string HttpRequest::getUri(void)										{	return _uri.serializeUri();	}
-int			HttpRequest::getEventStatus(void) const							{	return _eventStatus;		}
 std::multimap<std::string, std::string>	HttpRequest::getHeaders(void) const	{	return _headers; 			}
-
-
-void HttpRequest::setEventStatus(int status) {
-	_eventStatus = status;
-}
 

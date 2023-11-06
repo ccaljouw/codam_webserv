@@ -30,7 +30,7 @@ HttpResponse::HttpResponse(const HttpRequest& request) {
 //to do: standard headrs: cookie date, length, host, content type, 
 HttpResponse::HttpResponse(const HttpResponse& origin) {
 	_protocol		= origin._protocol;
-	_statusCode	= origin._statusCode;
+	_statusCode		= origin._statusCode;
 	_headers		= origin._headers;
 	_body			= origin._body;
 	addHeader("host", HOST);
@@ -41,7 +41,7 @@ HttpResponse::HttpResponse(const HttpResponse& origin) {
 const HttpResponse& HttpResponse::operator=(const HttpResponse& rhs) {
 	if (this != &rhs) {
 		_protocol		= rhs._protocol;
-		_statusCode	= rhs._statusCode;
+		_statusCode		= rhs._statusCode;
 		_headers.clear();
 		_headers		= rhs._headers;
 		_body			= rhs._body;
@@ -83,6 +83,8 @@ std::string HttpResponse::serializeResponse(void) {
 	return serializedResponse;
 }
 
+//todo:
+//check method protocol, some headers
 //status code to map
 //checks before sending (status code set, stc)
 //check WHITE_SPACE
