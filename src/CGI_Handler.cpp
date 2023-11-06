@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/06 13:30:11 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/06 14:22:59 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,22 @@ const int CGI::getStatus() const	{ return (_status); }
 const int CGI::getFdIn() const		{ return (_fdIn); }
 const int CGI::getFdOut() const		{ return (_fdOut); }
 
-
-
-
-void	execChild
+void	execChild(const Uri& uri, HttpResponse& response, CGI cgi)
+{
+	
+	char	*program = static_cast<char *>uri.getPath();
+	char	*argv[] = {program, NULL};
+	char	**env = NULL;
+	
+	if (std::dup2(cgi.getFdOut(), 1) == -1)
+	{
+		response.setStatus(500);
+		return ;
+	}
+	close(cgi.getFdIn());
+	std::execve(program, argv, env);
+	
+}
 
 void cgiHandler(const Uri& uri, HttpResponse& response, int epollFd)
 {
