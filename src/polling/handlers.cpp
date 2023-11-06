@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/06 15:07:53 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/06 15:26:49 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,16 +49,17 @@ void handleRequest(int epollFd, connection *conn)
     // Process the request data
 	std::cout << "handle request" << std::endl;
 	HttpRequest request(conn->request);
-	HttpResponse response(request);
 	// if (to CGI)
-		cgiHandler(request.getUri(), response, epollFd);
-		conn->state = IN_CGI;
+		(void)epollFd;
+		// cgiHandler(request.getUri(), response, epollFd);
+		// conn->state = IN_CGI;
 	// else
 	// {
-	// 	conn->response = response.serializeResponse();
-	// 	conn->request.clear();
-	// 	std::cout << "Response ready" << std::endl;
-	// 	conn->state = WRITING; // change to response ready status?
+		HttpResponse response(request);
+		conn->response = response.serializeResponse();
+		conn->request.clear();
+		std::cout << "Response ready" << std::endl;
+		conn->state = WRITING; // change to response ready status?
 	// }
 }
 
