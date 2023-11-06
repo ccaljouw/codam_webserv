@@ -6,12 +6,13 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/06 12:13:56 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/06 13:03:53 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <eventloop.hpp>
-# include <unistd.h>
+#include <webServ.hpp>
+#include <unistd.h>
 
 // TODO: check errors, check duplicates
 // TODO: check what to do if backlog is full?
@@ -46,9 +47,16 @@ void handleRequest(connection *conn)
 {
     // Process the request data
 	std::cout << "handle request" << std::endl;
-	int	length =  static_cast<int>(conn->request.length()) + 22;
-	conn->response = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " \
-			+ std::to_string(length) + "\n\nmessage received:\n" + conn->request + "\n\n";
+
+	HttpRequest request(conn->request);
+	HttpResponse response(request);
+	conn->response = response.serializeResponse();
+	
+	// int	length =  static_cast<int>(conn->request.length()) + 22;
+	// conn->response = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " 
+	// 		+ std::to_string(length) + "\n\nmessage received:\n" + conn->request + "\n\n";
+	
+	std::cout << conn->response << std::endl;
 	conn->request.clear();
 	std::cout << "Response ready" << std::endl;
 	conn->state = WRITING; // change to response ready status?
