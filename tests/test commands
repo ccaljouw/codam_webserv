@@ -6,19 +6,12 @@
 #    By: carlo <carlo@student.codam.nl>               +#+                      #
 #                                                    +#+                       #
 #    Created: 2023/11/06 19:55:54 by carlo         #+#    #+#                  #
-#    Updated: 2023/11/06 22:09:27 by carlo         ########   odam.nl          #
+#    Updated: 2023/11/06 22:32:44 by carlo         ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
-curl --http1.1 http://localhost:8080/index.html
-curl --http1.1 -X GET -d "YourRequestBodyData" http://localhost:8080
-
+curl --http1.1 http://localhost:8080/html/index.html
 
 curl --http1.1 -X POST -d "your_request_data_here" http://localhost:8080/cgi-bin/
-
-
-
-
-
 
 
