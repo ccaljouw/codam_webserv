@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/06 13:03:53 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/06 13:26:47 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,23 +43,33 @@ void readData(connection *conn)
 }
 
 // TODO: a lot :)
-void handleRequest(connection *conn) 
+void handleRequest(int epollFd, connection *conn) 
 {
     // Process the request data
 	std::cout << "handle request" << std::endl;
-
 	HttpRequest request(conn->request);
 	HttpResponse response(request);
-	conn->response = response.serializeResponse();
-	
-	// int	length =  static_cast<int>(conn->request.length()) + 22;
-	// conn->response = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " 
-	// 		+ std::to_string(length) + "\n\nmessage received:\n" + conn->request + "\n\n";
-	
-	std::cout << conn->response << std::endl;
-	conn->request.clear();
-	std::cout << "Response ready" << std::endl;
-	conn->state = WRITING; // change to response ready status?
+	// if (to CGI)
+	(void)epollFd;
+		// call CGI handler
+		// conn->state = GGI
+	// else
+	{
+		conn->response = response.serializeResponse();
+		conn->request.clear();
+		std::cout << "Response ready" << std::endl;
+		conn->state = WRITING; // change to response ready status?
+	}
+}
+
+void readCGI(connection *conn)
+{
+	(void)conn;
+	// read CGI pipe and serializeRespons();
+	// conn->response = response.serializeResponse();
+	// conn->request.clear();
+	// std::cout << "Response ready" << std::endl;
+	// conn->state = WRITING; 
 }
 
 // TODO: should only write buffer size?

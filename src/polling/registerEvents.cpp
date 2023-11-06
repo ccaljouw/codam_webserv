@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 23:48:35 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/06 12:14:12 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/06 13:29:58 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,19 @@ void	register_client(int epollFd, int serverFd)
 	fd = accept(serverFd, nullptr, nullptr);
 	conn = new connection{fd, CONNECTED,  "", ""};
 	event.events = EPOLLIN | EPOLLOUT;   
+    event.data.ptr = conn;
+	epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, &event);
+}
+
+void	register_CGI(int epollFd, int serverFd)
+{
+	struct epoll_event 	event;
+	connection			*conn;
+	int					fd;
+	
+	fd = accept(serverFd, nullptr, nullptr);
+	conn = new connection{fd, CONNECTED,  "", ""};
+	event.events = EPOLLIN;   
     event.data.ptr = conn;
 	epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, &event);
 }

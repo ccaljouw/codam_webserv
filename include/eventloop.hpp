@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 18:13:17 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/06 12:15:01 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/06 13:30:19 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ enum	states {
 	CONNECTED,
 	READING,
 	HANDLING,
+	CGI,
 	WRITING,
 	CLOSING
 };
@@ -46,7 +47,8 @@ struct connection
 // handlers.cpp
 void	newConnection(int epollFd, int fd);
 void	readData(connection *conn);
-void	handleRequest(connection *conn);
+void	handleRequest(int epollFd, connection *conn);
+void 	readCGI(connection *conn);
 void	handleError(connection *conn);
 void	writeData(connection *conn);
 void	closeConnection(int epollFd, connection *conn);
@@ -54,5 +56,6 @@ void	closeConnection(int epollFd, connection *conn);
 // registerEvents.cpp
 void	register_server(int epollFd, int fd);
 void	register_client(int epollFd, int serverFd);
+void	register_CGI(int epollFd, int serverFd);
 
 #endif

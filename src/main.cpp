@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 11:16:40 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/06 12:18:31 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/06 13:24:52 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,9 @@ int main() {
 								&& events[i].events & EPOLLIN)
 				readData(conn);
 			if (conn->state == HANDLING)
-				handleRequest(conn);
+				handleRequest(epollFd, conn);
+			if (conn->state == CGI)
+				readCGI(conn);
 			if (conn->state == WRITING && events[i].events & EPOLLOUT)
 				writeData(conn);
 			if (events[i].events & EPOLLERR || events[i].events & EPOLLHUP)

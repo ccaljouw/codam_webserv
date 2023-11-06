@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 16:57:19 by carlo             #+#    #+#             */
-/*   Updated: 2023/11/06 12:54:40 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/06 13:11:36 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #define LINE_END "\r\n"
 #define WHITE_SPACE " \t\n\v\f\r"
 #define HTTP_PROTOCOL "HTTP/1.1"
+#define HOST "temp host"
 
 #include<map>
 #include<string>

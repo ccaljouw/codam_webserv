@@ -22,26 +22,29 @@ HttpResponse::HttpResponse(void) : _protocol(HTTP_PROTOCOL), _statusCode(200), _
 }
 
 HttpResponse::HttpResponse(const HttpRequest& request) {
-	this->_protocol 	= HTTP_PROTOCOL;
-	this->_statusCode	= 200;
-	this->_body			= "here is the request body: " + request.getBody() + LINE_END;
+	_protocol 	= HTTP_PROTOCOL;
+	_statusCode	= 200;
+	_body			= "here is the request body: " + request.getBody() + LINE_END;
 }
 
-
+//to do: standard headrs: cookie date, length, host, content type, 
 HttpResponse::HttpResponse(const HttpResponse& origin) {
-		this->_protocol		= origin._protocol;
-		this->_statusCode	= origin._statusCode;
-		this->_headers		= origin._headers;
-		this->_body			= origin._body;
+	_protocol		= origin._protocol;
+	_statusCode	= origin._statusCode;
+	_headers		= origin._headers;
+	_body			= origin._body;
+	addHeader("host", HOST);
+	addHeader("date", "temp date");
+	addHeader("Content_length", "temp length");
 }
 
 const HttpResponse& HttpResponse::operator=(const HttpResponse& rhs) {
 	if (this != &rhs) {
-		this->_protocol		= rhs._protocol;
-		this->_statusCode	= rhs._statusCode;
-		this->_headers.clear();
-		this->_headers		= rhs._headers;
-		this->_body			= rhs._body;
+		_protocol		= rhs._protocol;
+		_statusCode	= rhs._statusCode;
+		_headers.clear();
+		_headers		= rhs._headers;
+		_body			= rhs._body;
 	}
 	return *this;
 }
@@ -53,14 +56,14 @@ HttpResponse::~HttpResponse(void) {
 // ============= Setters ================
 void HttpResponse::setProtocol(const std::string& protocol)						{ _protocol 	= protocol;	}
 void HttpResponse::setStatusCode(int status) 									{ _statusCode	= status;	}
-void HttpResponse::setBody(const std::string& body)								{ _body			= body;	}
+void HttpResponse::setBody(const std::string& body)								{ _body			= body;		}
 void HttpResponse::addHeader(const std::string& key, const std::string& value)	{
 	_headers.insert(std::make_pair(key, value));
 }
 
 // ============= Getters ================
 int HttpResponse::getStatusCode() const {
-	return this->_statusCode;
+	return _statusCode;
 }
 
 
