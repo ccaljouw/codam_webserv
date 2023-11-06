@@ -1,0 +1,4 @@
+with carien discuss status code of create requests and responses
+in response add checks for case sensitivity and whitespaces (see format)
+in response add sserialize func
+add std headers set to always add
