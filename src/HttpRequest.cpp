@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/05 09:57:47 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/06 10:44:01 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ HttpRequest::HttpRequest(const std::string& request) : _uri() {
 			//header keys are case insensitive
 			std::transform(key.begin(), key.end(), key.begin(), ::tolower);
 				
-			//trim leading and training whitespaces from header value (not key)
+			//trim leading and trailing whitespaces from header value (not key)
 			value = value.substr(key.find_first_not_of(WHITE_SPACE));
 			value = value.substr(0, value.find_last_not_of(WHITE_SPACE) + 1);
 			_headers.insert(std::make_pair(key, value));
@@ -100,26 +100,27 @@ HttpRequest::~HttpRequest(void) {
 }
 
 
-//========= getters ============
-std::string HttpRequest::getMethod(void) const		{	return _method;				}
-std::string HttpRequest::getProtocol(void) const	{	return _protocol;			}
-std::string HttpRequest::getBody(void) const		{	return _body;				}
-std::string HttpRequest::getUri(void)				{	return _uri.serializeUri();	}
-int			HttpRequest::getEventStatus(void) const	{	return _eventStatus;		}
+//========= Getters ============
+std::string HttpRequest::getMethod(void) const								{	return _method;				}
+std::string HttpRequest::getProtocol(void) const							{	return _protocol;			}
+std::string HttpRequest::getBody(void) const								{	return _body;				}
+std::string HttpRequest::getUri(void)										{	return _uri.serializeUri();	}
+int			HttpRequest::getEventStatus(void) const							{	return _eventStatus;		}
+std::multimap<std::string, std::string>	HttpRequest::getHeaders(void) const	{	return _headers; 			}
 
-
-
-std::string HttpRequest::serializeHeaders(void) const {
-	
-	std::string serializedHeaders;
-	
-	for (const auto& headerPair: _headers) {
-		serializedHeaders += headerPair.first + ": " + headerPair.second + LINE_END;
-	}
-
-	return serializedHeaders;
-}
 
 void HttpRequest::setEventStatus(int status) {
 	_eventStatus = status;
 }
+
+// std::string HttpRequest::serializeHeaders(void) const {
+	
+// 	std::string serializedHeaders;
+	
+// 	for (const auto& headerPair: _headers) {
+// 		serializedHeaders += headerPair.first + ": " + headerPair.second + LINE_END;
+// 	}
+
+// 	return serializedHeaders;
+// }
+

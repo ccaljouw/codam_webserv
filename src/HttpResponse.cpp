@@ -62,10 +62,10 @@ int HttpResponse::getStatusCode() const {
 }
 
 
-std::string HttpResponse::serializeHeaders(const std::multimap<std::string, std::string>& headers) {
+std::string HttpResponse::serializeHeaders() {
 	std::string serializedHeaders;
-	for(const auto& pair : headers) {
-		serializedHeaders += pair.first + ": " + pair.second + LINE_END;
+	for(const auto& headerPair : _headers) {
+		serializedHeaders += headerPair.first + ": " + headerPair.second + LINE_END;
 	}
 	return serializedHeaders;
 }
@@ -74,7 +74,7 @@ std::string HttpResponse::serializeHeaders(const std::multimap<std::string, std:
 std::string HttpResponse::serializeResponse(void) {
 	std::string serializedResponse;
 
-	serializedResponse += _protocol + " " + std::to_string(_statusCode) + LINE_END + serializeHeaders(_headers) + LINE_END + _body;
+	serializedResponse += _protocol + " " + std::to_string(_statusCode) + LINE_END + serializeHeaders() + LINE_END + _body;
 	return serializedResponse;
 }
 

@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/03 16:06:35 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/06 11:07:56 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,26 +18,25 @@
 
 Uri::Uri() : _scheme(), _authority(), _path(), _query(), _fragment(), _userinfo(), _host(), _port()  {}
 
-// regex teken directly from RFC 2396 : ^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?
 
+// regex teken directly from RFC 2396 : ^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))? added R for ignoring escape characterss
 Uri::Uri(const std::string& uri) {
 	std::regex uriRegex(R"(^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?)");
 	
 	std::smatch matches;
 	
 	if(std::regex_match(uri, matches, uriRegex)) {
-		_scheme = matches[2].str();
-		_authority = matches[4].str();
-		_path = matches[5].str();
-		_query = matches[7].str();
-		_fragment = matches[9].str();
+		_scheme 	= matches[2].str();
+		_authority 	= matches[4].str();
+		_path 		= matches[5].str();
+		_query 		= matches[7].str();
+		_fragment 	= matches[9].str();
 	} else {
 		//infvalid uri format
 		throw std::invalid_argument("invalid URI format");
 	}
 
 	splitAuthority();
-
 	//scheme and host are case insensitive and as such are normalized here
 	std::transform(_scheme.begin(), _scheme.end(), _scheme.begin(), ::tolower);
 	std::transform(_host.begin(), _host.end(), _host.begin(), ::tolower);
@@ -66,7 +65,7 @@ const Uri& Uri::operator=(const Uri& rhs) {
 
 void	Uri::splitAuthority() {
 
-	//check for optional usser info	
+	//check for optional userinfo	
 	size_t atPos = _authority.find("@");
 	if (atPos != std::string::npos) {
 		_userinfo 	= _authority.substr(0, atPos);
@@ -74,7 +73,6 @@ void	Uri::splitAuthority() {
 	} 
 	else
 		_host = _authority;
-		
 
 	//check for optional port
 	size_t columPos = _host.find(":");

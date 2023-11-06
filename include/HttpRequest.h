@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/05 09:55:59 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/06 10:40:58 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,17 +30,19 @@ class HttpRequest {
 		~HttpRequest(void);
 
 	// ============= Getters ================
-		std::string		getMethod(void) const;
-		std::string		getProtocol(void) const;
-		std::string		serializeHeaders(void) const;
-		std::string		getBody(void) const;
-		std::string		getUri(void);
-		int				getEventStatus(void) const;
+		std::string									getMethod(void) const;
+		std::string									getProtocol(void) const;
+		std::string									getBody(void) const;
+		std::string									getUri(void);
+		int											getEventStatus(void) const;
+		std::multimap<std::string, std::string>		getHeaders(void) const;
+		// std::string		serializeHeaders(void) const;
+	
 		
 	// ============ Setter ===================
 		void			setEventStatus(int status);
-		
-		
+	
+
 		private:
 		std::string								_method;
 		std::string								_protocol;

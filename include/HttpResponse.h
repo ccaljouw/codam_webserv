@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/05 20:27:36 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/06 10:22:42 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ class HttpResponse {
 	// ============= Getters ================
 		int getStatusCode() const;
 		
-		std::string serializeHeaders(const std::multimap<std::string, std::string>& headers);
+		std::string serializeHeaders(void);
 		std::string serializeResponse(void);
 		
 	private:

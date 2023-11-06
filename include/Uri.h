@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:12:15 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/03 16:06:13 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/06 10:06:50 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ class Uri {
 
 		std::string		serializeUri(void);
 
-		//getters
+		// ========== Getters ===========
 		std::string		getScheme(void) const;
 		std::string		getAuthority(void) const;
 		std::string		getPath(void) const;
@@ -48,8 +48,5 @@ class Uri {
 		std::string		_host;
 		int				_port;
 };
-
-std::ostream& operator<<(std::ostream& output, const Uri& rhs);
-
 
 #endif
