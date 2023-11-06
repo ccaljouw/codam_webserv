@@ -1,0 +1,52 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2023/06/21 08:27:49 by wingessorac       #+#    #+#              #
+#    Updated: 2023/11/06 12:49:58 by ccaljouw         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+include common.mk
+
+#==============================================================================#
+
+.DEFAULT_GOAL	:= all
+
+TARGET	 	=	webserv
+OBJ_FILES	=	$(addprefix obj/, main.o \
+				$(addprefix parsing/, Uri.o HttpRequest.o HttpResponse.o) \
+				$(addprefix polling/, handlers.o registerEvents.o) \
+				$(addprefix config/, Server.o))
+
+
+#===============================================================================#
+
+all: $(TARGET)
+
+#=========Linking===============================================================#
+$(TARGET): $(OBJ_FILES)
+	@echo -e "$(GREEN)Linking $(TARGET)$(RESET)"
+	@$(CXX) $(LDLAGS) -o $@ $^
+
+
+#=======Compiling===============================================================#
+$(OBJ_FILES): $(OBJ_DIR)/%.o : $(SRC_DIR)/%.cpp
+	@mkdir -p $(dir $@)
+	@echo -e "$(GREEN)Compiling $@ $(RESET) $(notdir $<)"
+	@$(CXX) $(CFLAGS) $(HEADERS) -c -o $@ $<
+
+
+#=======Cleaning================================================================#
+clean:
+	@echo -e "$(BLUE)Remoning OBJ files$(RESET)"
+	@rm -rf $(OBJ_DIR)
+
+fclean: clean
+	@echo -e "$(BLUE)Removing $(TARGET)$(RESET)"
+	@rm -rf $(TARGET)
+
+re: fclean all
