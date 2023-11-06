@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   CGI_Handler.hpp                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/06 12:06:07 by bfranco           #+#    #+#             */
-/*   Updated: 2023/11/06 14:54:40 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   CGI_Handler.hpp                                    :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/06 12:06:07 by bfranco       #+#    #+#                 */
+/*   Updated: 2023/11/06 16:28:59 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include "Uri.hpp"
 #include "HttpRequest.hpp"
 #include "HttpResponse.hpp"
+#include "eventloop.hpp"
 
 class CGI
 {
@@ -26,7 +27,7 @@ class CGI
 		CGI(const CGI& other) = delete;
 		CGI& operator=(const CGI& other) = delete;
 		
-		CGI(int epollFd);
+		CGI(int epollFd, connection *conn);
 		int getStatus() const;
 		int getFdIn() const;
 		int getFdOut() const;

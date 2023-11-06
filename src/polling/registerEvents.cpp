@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   registerEvents.cpp                                 :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 23:48:35 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/06 13:29:58 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   registerEvents.cpp                                 :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 23:48:35 by cariencaljo   #+#    #+#                 */
+/*   Updated: 2023/11/06 16:52:05 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	register_server(int epollFd, int fd)
 	struct epoll_event 	event;
 	connection			*conn;
 	
-	conn = new connection{fd, LISTENING, "", ""};
+	conn = new connection{fd, 0, LISTENING, "", ""};
     event.events = EPOLLIN | EPOLLET;
     event.data.ptr = conn;
     epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, &event);
@@ -35,21 +35,18 @@ void	register_client(int epollFd, int serverFd)
 	int					fd;
 	
 	fd = accept(serverFd, nullptr, nullptr);
-	conn = new connection{fd, CONNECTED,  "", ""};
+	conn = new connection{fd, 0, CONNECTED,  "", ""};
 	event.events = EPOLLIN | EPOLLOUT;   
     event.data.ptr = conn;
 	epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, &event);
 }
 
-void	register_CGI(int epollFd, int serverFd)
+void	register_CGI(int epollFd, int cgiFd, connection *conn)
 {
 	struct epoll_event 	event;
-	connection			*conn;
-	int					fd;
 	
-	fd = accept(serverFd, nullptr, nullptr);
-	conn = new connection{fd, CONNECTED,  "", ""};
+	conn->cgiFd = cgiFd;
 	event.events = EPOLLIN;   
     event.data.ptr = conn;
-	epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, &event);
+	epoll_ctl(epollFd, EPOLL_CTL_ADD, cgiFd, &event);
 }

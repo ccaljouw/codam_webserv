@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   handlers.cpp                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/06 15:26:49 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   handlers.cpp                                       :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
+/*   Updated: 2023/11/06 16:57:52 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void handleRequest(int epollFd, connection *conn)
 	HttpRequest request(conn->request);
 	// if (to CGI)
 		(void)epollFd;
-		// cgiHandler(request.getUri(), response, epollFd);
+		// cgiHandler(request.getUri(), response, epollFd, conn);
 		// conn->state = IN_CGI;
 	// else
 	// {
@@ -63,22 +63,27 @@ void handleRequest(int epollFd, connection *conn)
 	// }
 }
 
-void readCGI(connection *conn)
+// to do: check if bytes read is exactly buffersize
+void readCGI(int epollFd, connection *conn)
 {
 	char buffer[BUFFER_SIZE];
     ssize_t bytesRead;
 	
-	// read CGI pipe and return string;
-	// conn->response = string;
-	
-	if ((bytesRead = recv(conn->fd, buffer, sizeof(buffer), 0)) > 0) 
-	{
+	std::cout << "read data CGI" << std::endl;
+    if ((bytesRead = recv(conn->cgiFd, buffer, sizeof(buffer), 0)) > 0) {
 		conn->request.append(buffer, static_cast<long unsigned int>(bytesRead));
 		std::cout << "bytes read: " << bytesRead << std::endl;
-	}
-	conn->request.clear();
-	std::cout << "Response ready" << std::endl;
-	conn->state = WRITING; 
+		if (bytesRead < BUFFER_SIZE)
+		{
+			std::cout << "close pipe" << std::endl;
+			epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->cgiFd, nullptr);
+			close(conn->cgiFd);
+			conn->state = WRITING;
+			
+		}
+    }
+	// else
+	// 	error?
 }
 
 // TODO: check errors

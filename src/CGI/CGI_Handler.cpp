@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   CGI_Handler.cpp                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/06 12:51:38 by bfranco           #+#    #+#             */
-/*   Updated: 2023/11/06 15:07:26 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   CGI_Handler.cpp                                    :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
+/*   Updated: 2023/11/06 16:30:48 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "HttpRequest.hpp"
 #include "eventloop.hpp"
 
-CGI::CGI(int epollFd) : _epollFd(epollFd), _status(0)
+CGI::CGI(int epollFd, connection *conn) : _epollFd(epollFd), _status(0)
 {
 
 	int	fd[2];
@@ -25,7 +25,7 @@ CGI::CGI(int epollFd) : _epollFd(epollFd), _status(0)
 		// 	throw std::runtime_error("pipe failed");
 		_fdIn = fd[0];
 		_fdOut = fd[1];
-		register_CGI(_epollFd, _fdIn);
+		register_CGI(_epollFd, _fdIn, conn);
 	}
 	catch(const std::runtime_error& e)
 	{
@@ -61,9 +61,9 @@ void	execChild(const Uri& uri, HttpResponse& response, CGI &cgi)
 	
 }
 
-void cgiHandler(const Uri& uri, HttpResponse& response, int epollFd)
+void cgiHandler(const Uri& uri, HttpResponse& response, int epollFd, connection *conn)
 {
-	CGI	cgi(epollFd);
+	CGI	cgi(epollFd, conn);
 
 	std::cout << "in cgi" << std::endl;
 	if (cgi.getStatus() == 1)

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   eventloop.hpp                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 18:13:17 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/06 15:00:38 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   eventloop.hpp                                      :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 18:13:17 by cariencaljo   #+#    #+#                 */
+/*   Updated: 2023/11/06 16:58:01 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ enum	states {
 struct connection
 {
 	int			fd;
+	int			cgiFd;
 	states		state;
 	std::string	request;
 	std::string	response;
@@ -48,14 +49,14 @@ struct connection
 void	newConnection(int epollFd, int fd);
 void	readData(connection *conn);
 void	handleRequest(int epollFd, connection *conn);
-void 	readCGI(connection *conn);
+void	readCGI(int epollFd, connection *conn);
 void	handleError(connection *conn);
 void	writeData(connection *conn);
 void	closeConnection(int epollFd, connection *conn);
 
 // registerEvents.cpp
 void	register_server(int epollFd, int fd);
-void	register_client(int epollFd, int serverFd);
-void	register_CGI(int epollFd, int serverFd);
+void	register_client(int epollFd, int severFd);
+void	register_CGI(int epollFd, int cgiFd, connection *conn);
 
 #endif
