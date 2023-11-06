@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/06 22:14:47 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/06 22:39:41 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ try {
 	std::string tempUriString;
 	RequestLineStream >> _method >> tempUriString >> _protocol;
 	
-	//check protocol
+	//check protocol //todo test does not work
 	if (_protocol != HTTP_PROTOCOL) {
 		throw parsingException(505, "Version not supported");
 	}
@@ -122,20 +122,20 @@ HttpRequest::~HttpRequest(void) {
 }
 
 
-//========= Getters ============
-std::string HttpRequest::getMethod(void) const								{	return _method;				}
-std::string HttpRequest::getProtocol(void) const							{	return _protocol;			}
-std::string HttpRequest::getBody(void) const								{	return _body;				}
-std::string HttpRequest::getUri(void)										{	return uri.serializeUri();	}
-std::multimap<std::string, std::string>	HttpRequest::getHeaders(void) const	{	return _headers; 			}
-int HttpRequest::getRequestStatus(void) const								{	return _requestStatus;		}
+//========= Getters ===============================
+std::string HttpRequest::getMethod(void) const									{	return _method;				}
+std::string HttpRequest::getProtocol(void) const								{	return _protocol;			}
+std::string HttpRequest::getBody(void) const									{	return _body;				}
+std::string HttpRequest::getUri(void)											{	return uri.serializeUri();	}
+std::multimap<std::string, std::string>	HttpRequest::getHeaders(void) const		{	return _headers; 			}
+int HttpRequest::getRequestStatus(void) const									{	return _requestStatus;		}
 
-//========= Setters ============
-void HttpRequest::setMethod(const std::string& method) 						{	_method = method;			}
-void HttpRequest::setProtocol(const std::string& protocol) 					{	_protocol = protocol;		}
-void HttpRequest::setBody(const std::string& body) 							{	_body = body; 				}
-void HttpRequest::setUri(const std::string& string) 						{	uri = Uri(string);			}		
-void HttpRequest::setRequestStatus(int value) 								{	_requestStatus = value;		}
-void HttpRequest::addHeader(const std::string& key, const std::string& value) {
+//========= Setters ===============================
+void HttpRequest::setMethod(const std::string& method) 							{	_method = method;			}
+void HttpRequest::setProtocol(const std::string& protocol) 						{	_protocol = protocol;		}
+void HttpRequest::setBody(const std::string& body) 								{	_body = body; 				}
+void HttpRequest::setUri(const std::string& string) 							{	uri = Uri(string);			}		
+void HttpRequest::setRequestStatus(int value) 									{	_requestStatus = value;		}
+void HttpRequest::addHeader(const std::string& key, const std::string& value)	{
 	_headers.insert(std::make_pair(key, value));
 }

@@ -19,7 +19,7 @@
 
 
 HttpResponse::HttpResponse(void) : _protocol(HTTP_PROTOCOL), _statusCode(200), _headers(), _body() {
-//todo: add standard headers and status code, 
+//todo: add standard headers  e.g. cookies, date, length, host, content type
 }
 
 HttpResponse::HttpResponse(const HttpRequest& request) {
@@ -27,10 +27,10 @@ HttpResponse::HttpResponse(const HttpRequest& request) {
 
 	_protocol 			= HTTP_PROTOCOL;
 	_statusCode			= request.getRequestStatus();
-	_body				= "here is the request body: " + request.getBody() + LINE_END;
+	_body				= request.getBody() + LINE_END;
 }
 
-//todo: standard headers: cookie date, length, host, content type, 
+//todo: standard headers: 
 HttpResponse::HttpResponse(const HttpResponse& origin) {
 	_protocol			= origin._protocol;
 	_statusCode			= origin._statusCode;
@@ -84,11 +84,12 @@ void HttpResponse::setProtocol(const std::string& protocol)						{ _protocol 	= 
 void HttpResponse::setStatusCode(int status) 									{ _statusCode	= 	status;						}
 void HttpResponse::addHeader(const std::string& key, const std::string& value)	{ _headers.insert(std::make_pair(key, value));	}
 
-void HttpResponse::setBody(const std::string& filePath) {
+void HttpResponse::setBody(const std::string& filePath)	{
 	std::ifstream inputFile(filePath);
-
 	if (inputFile.is_open()) {
+
 		std::string line;
+
 		while(std::getline(inputFile, line)) {
 			_body += line;
 			_body += '\n';
@@ -105,7 +106,6 @@ void HttpResponse::setBody(const std::string& filePath) {
 
 //todo:
 //check method protocol, some headers
-//status code to map
 //checks before sending (status code set, stc)
 //check WHITE_SPACE
 //check capitalseensitivity

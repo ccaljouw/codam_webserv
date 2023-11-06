@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/06 22:25:32 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/06 22:44:57 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void handleRequest(int epollFd, connection *conn)
 			std::cout << "Response ready" << std::endl;
 			conn->state = WRITING; // change to response ready status?
 	}
-	//catch errors	
+	// todo move to error handeling 
 	} catch (const HttpRequest::parsingException& exception) {
 		std::cout << "Error: " << exception.what() << std::endl;
 		HttpResponse response;
@@ -109,7 +109,7 @@ void readCGI(connection *conn)
 
 // TODO: should only write buffer size?
 // TODO: check errors
-// TODO: set status CLOSING when response whas error
+// TODO: set status CLOSING when response was error
 void writeData(connection *conn) 
 {
     // Send the response
