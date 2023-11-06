@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/06 17:31:48 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/06 18:34:28 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void readData(connection *conn)
     char buffer[BUFFER_SIZE];
     ssize_t bytesRead;
 	
-	std::cout << "read data" << std::endl;
+	// std::cout << "read data" << std::endl;
     if ((bytesRead = recv(conn->fd, buffer, sizeof(buffer), 0)) > 0) {
 		conn->request.append(buffer, static_cast<long unsigned int>(bytesRead));
 		std::cout << "bytes read: " << bytesRead << std::endl;
@@ -50,16 +50,16 @@ void handleRequest(int epollFd, connection *conn)
 	std::cout << "handle request" << std::endl;
 	HttpRequest request(conn->request);
 	// if (to CGI)
-		(void)epollFd;
-		// cgiHandler(request.getUri(), response, epollFd, conn);
-		// conn->state = IN_CGI;
+		// (void)epollFd;
+		cgiHandler(request.getUri(), conn, epollFd);
+		conn->state = IN_CGI;
 	// else
 	// {
-		HttpResponse response(request);
-		conn->response = response.serializeResponse();
-		conn->request.clear();
-		std::cout << "Response ready" << std::endl;
-		conn->state = WRITING; // change to response ready status?
+		// HttpResponse response(request);
+		// conn->response = response.serializeResponse();
+		// conn->request.clear();
+		// std::cout << "Response ready" << std::endl;
+		// conn->state = WRITING; // change to response ready status?
 	// }
 }
 
@@ -70,9 +70,9 @@ void readCGI(int epollFd, connection *conn)
     ssize_t bytesRead;
 	
 	std::cout << "read data CGI" << std::endl;
-    if ((bytesRead = recv(conn->cgiFd, buffer, sizeof(buffer), 0)) > 0) {
-		conn->request.append(buffer, static_cast<long unsigned int>(bytesRead));
-		std::cout << "bytes read: " << bytesRead << std::endl;
+    if ((bytesRead = read(conn->cgiFd, buffer, sizeof(buffer))) > 0) {
+		std::cout << "bytes read: " << bytesRead << " :\n" << buffer << std::endl;
+		conn->response.append(buffer, static_cast<long unsigned int>(bytesRead));
 		if (bytesRead < BUFFER_SIZE)
 		{
 			std::cout << "close pipe" << std::endl;
@@ -82,7 +82,12 @@ void readCGI(int epollFd, connection *conn)
 			
 		}
     }
-	// else
+	else
+	{
+		std::cout << "nothing to read" << std::endl;
+		epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->cgiFd, nullptr);
+		close(conn->cgiFd);
+    }
 	// 	error?
 }
 

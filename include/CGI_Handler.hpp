@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/06 12:06:07 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/06 17:30:07 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/06 17:34:19 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ class CGI
 		int getFdIn() const;
 		int getFdOut() const;
 		void	closeFds() const;
-		int		getStatus() const;
 		
 	private:
 		int		_fdIn;

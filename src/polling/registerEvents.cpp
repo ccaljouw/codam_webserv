@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:48:35 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/06 17:32:07 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/06 18:06:08 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ void	register_CGI(int epollFd, int cgiFd, connection *conn)
 {
 	struct epoll_event 	event;
 	
+	std::cout << "registering cgi with fd: " << cgiFd << std::endl;
 	conn->cgiFd = cgiFd;
 	event.events = EPOLLIN;   
     event.data.ptr = conn;

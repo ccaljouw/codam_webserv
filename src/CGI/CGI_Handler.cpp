@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/06 17:31:25 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/06 18:09:13 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,15 @@ CGI::CGI(int epollFd, connection *conn) : _epollFd(epollFd), _status(0)
 	int	fd[2];
 	try
 	{
-		if (pipe(fd) == -1)
-			throw std::runtime_error("pipe failed");
-		_fdIn = fd[0];
-		_fdOut = fd[1];
-		register_CGI(_epollFd, _fdIn, conn);
+		// if (pipe(fd) == -1)
+		// 	throw std::runtime_error("pipe failed");
+		// else
+		{
+			std::cout << "pipe created: " << pipe(fd) << " register cgi on: " <<  fd[0] << std::endl;
+			_fdIn = fd[0];
+			_fdOut = fd[1];
+			register_CGI(_epollFd, _fdIn, conn);
+		}
 	}
 	catch(const std::runtime_error& e)
 	{
@@ -51,19 +55,20 @@ void	execChild(const Uri& uri, CGI &cgi)
 	
 	(void)program;
 	std::cout << "exec child" << std::endl;
-	// if (dup2(cgi.getFdOut(), 1) == -1)
+	// if (dup2(cgi.getFdOut(), STDOUT_FILENO) == -1)
 	// {
 	// 	write(cgi.getFdOut(), "status: 500\r\n\r\n", 15);
 	// 	cgi.closeFds();
 	// 	return ;
 	// }
-	cgi.closeFds();
+	close(cgi.getFdIn());
+	dup2(cgi.getFdOut(), STDOUT_FILENO);
 	// execve(program, argv, env);
 	execve(argv[0], argv, env);
 
 }
 
-void cgiHandler(const Uri& uri, HttpResponse& response, int epollFd, connection *conn)
+int cgiHandler(const Uri& uri, connection *conn, int epollFd)
 {
 	CGI	cgi(epollFd, conn);
 
@@ -71,11 +76,11 @@ void cgiHandler(const Uri& uri, HttpResponse& response, int epollFd, connection 
 		return 1;
 	
 	int pid = fork();
-	if (pid == -1)
+	if (pid == -1) //close FdIn and FdOut?
 		return 1;
 	else if (pid == 0)
 		execChild(uri, cgi);
 	else
-		close(cgi.getFdIn());
+		close(cgi.getFdOut());
 	return 0;
 }
