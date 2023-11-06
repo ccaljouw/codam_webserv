@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/06 10:44:01 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/06 11:09:16 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,15 +112,4 @@ std::multimap<std::string, std::string>	HttpRequest::getHeaders(void) const	{	re
 void HttpRequest::setEventStatus(int status) {
 	_eventStatus = status;
 }
-
-// std::string HttpRequest::serializeHeaders(void) const {
-	
-// 	std::string serializedHeaders;
-	
-// 	for (const auto& headerPair: _headers) {
-// 		serializedHeaders += headerPair.first + ": " + headerPair.second + LINE_END;
-// 	}
-
-// 	return serializedHeaders;
-// }
 

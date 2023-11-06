@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/06 10:40:58 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/06 11:08:55 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ class HttpRequest {
 		std::string									getUri(void);
 		int											getEventStatus(void) const;
 		std::multimap<std::string, std::string>		getHeaders(void) const;
-		// std::string		serializeHeaders(void) const;
 	
 		
 	// ============ Setter ===================
