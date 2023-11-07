@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   CGI_Handler.hpp                                    :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/06 12:06:07 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/06 17:34:19 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/07 17:01:25 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,24 +22,24 @@
 class CGI
 {
 	public:
-		~CGI();
 		CGI() = delete;
 		CGI(const CGI& other) = delete;
 		CGI& operator=(const CGI& other) = delete;
 		
+		~CGI();
 		CGI(int epollFd, connection *conn);
-		int getStatus() const;
-		int getFdIn() const;
-		int getFdOut() const;
-		void	closeFds() const;
+		int		getStatus() const;
+		int		getFdIn() const;
+		int		getFdOut() const;
+		void	closeFds();
 		
 	private:
-		int		_fdIn;
-		int		_fdOut;
 		int		_epollFd;
 		int		_status;
+		int		_fdIn;
+		int		_fdOut;
 };
 
-int cgiHandler(const Uri& uri, connection *conn, int epollFd);
+int cgiHandler(const Uri& uri, connection *conn, int epollFd, char **env); // todo : const ref request
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/07 13:22:49 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/07 17:00:14 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void handleRequest(int epollFd, connection *conn)
 		else if (request.uri.getExecutable() == "cgi-bin") { //todo:make configurable
 			// call CGI handler
 			//case error in cgi handler
-			if (cgiHandler(request.getUri(), conn, epollFd) == 1 ) 
+			if (cgiHandler(request.getUri(), conn, epollFd, request.getHeadersArray()) == 1 ) 
 			{
 				HttpResponse respons(request);
 				respons.setStatusCode(500);
@@ -125,9 +125,8 @@ void readCGI(int epollFd, connection *conn)
 		epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->cgiFd, nullptr);
 		close(conn->cgiFd);
 		conn->state = WRITING;
-		
 	}
- }
+}
 
 // TODO: check errors
 void writeData(int epollFd, connection *conn) 

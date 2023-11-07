@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/07 13:46:07 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/07 15:10:09 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,6 @@ std::string	Uri::serializeUri() {
 std::string	Uri::getScheme() const		{	return _scheme;		}
 std::string	Uri::getAuthority() const	{	return _authority;	}
 std::string	Uri::getPath() const		{	return _path; 		}
-std::string	Uri::getRelPath() const		{	return "./cgi-bin/upload.py"; }
 std::string	Uri::getQuery() const		{	return _query;		}
 std::string	Uri::getFragment() const	{	return _fragment;	}
 std::string	Uri::getUserInfo() const	{	return _userinfo;	}
