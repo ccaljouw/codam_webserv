@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/07 09:32:28 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/07 09:48:18 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,12 +60,9 @@ void handleRequest(int epollFd, connection *conn)
 			conn->response = HttpResponse(request).serializeResponse();
 			conn->request.clear();
 			std::cout << "Response ready" << std::endl;
-			conn->state = WRITING; // change to response ready status?		
-		
-		///case cgi
+			conn->state = WRITING;
 		} 
-		else if (request.uri.getPath() == "cgi-bin") 
-		{ //todo:make configurable
+		else if (request.uri.getPath() == "cgi-bin") { //todo:make configurable
 			// call CGI handler
 			//case error in cgi handler
 			if (cgiHandler(request.getUri(), conn, epollFd) == 1 ) 
@@ -78,7 +75,6 @@ void handleRequest(int epollFd, connection *conn)
 				conn->state = WRITING; // change to response ready status?		
 			} 
 			else {
-				// cgi handles it from here?
 				conn->state = IN_CGI;
 			}
 		}	
@@ -88,25 +84,23 @@ void handleRequest(int epollFd, connection *conn)
 				conn->response = response.serializeResponse();
 				conn->request.clear();
 				std::cout << "Response ready" << std::endl;
-				conn->state = WRITING; // change to response ready status?
+				conn->state = WRITING;
 		}
-		else //anyrhing but CGI and GET for now
-		{
+		else { //anyrhing but CGI and GET for now
 			HttpResponse response(request);
 			conn->response = response.serializeResponse();
 			conn->request.clear();
 			std::cout << "Response ready" << std::endl;
-			conn->state = WRITING; // change to response ready status?
+			conn->state = WRITING;
 		}
-	} 
-	catch (const HttpRequest::parsingException& exception) {
+	} catch (const HttpRequest::parsingException& exception) {
 		std::cout << "Error: " << exception.what() << std::endl;
 		HttpResponse response;
 		response.setStatusCode(exception.getErrorCode());
 		conn->response = response.serializeResponse();
 		conn->request.clear();
 		conn->state = WRITING;
-}
+	}
 }
 
 void readCGI(int epollFd, connection *conn)
