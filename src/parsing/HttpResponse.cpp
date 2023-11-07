@@ -74,7 +74,7 @@ std::string HttpResponse::serializeHeaders() {
 
 std::string HttpResponse::serializeResponse(void) {
 	std::string serializedResponse;
-	serializedResponse += _protocol + " " + std::to_string(_statusCode) + LINE_END + serializeHeaders() + LINE_END + _body + LINE_END + LINE_END;
+	serializedResponse += _protocol + " " + std::to_string(_statusCode) + LINE_END + serializeHeaders() + LINE_END + _body + LINE_END;
 	return serializedResponse;
 }
 
@@ -122,8 +122,10 @@ void HttpResponse::setBody(const std::string& filePath)	{
 	if (inputFile.is_open()) {
 
 		std::string line;
-		while(std::getline(inputFile, line))
+		while(std::getline(inputFile, line)) {
 			_body += line;
+			_body += LINE_END;
+		}
 		inputFile.close();
 
 	} else { 
