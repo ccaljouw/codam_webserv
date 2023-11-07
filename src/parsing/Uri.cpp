@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/07 09:20:17 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/07 22:09:08 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,12 @@
 
 #include <regex>
 #include <exception>
+#include <sstream>
+// #include <unistd.h>
+#include <cstring>
 
-//todo:check multiple querie handeling
 
-Uri::Uri() : _scheme(), _authority(), _path(), _query(), _fragment(), _userinfo(), _host(), _port()  {}
+Uri::Uri() : _scheme(), _authority(), _path(), _query(), _queryMap(), _fragment(), _userinfo(), _host(), _port()  {}
 
 
 // regex teken directly from RFC 2396 : ^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))? added R for ignoring escape characterss
@@ -42,6 +44,8 @@ Uri::Uri(const std::string& uri) {
 	//scheme and host are case insensitive and as such are normalized here
 	std::transform(_scheme.begin(), _scheme.end(), _scheme.begin(), ::tolower);
 	std::transform(_host.begin(), _host.end(), _host.begin(), ::tolower);
+
+	mapQueries();
 }
 
 Uri::Uri(const Uri& origin) { 
@@ -54,6 +58,8 @@ const Uri& Uri::operator=(const Uri& rhs) {
 		_authority		= rhs._authority;
 		_path			= rhs._path;
 		_query			= rhs._query;
+		_queryMap.clear();
+		_queryMap		= rhs._queryMap;
 		_fragment		= rhs._fragment;
 		_userinfo		= rhs._userinfo;
 		_host			= rhs._host;
@@ -62,22 +68,27 @@ const Uri& Uri::operator=(const Uri& rhs) {
 	return *this;
 }
 
+Uri::~Uri() {
+	_queryMap.clear();
+}
+
+
 
 //==============================
 
 void	Uri::splitAuthority() {
 
 	//check for optional userinfo	
-	size_t atPos = _authority.find("@");
+	size_t atPos	= _authority.find("@");
 	if (atPos != std::string::npos) {
-		_userinfo 	= _authority.substr(0, atPos);
-		_host 		= _authority.substr(atPos + 1);
+		_userinfo	= _authority.substr(0, atPos);
+		_host		= _authority.substr(atPos + 1);
 	} 
 	else
 		_host = _authority;
 
 	//check for optional port
-	size_t columPos = _host.find(":");
+	size_t columPos	= _host.find(":");
 	if (columPos != std::string::npos) {
 		_port = stoi(_host.substr(columPos + 1));
 		_host = _host.substr(0, columPos);
@@ -111,14 +122,29 @@ std::string	Uri::serializeUri() {
 
 //=========== getters =================
 
-std::string	Uri::getScheme() const		{	return _scheme;		}
-std::string	Uri::getAuthority() const	{	return _authority;	}
-std::string	Uri::getPath() const		{	return _path; 		}
-std::string	Uri::getQuery() const		{	return _query;		}
-std::string	Uri::getFragment() const	{	return _fragment;	}
-std::string	Uri::getUserInfo() const	{	return _userinfo;	}
-std::string	Uri::getHost() const		{	return _host;		}
-int			Uri::getPort() const		{	return _port;		}
+std::string	Uri::getScheme() const								{	return _scheme;		}
+std::string	Uri::getAuthority() const							{	return _authority;	}
+std::string	Uri::getPath() const								{	return _path; 		}
+std::string	Uri::getQuery() const								{	return _query;		}
+std::string	Uri::getFragment() const							{	return _fragment;	}
+std::string	Uri::getUserInfo() const							{	return _userinfo;	}
+std::string	Uri::getHost() const								{	return _host;		}
+int			Uri::getPort() const								{	return _port;		}
+std::map<std::string, std::string> Uri::getQueryMap(void) const	{	return _queryMap;	}
+
+
+
+std::string	Uri::getExecutable(void) {
+	std::string temp = _path;
+	if (temp[0] == '/')
+		temp = temp.substr(1);
+	size_t slash = temp.find("/");
+	if (slash != std::string::npos) {
+		return temp.substr(0, slash);
+	}
+	return ""; //todo error
+}
+
 
 std::string	Uri::getPathInfo(void) {
 	std::string temp = _path;
@@ -131,13 +157,22 @@ std::string	Uri::getPathInfo(void) {
 	return "";	//todo error
 }
 
-std::string	Uri::getExecutable(void) {
-	std::string temp = _path;
-	if (temp[0] == '/')
-		temp = temp.substr(1);
-	size_t slash = temp.find("/");
-	if (slash != std::string::npos) {
-		return temp.substr(0, slash);
+
+//=========== setters =================
+void Uri::mapQueries() {
+	
+	std::istringstream qurieStream(_query);
+	
+	std::string token;
+	while(getline(qurieStream, token, '&')) {
+		size_t equalPosition = token.find('=');
+		if (equalPosition != std::string::npos) {
+			std::string key = token.substr(0, equalPosition);
+			std::string value = token.substr(equalPosition + 1); //todo: URL-decode key and value is needed
+			_queryMap[key] = value;
+		}
+		else {
+			_queryMap[token] = "";
+		}
 	}
-	return ""; //todo error
 }

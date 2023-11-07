@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/07 11:00:35 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/07 22:13:44 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,13 @@
 #include <sstream>
 #include <exception>
 #include <algorithm>
-#include <unistd.h>
 #include <cstring>
 
 
 HttpRequest::HttpRequest() : uri(), _method(), _protocol(), _headers(), _body(), _requestStatus(200) {};
 
 HttpRequest::HttpRequest(const std::string& request) : uri(), _requestStatus(200) {
-
+//todo: slip into helper functions mapHeaders
 // 1. === parse request line === 
 try {
 	std::size_t RequestLineEnd = request.find("\r\n");
@@ -31,9 +30,10 @@ try {
 		throw parsingException(405, "Bad request");
 		
 	std::string RequestLine = request.substr(0, RequestLineEnd);
+	
 	std::stringstream RequestLineStream(RequestLine);
-
 	std::string tempUriString;
+
 	RequestLineStream >> _method >> tempUriString >> _protocol;
 	
 	//check protocol //todo test does not work
@@ -67,8 +67,9 @@ try {
 	std::string HeaderBlock = request.substr(headersStart, headersEnd - headersStart);
 
 	//split header block into seperate lines using a stream and seperating the key value pairs
-	std::stringstream HeaderStream(HeaderBlock);
+	std::istringstream HeaderStream(HeaderBlock);
 	std::string headerLine;
+	
 	while(std::getline(HeaderStream, headerLine)) {
 		std::size_t columPos = headerLine.find(":");
 		if (columPos != std::string::npos) {
@@ -98,13 +99,9 @@ try {
 
 
 HttpRequest::HttpRequest(const HttpRequest& origin) {
-	uri					= origin.uri;
-	_method				= origin._method;
-	_protocol			= origin._protocol;
-	_headers			= origin._headers;
-	_body				= origin._body;
-	_requestStatus		= origin._requestStatus;
+	*this = origin;
 };
+
 
 const HttpRequest& HttpRequest::operator=(const HttpRequest& rhs) {
 	if (this != &rhs) {
@@ -119,7 +116,7 @@ const HttpRequest& HttpRequest::operator=(const HttpRequest& rhs) {
 	return *this;
 }
 
-HttpRequest::~HttpRequest(void) {
+HttpRequest::~HttpRequest() {
 	_headers.clear();
 }
 
@@ -130,22 +127,36 @@ std::string	HttpRequest::getProtocol(void) const								{	return _protocol;			}
 std::string	HttpRequest::getBody(void) const									{	return _body;				}
 std::string	HttpRequest::getUri(void)											{	return uri.serializeUri();	}
 std::multimap<std::string, std::string>	HttpRequest::getHeaders(void) const		{	return _headers; 			}
-int			HttpRequest::getRequestStatus(void) const							{	return _requestStatus;		}
+int	HttpRequest::getRequestStatus(void) const									{	return _requestStatus;		}
 
 
 
-char**		HttpRequest::getHeadersArray(void) const {
+char**		HttpRequest::getEnvArray(void) const {
+
+	// merge headers map and queries map into one map
+	std::multimap<std::string, std::string> mergedMap;
+	
+	for (const auto& headerPair : _headers) {
+		mergedMap.insert(headerPair);
+	}
+	for (const auto& queryPair : uri.getQueryMap()) {
+		mergedMap.insert(queryPair);
+	}
+	
+	// make c_string array frrom multimap. first a vector of c_strings.	
 	std::vector<char*> c_strings;
-	for (auto& headerPair : _headers) {
-		std::string headerString = headerPair.first + ": " + headerPair.second;
-		c_strings.push_back(strdup(headerString.c_str()));
+	
+	for (auto& pair : mergedMap) {
+		std::string line = pair.first + ": " + pair.second;
+		c_strings.push_back(strdup(line.c_str()));
 	}
 	c_strings.push_back(nullptr);
 	
-	char **headerArray = (char**)malloc(sizeof(char *) * c_strings.size());
-	std::copy(c_strings.begin(), c_strings.end(), headerArray);
+	//malloc an array and copy vector into array
+	char **envArray = (char**)malloc(sizeof(char *) * c_strings.size());
+	std::copy(c_strings.begin(), c_strings.end(), envArray);
 	
-	return headerArray;				//returns a pointer to the underlying array.
+	return envArray;
 }
 	
 

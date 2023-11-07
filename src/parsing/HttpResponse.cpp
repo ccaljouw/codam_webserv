@@ -21,7 +21,7 @@
 std::string getTimeStamp();
 
 
-HttpResponse::HttpResponse(void) : _protocol(HTTP_PROTOCOL), _statusCode(200), _headers(), _body() {
+HttpResponse::HttpResponse() : _protocol(HTTP_PROTOCOL), _statusCode(200), _headers(), _body() {
 	fillStandardHeaders();
 }
 
@@ -36,12 +36,7 @@ HttpResponse::HttpResponse(const HttpRequest& request) {
 
 
 HttpResponse::HttpResponse(const HttpResponse& origin) {
-	_protocol			= origin._protocol;
-	_statusCode			= origin._statusCode;
-	_headers			= origin._headers;
-	_body				= origin._body;
-
-	fillStandardHeaders();
+	*this = origin;
 }
 
 
@@ -58,7 +53,7 @@ const HttpResponse& HttpResponse::operator=(const HttpResponse& rhs) {
 }
 
 
-HttpResponse::~HttpResponse(void) {
+HttpResponse::~HttpResponse() {
 	_headers.clear();
 }
 
@@ -72,7 +67,7 @@ std::string HttpResponse::serializeHeaders() {
 }
 
 
-std::string HttpResponse::serializeResponse(void) {
+std::string HttpResponse::serializeResponse() {
 	std::string serializedResponse;
 	serializedResponse += _protocol + " " + std::to_string(_statusCode) + LINE_END + serializeHeaders() + LINE_END + _body + LINE_END;
 	return serializedResponse;
@@ -113,7 +108,6 @@ void HttpResponse::setHeader(const std::string& key, const std::string& value) {
 		}
 	}
 	_headers.insert(std::make_pair(key, value));
-	setHeader("Last-Modified", getTimeStamp());
 }
 
 
@@ -132,6 +126,7 @@ void HttpResponse::setBody(const std::string& filePath)	{
 		throw HttpRequest::parsingException(422, "Unprocessable Entity");
 	}
 	size_t bodyLength = _body.length();
+
 	setHeader("Content-Length", std::to_string(bodyLength));
 	setHeader("Last-Modified", getTimeStamp());
 }
@@ -144,7 +139,7 @@ void HttpResponse::fillStandardHeaders() {
 	// addHeader("Set-Cookie", "...");
 	// addHeader("Transfer-Encoding", "chunked");
 	addHeader("Date", getTimeStamp());
-	addHeader("Last-Modified", getTimeStamp());
+	setHeader("Last-Modified", getTimeStamp());
 	addHeader("Content-type", "text/html; charset=utf-8");
 	addHeader("Server", "CODAM_WEBSERV");
 	
