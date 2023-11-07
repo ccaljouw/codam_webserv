@@ -53,6 +53,7 @@ const HttpResponse& HttpResponse::operator=(const HttpResponse& rhs) {
 		_headers		= rhs._headers;
 		_body			= rhs._body;
 	}
+	updateDateLength();
 	return *this;
 }
 
@@ -73,9 +74,7 @@ std::string HttpResponse::serializeHeaders() {
 
 std::string HttpResponse::serializeResponse(void) {
 	std::string serializedResponse;
-	setHeader("Last-Modified", getTimeStamp());
-	serializedResponse += _protocol + " " + std::to_string(_statusCode) + LINE_END + serializeHeaders() + LINE_END + _body;
-	setHeader("Content-Length", std::to_string(serializedResponse.size()));
+	serializedResponse += _protocol + " " + std::to_string(_statusCode) + LINE_END + serializeHeaders() + LINE_END + _body + LINE_END;
 	return serializedResponse;
 }
 
@@ -87,19 +86,22 @@ int HttpResponse::getStatusCode() const {	return _statusCode;	}
 // ============= Setters ================
 void HttpResponse::setProtocol(const std::string& protocol)	{ 
 	_protocol 	= 	protocol;
-	setHeader("Last-Modified", getTimeStamp());
+
+	updateDateLength();
 }
 
 
 void HttpResponse::setStatusCode(int status) {
 	_statusCode	= status;
-	setHeader("Last-Modified", getTimeStamp());
+
+	updateDateLength();
 }
 
 
 void HttpResponse::addHeader(const std::string& key, const std::string& value) {
 	_headers.insert(std::make_pair(key, value));
-	setHeader("Last-Modified", getTimeStamp());
+
+	updateDateLength();
 }
 
 
@@ -111,6 +113,7 @@ void HttpResponse::setHeader(const std::string& key, const std::string& value) {
 		}
 	}
 	_headers.insert(std::make_pair(key, value));
+	setHeader("Content-Length", std::to_string(serializeResponse().size()));
 }
 
 
@@ -128,7 +131,7 @@ void HttpResponse::setBody(const std::string& filePath)	{
 	} else { 
 		throw HttpRequest::parsingException(422, "Unprocessable Entity");
 	}
-	setHeader("Last-Modified", getTimeStamp());
+	updateDateLength();
 }
 
 
@@ -142,9 +145,14 @@ void HttpResponse::fillStandardHeaders() {
 	addHeader("Last-Modified", getTimeStamp());
 	addHeader("Content-type", "text/html; charset=utf-8");
 	addHeader("Server", "CODAM_WEBSERV");
-	addHeader("Content-Length", std::to_string(serializeResponse().size()));
+	updateDateLength();
 }
 
+void HttpResponse::updateDateLength(void) {
+	setHeader("Last-Modified", getTimeStamp());
+	int len = serializeResponse().size();
+	setHeader("Content-Length", std::to_string(len));
+}
 
 
 

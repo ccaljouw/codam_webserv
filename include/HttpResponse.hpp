@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/07 12:20:29 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/07 13:55:23 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ class HttpResponse {
 		void setBody(const std::string& filePath);
 		void setHeader(const std::string& key, const std::string& value);
 		void fillStandardHeaders(void); //todo: get from config
+		void updateDateLength(void);
 
 		
 	private:
