@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   handlers.cpp                                       :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/07 10:12:54 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/07 13:22:49 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void handleRequest(int epollFd, connection *conn)
 			std::cout << "Response ready" << std::endl;
 			conn->state = WRITING;
 		} 
-		else if (request.uri.getPath() == "cgi-bin") { //todo:make configurable
+		else if (request.uri.getExecutable() == "cgi-bin") { //todo:make configurable
 			// call CGI handler
 			//case error in cgi handler
 			if (cgiHandler(request.getUri(), conn, epollFd) == 1 ) 

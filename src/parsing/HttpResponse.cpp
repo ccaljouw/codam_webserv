@@ -141,7 +141,7 @@ void HttpResponse::fillStandardHeaders() {
 	addHeader("Last-Modified", getTimeStamp());
 	addHeader("Content-type", "text/html; charset=utf-8");
 	addHeader("Server", "CODAM_WEBSERV");
-	addHeader("Content-Length", std::to_string(serializeResponse().size()));
+	// addHeader("Content-Length", std::to_string(serializeResponse().size()));
 }
 
 

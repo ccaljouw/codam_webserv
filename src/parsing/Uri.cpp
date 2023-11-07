@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   Uri.cpp                                            :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/07 09:20:17 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/07 13:46:07 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,13 +114,14 @@ std::string	Uri::serializeUri() {
 std::string	Uri::getScheme() const		{	return _scheme;		}
 std::string	Uri::getAuthority() const	{	return _authority;	}
 std::string	Uri::getPath() const		{	return _path; 		}
+std::string	Uri::getRelPath() const		{	return "./cgi-bin/upload.py"; }
 std::string	Uri::getQuery() const		{	return _query;		}
 std::string	Uri::getFragment() const	{	return _fragment;	}
 std::string	Uri::getUserInfo() const	{	return _userinfo;	}
 std::string	Uri::getHost() const		{	return _host;		}
 int			Uri::getPort() const		{	return _port;		}
 
-std::string	Uri::getPathInfo(void) {
+std::string	Uri::getPathInfo(void) const {
 	std::string temp = _path;
 	if (temp[0] == '/')
 		temp = temp.substr(1);
@@ -131,7 +132,7 @@ std::string	Uri::getPathInfo(void) {
 	return "";	//todo error
 }
 
-std::string	Uri::getExecutable(void) {
+std::string	Uri::getExecutable(void) const {
 	std::string temp = _path;
 	if (temp[0] == '/')
 		temp = temp.substr(1);
