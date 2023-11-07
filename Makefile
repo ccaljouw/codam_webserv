@@ -6,7 +6,7 @@
 #    By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/21 08:27:49 by wingessorac       #+#    #+#              #
-#    Updated: 2023/11/06 12:49:58 by ccaljouw         ###   ########.fr        #
+#    Updated: 2023/11/06 14:26:36 by ccaljouw         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,8 @@ TARGET	 	=	webserv
 OBJ_FILES	=	$(addprefix obj/, main.o \
 				$(addprefix parsing/, Uri.o HttpRequest.o HttpResponse.o) \
 				$(addprefix polling/, handlers.o registerEvents.o) \
-				$(addprefix config/, Server.o))
+				$(addprefix config/, Server.o) \
+				$(addprefix CGI/, CGI_Handler.o))
 
 
 #===============================================================================#

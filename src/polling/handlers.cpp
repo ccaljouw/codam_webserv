@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/07 09:47:17 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/07 10:12:54 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,23 +23,26 @@ void	newConnection(int epollFd, int fd)
 }
 
 // TODO: check errors
-void readData(connection *conn) 
+void readData(int epollFd, connection *conn) 
 {
     char buffer[BUFFER_SIZE];
     ssize_t bytesRead;
 	
 	std::cout << "read data" << std::endl;
-	conn->state = READING;
     if ((bytesRead = recv(conn->fd, buffer, sizeof(buffer), 0)) > 0) {
 		conn->request.append(buffer, static_cast<long unsigned int>(bytesRead));
 		std::cout << "bytes read: " << bytesRead << std::endl;
-		if (bytesRead < BUFFER_SIZE)
-			conn->state = HANDLING;
     }
-   	else if (conn->request.empty()) {
+   	else if (conn->request.empty()) //add timeout?
+	{
 		std::cout << "nothing to read" << std::endl;
 		conn->state = CLOSING;
     }
+	if (bytesRead < BUFFER_SIZE && !conn->request.empty())
+	{
+		conn->state = HANDLING;
+		modifyEvent(epollFd, EPOLLOUT, conn);
+	}
 }
 
 // TODO: a lot :)
@@ -48,82 +51,105 @@ void handleRequest(int epollFd, connection *conn)
 	(void)epollFd;
 
 	try {
-    // Process the request data
-	std::cout << "handle request" << std::endl;
-	HttpRequest request(conn->request);
+		// Process the request data
+		std::cout << "handle request" << std::endl;
+		HttpRequest request(conn->request);
 	
-	//case parsing error:
-	if (request.getRequestStatus() != 200) {
-		conn->response = HttpResponse(request).serializeResponse();
-		conn->request.clear();
-		std::cout << "Response ready" << std::endl;
-		conn->state = WRITING; // change to response ready status?		
-	
-	// case cgi
-	// } else {
-	// 	if (request.uri.getExecutable() == "cgi-bin") { //todo:make configurable
-	//	call CGI handler with pathinfo and array of env variable
-	//	std::string pathinfo = request.uri.getPathInfo();
-	//	char **headerArray = request.getHeadersArray(); // todo:: needs to be freed!!
-	
-		
-		
-	//	case error in cgi handler
-		// if (cgi_handler(conn->request) == 1 ) {
-		// 	HttpResponse respons(request);
-		// 	respons.setStatusCode(500);
-		// 	conn->response = respons.serializeResponse();
-		// 	conn->request.clear();
-		// 	std::cout << "Response ready" << std::endl;
-		// 	conn->state = WRITING; // change to response ready status?		
-		// } else {
-		// cgi handles it from here?
-		// conn->state = GGI	
-		// }
-		
-	//case handel self		
-	} else if (request.getMethod() == "GET") {
+		//case parsing error:
+		if (request.getRequestStatus() != 200) {
+			conn->response = HttpResponse(request).serializeResponse();
+			conn->request.clear();
+			std::cout << "Response ready" << std::endl;
+			conn->state = WRITING;
+		} 
+		else if (request.uri.getPath() == "cgi-bin") { //todo:make configurable
+			// call CGI handler
+			//case error in cgi handler
+			if (cgiHandler(request.getUri(), conn, epollFd) == 1 ) 
+			{
+				HttpResponse respons(request);
+				respons.setStatusCode(500);
+				conn->response = respons.serializeResponse();
+				conn->request.clear();
+				std::cout << "Response ready" << std::endl;
+				conn->state = WRITING; // change to response ready status?		
+			} 
+			else {
+				conn->state = IN_CGI;
+			}
+		}	
+		else if (request.getMethod() == "GET") {
+				HttpResponse response(request);
+				response.setBody("." + request.uri.getPath()); //todo ugly solution maybe better parsing?
+				conn->response = response.serializeResponse();
+				conn->request.clear();
+				std::cout << "Response ready" << std::endl;
+				conn->state = WRITING;
+		}
+		else { //anyrhing but CGI and GET for now
 			HttpResponse response(request);
-			response.setBody("." + request.uri.getPath()); //todo ugly solution maybe better parsing?
 			conn->response = response.serializeResponse();
 			conn->request.clear();
 			std::cout << "Response ready" << std::endl;
-			conn->state = WRITING; // change to response ready status?
-	}
-	// todo move to error handeling 
+			conn->state = WRITING;
+		}
 	} catch (const HttpRequest::parsingException& exception) {
 		std::cout << "Error: " << exception.what() << std::endl;
 		HttpResponse response;
 		response.setStatusCode(exception.getErrorCode());
 		conn->response = response.serializeResponse();
 		conn->request.clear();
-		std::cout << "Response ready" << std::endl;
-		conn->state = WRITING; // change to response ready status?
+		conn->state = WRITING;
 	}
 }
 
-void readCGI(connection *conn)
+void readCGI(int epollFd, connection *conn)
 {
-	(void)conn;
-	// read CGI pipe and serializeRespons();
-	// conn->response = response.serializeResponse();
-	// conn->request.clear();
-	// std::cout << "Response ready" << std::endl;
-	// conn->state = WRITING; 
-}
+	char buffer[BUFFER_SIZE];
+    ssize_t bytesRead;
+	
+	std::cout << "read data CGI" << std::endl;
+    if ((bytesRead = read(conn->cgiFd, buffer, sizeof(buffer))) > 0) {
+		std::cout << "bytes read: " << bytesRead << " :\n" << buffer << std::endl;
+		conn->response.append(buffer, static_cast<long unsigned int>(bytesRead));
+    }
+	else if (conn->response.empty())
+	{
+		std::cout << "nothing to read" << std::endl;
+		epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->cgiFd, nullptr);
+		close(conn->cgiFd);
+    }
+	if (bytesRead < BUFFER_SIZE && !conn->response.empty())
+	{
+		std::cout << "close pipe" << std::endl;
+		epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->cgiFd, nullptr);
+		close(conn->cgiFd);
+		conn->state = WRITING;
+		
+	}
+ }
 
-// TODO: should only write buffer size?
 // TODO: check errors
-// TODO: set status CLOSING when response was error
-void writeData(connection *conn) 
+void writeData(int epollFd, connection *conn) 
 {
-    // Send the response
+	size_t	len;
+	
 	conn->state = WRITING;
 	std::cout << "write data" << std::endl;
-    send(conn->fd, conn->response.c_str(), conn->response.length(), 0);
-	conn->response.clear();
-    std::cout << "Response sent" << std::endl;
-	conn->state = CONNECTED;
+	len = std::min(conn->response.length(), static_cast<size_t>(BUFFER_SIZE));
+    len = send(conn->fd, conn->response.c_str(), conn->response.length(), 0);
+	if (len < conn->response.length())
+	{
+		conn->response = conn->response.substr(len, conn->response.npos);
+		conn->state = WRITING;
+	}
+	else
+	{
+		conn->response.clear();
+		std::cout << "Response sent" << std::endl;
+		conn->state = CONNECTED;
+		modifyEvent(epollFd, EPOLLIN, conn);
+	}
 }
 
 // TODO: handle errors
@@ -138,5 +164,6 @@ void	closeConnection(int epollFd, connection *conn)
 
 void	handleError(connection *conn)
 {
+	std::cout << "errorHandler" << std::endl;
 	conn->state = CLOSING;
 }
