@@ -6,10 +6,12 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/06 16:26:50 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/07 08:56:43 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
+
+//todo :1: parse error and response  2:  when in cgi  3: cgi succes 4:handle not cgi
 
 #pragma once
 #ifndef WEBSERV_H
@@ -21,6 +23,7 @@
 #define HOST "temp host"
 
 #include<map>
+#include<vector>
 #include<string>
 
 #include "HttpRequest.hpp"
@@ -37,24 +40,18 @@
 // 	{ 201, "Created"},				// Following a POST command, this indicates success, but the textual part of the response line indicates the URI by which the newly created document should be known. 
 // 	{ 202, "Accepted"},				// The request has been accepted for processing, but the processing has not been completed.
 // 	{ 204, "No response"},			// Server has received the request but there is no information to send back, and the client should stay in the same document view. 
-//     { 400, "Bad request"},			// The request had bad syntax or was inherently impossible to be satisfied. 
-//     { 401, "Unauthorized"},			// The parameter to this message gives a specification of authorization schemes which are acceptable. The client should retry the request with a suitable Authorization header. 
-//     { 403, "Forbidden"},			// The request is for something forbidden. Authorization will not help. 
+//  { 400, "Bad request"},			// The request had bad syntax or was inherently impossible to be satisfied. 
+//  { 401, "Unauthorized"},			// The parameter to this message gives a specification of authorization schemes which are acceptable. The client should retry the request with a suitable Authorization header. 
+//  { 403, "Forbidden"},			// The request is for something forbidden. Authorization will not help. 
 // 	{ 404, "Not found"},			//  The server has not found anything matching the URI given 
+//	{ 405, "Method Not Allowed"}
 // 	{ 422, "Unprocessable Entity"}, // Indicates that the server understands the content type of the request entity, and the syntax of the request entity is correct, but it was unable to process the contained instructions. 
 // 	{ 500, "Internal Error"},		// The server encountered an unexpected condition which prevented it from fulfilling the request. 
 // 	{ 501, "Not implemented"},		// The server does not support the facility required. 
 // 	{ 502, "Service temporary overloaded"},
-// 	{ 503, "Gateway timeout"}
+// 	{ 503, "Gateway timeout"},
+//	{ 505, "version not supported"}
 // };
-
-
-// enum eventStatus {
-// 	WAITING,
-// 	READING,
-// 	WRITING
-// };
-
 
 #endif
 

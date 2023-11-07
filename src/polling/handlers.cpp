@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/06 20:37:28 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/07 09:32:28 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,22 +48,65 @@ void readData(int epollFd, connection *conn)
 // TODO: a lot :)
 void handleRequest(int epollFd, connection *conn) 
 {
-    // Process the request data
-	std::cout << "handle request" << std::endl;
-	HttpRequest request(conn->request);
-	// if (to CGI)
-		// (void)epollFd;
-		cgiHandler(request.getUri(), conn, epollFd);
+	(void)epollFd;
+
+	try {
+		// Process the request data
+		std::cout << "handle request" << std::endl;
+		HttpRequest request(conn->request);
+	
+		//case parsing error:
+		if (request.getRequestStatus() != 200) {
+			conn->response = HttpResponse(request).serializeResponse();
+			conn->request.clear();
+			std::cout << "Response ready" << std::endl;
+			conn->state = WRITING; // change to response ready status?		
+		
+		///case cgi
+		} 
+		else if (request.uri.getPath() == "cgi-bin") 
+		{ //todo:make configurable
+			// call CGI handler
+			//case error in cgi handler
+			if (cgiHandler(request.getUri(), conn, epollFd) == 1 ) 
+			{
+				HttpResponse respons(request);
+				respons.setStatusCode(500);
+				conn->response = respons.serializeResponse();
+				conn->request.clear();
+				std::cout << "Response ready" << std::endl;
+				conn->state = WRITING; // change to response ready status?		
+			} 
+			else {
+				// cgi handles it from here?
+				conn->state = IN_CGI;
+			}
+		}	
+		else if (request.getMethod() == "GET") {
+				HttpResponse response(request);
+				response.setBody("." + request.uri.getPath()); //todo ugly solution maybe better parsing?
+				conn->response = response.serializeResponse();
+				conn->request.clear();
+				std::cout << "Response ready" << std::endl;
+				conn->state = WRITING; // change to response ready status?
+		}
+		else //anyrhing but CGI and GET for now
+		{
+			HttpResponse response(request);
+			conn->response = response.serializeResponse();
+			conn->request.clear();
+			std::cout << "Response ready" << std::endl;
+			conn->state = WRITING; // change to response ready status?
+		}
+	} 
+	catch (const HttpRequest::parsingException& exception) {
+		std::cout << "Error: " << exception.what() << std::endl;
+		HttpResponse response;
+		response.setStatusCode(exception.getErrorCode());
+		conn->response = response.serializeResponse();
 		conn->request.clear();
-		conn->state = IN_CGI;
-	// else
-	// {
-		// HttpResponse response(request);
-		// conn->response = response.serializeResponse();
-		// conn->request.clear();
-		// std::cout << "Response ready" << std::endl;
-		// conn->state = WRITING; // change to response ready status?
-	// }
+		conn->state = WRITING;
+}
 }
 
 void readCGI(int epollFd, connection *conn)

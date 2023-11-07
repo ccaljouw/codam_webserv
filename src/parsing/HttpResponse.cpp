@@ -10,28 +10,34 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "HttpResponse.hpp"
+#include "HttpRequest.hpp"
+#include "webServ.hpp"
 #include	"webServ.hpp"	
 
 #include <iostream>
-//#include <exception>
+#include <fstream>
 
 
 HttpResponse::HttpResponse(void) : _protocol(HTTP_PROTOCOL), _statusCode(200), _headers(), _body() {
-	//add standard headers status code, 
+//todo: add standard headers  e.g. cookies, date, length, host, content type
 }
 
 HttpResponse::HttpResponse(const HttpRequest& request) {
-	_protocol 	= HTTP_PROTOCOL;
-	_statusCode	= 200;
-	_body			= "here is the request body: " + request.getBody() + LINE_END;
+//todo: add standard headers and status code, 
+
+	_protocol 			= HTTP_PROTOCOL;
+	_statusCode			= request.getRequestStatus();
+	_body				= request.getBody() + LINE_END;
 }
 
-//to do: standard headrs: cookie date, length, host, content type, 
+//todo: standard headers: 
 HttpResponse::HttpResponse(const HttpResponse& origin) {
-	_protocol		= origin._protocol;
-	_statusCode	= origin._statusCode;
-	_headers		= origin._headers;
-	_body			= origin._body;
+	_protocol			= origin._protocol;
+	_statusCode			= origin._statusCode;
+	_headers			= origin._headers;
+	_body				= origin._body;
+
 	addHeader("host", HOST);
 	addHeader("date", "temp date");
 	addHeader("Content_length", "temp length");
@@ -40,7 +46,7 @@ HttpResponse::HttpResponse(const HttpResponse& origin) {
 const HttpResponse& HttpResponse::operator=(const HttpResponse& rhs) {
 	if (this != &rhs) {
 		_protocol		= rhs._protocol;
-		_statusCode	= rhs._statusCode;
+		_statusCode		= rhs._statusCode;
 		_headers.clear();
 		_headers		= rhs._headers;
 		_body			= rhs._body;
@@ -50,19 +56,6 @@ const HttpResponse& HttpResponse::operator=(const HttpResponse& rhs) {
 
 HttpResponse::~HttpResponse(void) {
 	_headers.clear();
-}
-
-// ============= Setters ================
-void HttpResponse::setProtocol(const std::string& protocol)						{ _protocol 	= protocol;	}
-void HttpResponse::setStatusCode(int status) 									{ _statusCode	= status;	}
-void HttpResponse::setBody(const std::string& body)								{ _body			= body;		}
-void HttpResponse::addHeader(const std::string& key, const std::string& value)	{
-	_headers.insert(std::make_pair(key, value));
-}
-
-// ============= Getters ================
-int HttpResponse::getStatusCode() const {
-	return _statusCode;
 }
 
 
@@ -82,7 +75,38 @@ std::string HttpResponse::serializeResponse(void) {
 	return serializedResponse;
 }
 
-//status code to map
+
+// ============= Getters ================
+int HttpResponse::getStatusCode() const {	return _statusCode;	}
+
+
+// ============= Setters ================
+void HttpResponse::setProtocol(const std::string& protocol)						{ _protocol 	= 	protocol;					}
+void HttpResponse::setStatusCode(int status) 									{ _statusCode	= 	status;						}
+void HttpResponse::addHeader(const std::string& key, const std::string& value)	{ _headers.insert(std::make_pair(key, value));	}
+
+void HttpResponse::setBody(const std::string& filePath)	{
+	std::ifstream inputFile(filePath);
+	if (inputFile.is_open()) {
+
+		std::string line;
+
+		while(std::getline(inputFile, line)) {
+			_body += line;
+			_body += '\n';
+		}
+
+		inputFile.close();
+
+	} else { 
+		throw HttpRequest::parsingException(422, "Unprocessable Entity");
+	}
+}
+
+
+
+//todo:
+//check method protocol, some headers
 //checks before sending (status code set, stc)
 //check WHITE_SPACE
 //check capitalseensitivity
