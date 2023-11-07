@@ -53,7 +53,7 @@ const HttpResponse& HttpResponse::operator=(const HttpResponse& rhs) {
 		_headers		= rhs._headers;
 		_body			= rhs._body;
 	}
-	updateDateLength();
+	setHeader("Last-Modified", getTimeStamp());
 	return *this;
 }
 
@@ -87,21 +87,21 @@ int HttpResponse::getStatusCode() const {	return _statusCode;	}
 void HttpResponse::setProtocol(const std::string& protocol)	{ 
 	_protocol 	= 	protocol;
 
-	updateDateLength();
+	setHeader("Last-Modified", getTimeStamp());
 }
 
 
 void HttpResponse::setStatusCode(int status) {
 	_statusCode	= status;
 
-	updateDateLength();
+	setHeader("Last-Modified", getTimeStamp());
 }
 
 
 void HttpResponse::addHeader(const std::string& key, const std::string& value) {
 	_headers.insert(std::make_pair(key, value));
 
-	updateDateLength();
+	setHeader("Last-Modified", getTimeStamp());
 }
 
 
@@ -113,7 +113,7 @@ void HttpResponse::setHeader(const std::string& key, const std::string& value) {
 		}
 	}
 	_headers.insert(std::make_pair(key, value));
-	setHeader("Content-Length", std::to_string(serializeResponse().size()));
+	setHeader("Last-Modified", getTimeStamp());
 }
 
 
@@ -124,14 +124,16 @@ void HttpResponse::setBody(const std::string& filePath)	{
 		std::string line;
 		while(std::getline(inputFile, line)) {
 			_body += line;
-			_body += '\n';
+			_body += LINE_END;
 		}
 		inputFile.close();
 
 	} else { 
 		throw HttpRequest::parsingException(422, "Unprocessable Entity");
 	}
-	updateDateLength();
+	size_t bodyLength = _body.length();
+	setHeader("Content-Length", std::to_string(bodyLength));
+	setHeader("Last-Modified", getTimeStamp());
 }
 
 
@@ -145,15 +147,9 @@ void HttpResponse::fillStandardHeaders() {
 	addHeader("Last-Modified", getTimeStamp());
 	addHeader("Content-type", "text/html; charset=utf-8");
 	addHeader("Server", "CODAM_WEBSERV");
-	updateDateLength();
+	addHeader("Content-Length", std::to_string(0));
+	addHeader("Last-Modified", getTimeStamp());
 }
-
-void HttpResponse::updateDateLength(void) {
-	setHeader("Last-Modified", getTimeStamp());
-	int len = serializeResponse().size();
-	setHeader("Content-Length", std::to_string(len));
-}
-
 
 
 //todo:
