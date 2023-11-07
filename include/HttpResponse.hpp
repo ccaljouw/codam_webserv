@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/06 21:59:03 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/07 12:20:29 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ class HttpResponse {
 		void setStatusCode(int status);
 		void addHeader(const std::string& key, const std::string& value);
 		void setBody(const std::string& filePath);
+		void setHeader(const std::string& key, const std::string& value);
+		void fillStandardHeaders(void); //todo: get from config
 
 		
 	private:

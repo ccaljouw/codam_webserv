@@ -1,12 +1,12 @@
 # **************************************************************************** #
 #                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2023/06/21 08:27:49 by wingessorac       #+#    #+#              #
-#    Updated: 2023/11/06 14:26:36 by ccaljouw         ###   ########.fr        #
+#                                                         ::::::::             #
+#    Makefile                                           :+:    :+:             #
+#                                                      +:+                     #
+#    By: ccaljouw <ccaljouw@student.42.fr>            +#+                      #
+#                                                    +#+                       #
+#    Created: 2023/06/21 08:27:49 by wingessorac   #+#    #+#                  #
+#    Updated: 2023/11/07 12:25:59 by carlo         ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ include common.mk
 
 TARGET	 	=	webserv
 OBJ_FILES	=	$(addprefix obj/, main.o \
-				$(addprefix parsing/, Uri.o HttpRequest.o HttpResponse.o) \
+				$(addprefix parsing/, Uri.o HttpRequest.o HttpResponse.o helpers.o) \
 				$(addprefix polling/, handlers.o registerEvents.o) \
 				$(addprefix config/, Server.o) \
 				$(addprefix CGI/, CGI_Handler.o))
