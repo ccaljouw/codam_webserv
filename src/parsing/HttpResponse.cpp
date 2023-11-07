@@ -75,6 +75,7 @@ std::string HttpResponse::serializeResponse(void) {
 	std::string serializedResponse;
 	setHeader("Last-Modified", getTimeStamp());
 	serializedResponse += _protocol + " " + std::to_string(_statusCode) + LINE_END + serializeHeaders() + LINE_END + _body;
+	setHeader("Content-Length", std::to_string(serializedResponse.size()));
 	return serializedResponse;
 }
 
