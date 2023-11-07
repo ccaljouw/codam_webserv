@@ -3,19 +3,19 @@
 /*                                                        ::::::::            */
 /*   CGI_Handler.cpp                                    :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/06 20:11:48 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/07 19:04:30 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "CGI_Handler.hpp"
 #include "HttpRequest.hpp"
+#include <string.h>
 
-CGI::CGI(int epollFd, connection *conn) : _epollFd(epollFd), _status(0)
+CGI::CGI(int epollFd, connection *conn) : _epollFd(epollFd), _status(0), _fdIn(-1), _fdOut(-1)
 {
-
 	int	fd[2];
 	try
 	{
@@ -35,10 +35,18 @@ CGI::CGI(int epollFd, connection *conn) : _epollFd(epollFd), _status(0)
 	}
 }
 
-void	CGI::closeFds() const
+void	CGI::closeFds()
 {
-	close(_fdIn);
-	close(_fdOut);
+	if (_fdIn != -1)
+	{
+		close(_fdIn);
+		_fdIn = -1;
+	}
+	if (_fdOut != -1)
+	{
+		close(_fdOut);
+		_fdOut = -1;
+	}
 }
 
 CGI::~CGI() {};
@@ -46,39 +54,52 @@ int CGI::getStatus() const	{ return (_status); }
 int CGI::getFdIn() const		{ return (_fdIn); }
 int CGI::getFdOut() const		{ return (_fdOut); }
 
-void	execChild(const Uri& uri, CGI &cgi)
+char	*getProgramPath(const Uri& uri, char *program)
 {
-	char	*program = const_cast<char *>(uri.getPath().c_str());
-	char	*argv[] = {const_cast<char *>("/bin/ls"), const_cast<char *>("-la"), NULL};
-	char	**env = NULL;
+	std::string	path = uri.getPath();
+	std::cout << "path = " << path << std::endl;
+	program[0] = '.';
+	for (int i = 0; i < static_cast<int>(path.size()); i++)
+		program[i + 1] = path[i];
+	program[path.size() + 1] = '\0';
+	return (program);
+}
+
+void	execChild(const Uri& uri, CGI &cgi, char **env)
+{
+	char	program[uri.getPath().size() + 2];
+	char	*argv[] = {program, NULL};
+	// char	**env = uri.getHeadersArray();
+	getProgramPath(uri, program);
 	
-	(void)program;
-	std::cout << "exec child" << std::endl;
+	std::cout << "program = " << argv[0] << std::endl;
 	// if (dup2(cgi.getFdOut(), STDOUT_FILENO) == -1)
 	// {
 	// 	write(cgi.getFdOut(), "status: 500\r\n\r\n", 15);
 	// 	cgi.closeFds();
 	// 	return ;
 	// }
-	close(cgi.getFdIn());
 	dup2(cgi.getFdOut(), STDOUT_FILENO);
-	// execve(program, argv, env);
+	// cgi.closeFds();
+	close(cgi.getFdIn());
 	execve(argv[0], argv, env);
-
 }
 
-int cgiHandler(const Uri& uri, connection *conn, int epollFd)
+int cgiHandler(const Uri& uri, connection *conn, int epollFd, char **env)
 {
 	CGI	cgi(epollFd, conn);
 
 	if (cgi.getStatus() == 1)
+	{
+		cgi.closeFds();
 		return 1;
+	}
 	
 	int pid = fork();
 	if (pid == -1) //close FdIn and FdOut?
 		return 1;
 	else if (pid == 0)
-		execChild(uri, cgi);
+		execChild(uri, cgi, env);
 	else
 		close(cgi.getFdOut());
 	return 0;

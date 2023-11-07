@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   handlers.cpp                                       :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/07 10:12:54 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/07 18:58:18 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,9 @@ void readData(int epollFd, connection *conn)
     char buffer[BUFFER_SIZE];
     ssize_t bytesRead;
 	
-	std::cout << "read data" << std::endl;
     if ((bytesRead = recv(conn->fd, buffer, sizeof(buffer), 0)) > 0) {
 		conn->request.append(buffer, static_cast<long unsigned int>(bytesRead));
-		std::cout << "bytes read: " << bytesRead << std::endl;
+		std::cout << "\n\033[0;33m" << buffer << "\033[0m\n" << std::endl;
     }
    	else if (conn->request.empty()) //add timeout?
 	{
@@ -52,26 +51,23 @@ void handleRequest(int epollFd, connection *conn)
 
 	try {
 		// Process the request data
-		std::cout << "handle request" << std::endl;
 		HttpRequest request(conn->request);
 	
 		//case parsing error:
 		if (request.getRequestStatus() != 200) {
 			conn->response = HttpResponse(request).serializeResponse();
 			conn->request.clear();
-			std::cout << "Response ready" << std::endl;
 			conn->state = WRITING;
 		} 
-		else if (request.uri.getPath() == "cgi-bin") { //todo:make configurable
+		else if (request.uri.getExecutable() == "cgi-bin") { //todo:make configurable
 			// call CGI handler
 			//case error in cgi handler
-			if (cgiHandler(request.getUri(), conn, epollFd) == 1 ) 
+			if (cgiHandler(request.getUri(), conn, epollFd, request.getHeadersArray()) == 1 ) 
 			{
 				HttpResponse respons(request);
 				respons.setStatusCode(500);
 				conn->response = respons.serializeResponse();
 				conn->request.clear();
-				std::cout << "Response ready" << std::endl;
 				conn->state = WRITING; // change to response ready status?		
 			} 
 			else {
@@ -83,20 +79,18 @@ void handleRequest(int epollFd, connection *conn)
 				response.setBody("." + request.uri.getPath()); //todo ugly solution maybe better parsing?
 				conn->response = response.serializeResponse();
 				conn->request.clear();
-				std::cout << "Response ready" << std::endl;
 				conn->state = WRITING;
 		}
 		else { //anyrhing but CGI and GET for now
 			HttpResponse response(request);
 			conn->response = response.serializeResponse();
 			conn->request.clear();
-			std::cout << "Response ready" << std::endl;
 			conn->state = WRITING;
 		}
 	} catch (const HttpRequest::parsingException& exception) {
 		std::cout << "Error: " << exception.what() << std::endl;
 		HttpResponse response;
-		response.setStatusCode(exception.getErrorCode());
+		response.setStatusCode(404);
 		conn->response = response.serializeResponse();
 		conn->request.clear();
 		conn->state = WRITING;
@@ -125,9 +119,8 @@ void readCGI(int epollFd, connection *conn)
 		epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->cgiFd, nullptr);
 		close(conn->cgiFd);
 		conn->state = WRITING;
-		
 	}
- }
+}
 
 // TODO: check errors
 void writeData(int epollFd, connection *conn) 
@@ -135,7 +128,7 @@ void writeData(int epollFd, connection *conn)
 	size_t	len;
 	
 	conn->state = WRITING;
-	std::cout << "write data" << std::endl;
+	std::cout << "\n\033[34;1m" << conn->response << "\033[0m\n" << std::endl;
 	len = std::min(conn->response.length(), static_cast<size_t>(BUFFER_SIZE));
     len = send(conn->fd, conn->response.c_str(), conn->response.length(), 0);
 	if (len < conn->response.length())

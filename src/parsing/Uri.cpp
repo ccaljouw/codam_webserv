@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   Uri.cpp                                            :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/07 22:09:08 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/07 22:18:58 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ std::string	Uri::getExecutable(void) {
 }
 
 
-std::string	Uri::getPathInfo(void) {
+std::string	Uri::getPathInfo(void) const {
 	std::string temp = _path;
 	if (temp[0] == '/')
 		temp = temp.substr(1);
