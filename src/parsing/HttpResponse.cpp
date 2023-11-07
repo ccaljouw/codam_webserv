@@ -139,13 +139,12 @@ void HttpResponse::fillStandardHeaders() {
 	// addHeader("Set-Cookie", "...");
 	// addHeader("Transfer-Encoding", "chunked");
 	addHeader("Date", getTimeStamp());
-	setHeader("Last-Modified", getTimeStamp());
 	addHeader("Content-type", "text/html; charset=utf-8");
 	addHeader("Server", "CODAM_WEBSERV");
 	
 	size_t bodyLength = _body.length();
 	setHeader("Content-Length", std::to_string(bodyLength));
-	addHeader("Last-Modified", getTimeStamp());
+	setHeader("Last-Modified", getTimeStamp());
 }
 
 
