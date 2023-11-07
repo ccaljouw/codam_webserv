@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/07 22:18:58 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/07 22:20:55 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,7 @@ std::map<std::string, std::string> Uri::getQueryMap(void) const	{	return _queryM
 
 
 
-std::string	Uri::getExecutable(void) {
+std::string	Uri::getExecutable(void) const {
 	std::string temp = _path;
 	if (temp[0] == '/')
 		temp = temp.substr(1);
