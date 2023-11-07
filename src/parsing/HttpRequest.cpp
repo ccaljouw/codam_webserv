@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/07 10:07:46 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/07 11:00:35 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,15 +132,20 @@ std::string	HttpRequest::getUri(void)											{	return uri.serializeUri();	}
 std::multimap<std::string, std::string>	HttpRequest::getHeaders(void) const		{	return _headers; 			}
 int			HttpRequest::getRequestStatus(void) const							{	return _requestStatus;		}
 
+
+
 char**		HttpRequest::getHeadersArray(void) const {
-	std::vector<char*> headerCStrings;
-	for (const auto& headerPair : _headers) {
+	std::vector<char*> c_strings;
+	for (auto& headerPair : _headers) {
 		std::string headerString = headerPair.first + ": " + headerPair.second;
-		headerCStrings.push_back(strdup(headerString.c_str()));
+		c_strings.push_back(strdup(headerString.c_str()));
 	}
-	headerCStrings.push_back(nullptr);
+	c_strings.push_back(nullptr);
 	
-	return headerCStrings.data();				//returns a pointer to the underlying array.
+	char **headerArray = (char**)malloc(sizeof(char *) * c_strings.size());
+	std::copy(c_strings.begin(), c_strings.end(), headerArray);
+	
+	return headerArray;				//returns a pointer to the underlying array.
 }
 	
 
