@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/06 17:04:52 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/06 20:34:48 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,13 +29,13 @@ int main() {
 				newConnection(epollFd, conn->fd);
 			if ((conn->state == CONNECTED || conn->state == READING) \
 								&& events[i].events & EPOLLIN)
-				readData(conn);
+				readData(epollFd, conn);
 			if (conn->state == HANDLING)
 				handleRequest(epollFd, conn);
 			if (conn->state == IN_CGI && events[i].events & EPOLLIN)
 				readCGI(epollFd, conn);
 			if (conn->state == WRITING && events[i].events & EPOLLOUT)
-				writeData(conn);
+				writeData(epollFd, conn);
 			if (events[i].events & EPOLLERR || events[i].events & EPOLLHUP)
 				handleError(conn);
 			if (conn->state == CLOSING)

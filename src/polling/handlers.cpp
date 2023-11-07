@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/06 18:34:28 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/06 20:37:28 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,24 +23,26 @@ void	newConnection(int epollFd, int fd)
 }
 
 // TODO: check errors
-void readData(connection *conn) 
+void readData(int epollFd, connection *conn) 
 {
     char buffer[BUFFER_SIZE];
     ssize_t bytesRead;
 	
-	// std::cout << "read data" << std::endl;
+	std::cout << "read data" << std::endl;
     if ((bytesRead = recv(conn->fd, buffer, sizeof(buffer), 0)) > 0) {
 		conn->request.append(buffer, static_cast<long unsigned int>(bytesRead));
 		std::cout << "bytes read: " << bytesRead << std::endl;
-		if (bytesRead < BUFFER_SIZE && !conn->request.empty())
-			conn->state = HANDLING;
     }
-   	else if (conn->request.empty()) {
+   	else if (conn->request.empty()) //add timeout?
+	{
 		std::cout << "nothing to read" << std::endl;
 		conn->state = CLOSING;
     }
-	else
-		conn->state = READING;
+	if (bytesRead < BUFFER_SIZE && !conn->request.empty())
+	{
+		conn->state = HANDLING;
+		modifyEvent(epollFd, EPOLLOUT, conn);
+	}
 }
 
 // TODO: a lot :)
@@ -52,6 +54,7 @@ void handleRequest(int epollFd, connection *conn)
 	// if (to CGI)
 		// (void)epollFd;
 		cgiHandler(request.getUri(), conn, epollFd);
+		conn->request.clear();
 		conn->state = IN_CGI;
 	// else
 	// {
@@ -63,7 +66,6 @@ void handleRequest(int epollFd, connection *conn)
 	// }
 }
 
-// to do: check if bytes read is exactly buffersize
 void readCGI(int epollFd, connection *conn)
 {
 	char buffer[BUFFER_SIZE];
@@ -73,26 +75,25 @@ void readCGI(int epollFd, connection *conn)
     if ((bytesRead = read(conn->cgiFd, buffer, sizeof(buffer))) > 0) {
 		std::cout << "bytes read: " << bytesRead << " :\n" << buffer << std::endl;
 		conn->response.append(buffer, static_cast<long unsigned int>(bytesRead));
-		if (bytesRead < BUFFER_SIZE)
-		{
-			std::cout << "close pipe" << std::endl;
-			epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->cgiFd, nullptr);
-			close(conn->cgiFd);
-			conn->state = WRITING;
-			
-		}
     }
-	else
+	else if (conn->response.empty())
 	{
 		std::cout << "nothing to read" << std::endl;
 		epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->cgiFd, nullptr);
 		close(conn->cgiFd);
     }
-	// 	error?
-}
+	if (bytesRead < BUFFER_SIZE && !conn->response.empty())
+	{
+		std::cout << "close pipe" << std::endl;
+		epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->cgiFd, nullptr);
+		close(conn->cgiFd);
+		conn->state = WRITING;
+		
+	}
+ }
 
 // TODO: check errors
-void writeData(connection *conn) 
+void writeData(int epollFd, connection *conn) 
 {
 	size_t	len;
 	
@@ -110,6 +111,7 @@ void writeData(connection *conn)
 		conn->response.clear();
 		std::cout << "Response sent" << std::endl;
 		conn->state = CONNECTED;
+		modifyEvent(epollFd, EPOLLIN, conn);
 	}
 }
 
@@ -125,5 +127,6 @@ void	closeConnection(int epollFd, connection *conn)
 
 void	handleError(connection *conn)
 {
+	std::cout << "errorHandler" << std::endl;
 	conn->state = CLOSING;
 }

@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/06 18:09:13 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/06 20:11:48 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,10 @@ CGI::CGI(int epollFd, connection *conn) : _epollFd(epollFd), _status(0)
 	int	fd[2];
 	try
 	{
-		// if (pipe(fd) == -1)
-		// 	throw std::runtime_error("pipe failed");
-		// else
+		if (pipe(fd) == -1)
+			throw std::runtime_error("pipe failed");
+		else
 		{
-			std::cout << "pipe created: " << pipe(fd) << " register cgi on: " <<  fd[0] << std::endl;
 			_fdIn = fd[0];
 			_fdOut = fd[1];
 			register_CGI(_epollFd, _fdIn, conn);
