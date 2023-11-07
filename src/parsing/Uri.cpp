@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/06 16:28:27 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/07 09:20:17 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,14 +50,14 @@ Uri::Uri(const Uri& origin) {
 
 const Uri& Uri::operator=(const Uri& rhs) {
 	if (this != &rhs) {
-		this->_scheme		= rhs._scheme;
-		this->_authority	= rhs._authority;
-		this->_path			= rhs._path;
-		this->_query		= rhs._query;
-		this->_fragment		= rhs._fragment;
-		this->_userinfo		= rhs._userinfo;
-		this->_host			= rhs._host;
-		this->_port			= rhs._port;
+		_scheme			= rhs._scheme;
+		_authority		= rhs._authority;
+		_path			= rhs._path;
+		_query			= rhs._query;
+		_fragment		= rhs._fragment;
+		_userinfo		= rhs._userinfo;
+		_host			= rhs._host;
+		_port			= rhs._port;
 	}
 	return *this;
 }
@@ -120,3 +120,24 @@ std::string	Uri::getUserInfo() const	{	return _userinfo;	}
 std::string	Uri::getHost() const		{	return _host;		}
 int			Uri::getPort() const		{	return _port;		}
 
+std::string	Uri::getPathInfo(void) {
+	std::string temp = _path;
+	if (temp[0] == '/')
+		temp = temp.substr(1);
+	size_t slash = temp.find("/");
+	if (slash != std::string::npos) {
+		return  temp.substr(slash + 1);
+	}
+	return "";	//todo error
+}
+
+std::string	Uri::getExecutable(void) {
+	std::string temp = _path;
+	if (temp[0] == '/')
+		temp = temp.substr(1);
+	size_t slash = temp.find("/");
+	if (slash != std::string::npos) {
+		return temp.substr(0, slash);
+	}
+	return ""; //todo error
+}

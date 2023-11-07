@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:12:15 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/06 16:24:42 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/07 09:06:40 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,11 @@ class Uri {
 		std::string		getHost(void) const;
 		int				getPort(void) const;
 
+		std::string		getPathInfo(void);
+		std::string		getExecutable(void);
+
+
+		
 	private:
 		void			splitAuthority(void);
 		

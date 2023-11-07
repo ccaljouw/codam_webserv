@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/06 22:44:57 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/07 09:47:17 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,22 +59,27 @@ void handleRequest(int epollFd, connection *conn)
 		std::cout << "Response ready" << std::endl;
 		conn->state = WRITING; // change to response ready status?		
 	
-	///case cgi
+	// case cgi
 	// } else {
-	// 	// if (request.uri.getPath() == "cgi-bin") { //todo:make configurable
-	// 	// call CGI handler
-	// 	//case error in cgi handler
-	// 	if (cgi_handler(conn->request) == 1 ) {
-	// 		HttpResponse respons(request);
-	// 		respons.setStatusCode(500);
-	// 		conn->response = respons.serializeResponse();
-	// 		conn->request.clear();
-	// 		std::cout << "Response ready" << std::endl;
-	// 		conn->state = WRITING; // change to response ready status?		
-	// 	} else {
-	// 	// cgi handles it from here?
-	// 	// conn->state = GGI	
-	// 	}
+	// 	if (request.uri.getExecutable() == "cgi-bin") { //todo:make configurable
+	//	call CGI handler with pathinfo and array of env variable
+	//	std::string pathinfo = request.uri.getPathInfo();
+	//	char **headerArray = request.getHeadersArray(); // todo:: needs to be freed!!
+	
+		
+		
+	//	case error in cgi handler
+		// if (cgi_handler(conn->request) == 1 ) {
+		// 	HttpResponse respons(request);
+		// 	respons.setStatusCode(500);
+		// 	conn->response = respons.serializeResponse();
+		// 	conn->request.clear();
+		// 	std::cout << "Response ready" << std::endl;
+		// 	conn->state = WRITING; // change to response ready status?		
+		// } else {
+		// cgi handles it from here?
+		// conn->state = GGI	
+		// }
 		
 	//case handel self		
 	} else if (request.getMethod() == "GET") {

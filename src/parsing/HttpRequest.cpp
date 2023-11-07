@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/06 22:39:41 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/07 09:46:55 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 #include <sstream>
 #include <exception>
 #include <algorithm>
+#include <unistd.h>
+#include <cstring>
 
 
 HttpRequest::HttpRequest() : uri(), _method(), _protocol(), _headers(), _body(), _requestStatus(200) {};
@@ -123,12 +125,25 @@ HttpRequest::~HttpRequest(void) {
 
 
 //========= Getters ===============================
-std::string HttpRequest::getMethod(void) const									{	return _method;				}
-std::string HttpRequest::getProtocol(void) const								{	return _protocol;			}
-std::string HttpRequest::getBody(void) const									{	return _body;				}
-std::string HttpRequest::getUri(void)											{	return uri.serializeUri();	}
+std::string	HttpRequest::getMethod(void) const									{	return _method;				}
+std::string	HttpRequest::getProtocol(void) const								{	return _protocol;			}
+std::string	HttpRequest::getBody(void) const									{	return _body;				}
+std::string	HttpRequest::getUri(void)											{	return uri.serializeUri();	}
 std::multimap<std::string, std::string>	HttpRequest::getHeaders(void) const		{	return _headers; 			}
-int HttpRequest::getRequestStatus(void) const									{	return _requestStatus;		}
+int			HttpRequest::getRequestStatus(void) const							{	return _requestStatus;		}
+
+char**		HttpRequest::getHeadersArray(void) const {
+	std::vector<char*> headerCStrings;
+	for (const auto& headerPair : _headers) {
+		std::string headerString = headerPair.first + ": " + headerPair.second;
+		headerCStrings.push_back(strdup(headerString.c_str()));
+	}
+	headerCStrings.push_back(nullptr);
+	
+	return headerCStrings.data();				//returns a pointer to the underlying array.
+}
+	
+
 
 //========= Setters ===============================
 void HttpRequest::setMethod(const std::string& method) 							{	_method = method;			}
