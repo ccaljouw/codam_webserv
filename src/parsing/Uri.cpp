@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   Uri.cpp                                            :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/07 09:20:17 by carlo         ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   Uri.cpp                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/03 12:17:27 by carlo             #+#    #+#             */
+/*   Updated: 2023/11/07 15:15:18 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ std::string	Uri::getUserInfo() const	{	return _userinfo;	}
 std::string	Uri::getHost() const		{	return _host;		}
 int			Uri::getPort() const		{	return _port;		}
 
-std::string	Uri::getPathInfo(void) {
+std::string	Uri::getPathInfo(void) const {
 	std::string temp = _path;
 	if (temp[0] == '/')
 		temp = temp.substr(1);
@@ -131,7 +131,7 @@ std::string	Uri::getPathInfo(void) {
 	return "";	//todo error
 }
 
-std::string	Uri::getExecutable(void) {
+std::string	Uri::getExecutable(void) const {
 	std::string temp = _path;
 	if (temp[0] == '/')
 		temp = temp.substr(1);

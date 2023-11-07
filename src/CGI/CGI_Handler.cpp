@@ -3,15 +3,16 @@
 /*                                                        ::::::::            */
 /*   CGI_Handler.cpp                                    :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/06 20:11:48 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/07 14:54:26 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "CGI_Handler.hpp"
 #include "HttpRequest.hpp"
+#include <string>
 
 CGI::CGI(int epollFd, connection *conn) : _epollFd(epollFd), _status(0)
 {
@@ -46,25 +47,33 @@ int CGI::getStatus() const	{ return (_status); }
 int CGI::getFdIn() const		{ return (_fdIn); }
 int CGI::getFdOut() const		{ return (_fdOut); }
 
+char	*getProgramPath(const Uri& uri, char *program)
+{
+	std::string	path = uri.getPath();
+	program[0] = '.';
+	for (int i = 0; i < static_cast<int>(path.size()); i++)
+		program[i + 1] = path[i];
+	program[path.size() + 1] = '\0';
+	return (program);
+}
+
 void	execChild(const Uri& uri, CGI &cgi)
 {
-	char	*program = const_cast<char *>(uri.getPath().c_str());
-	char	*argv[] = {const_cast<char *>("/bin/ls"), const_cast<char *>("-la"), NULL};
+	char	program[uri.getPath().size() + 2];
+	char	*argv[] = {program, NULL};
 	char	**env = NULL;
+	getProgramPath(uri, program);
 	
-	(void)program;
-	std::cout << "exec child" << std::endl;
+	std::cout << "program = " << program << std::endl;
 	// if (dup2(cgi.getFdOut(), STDOUT_FILENO) == -1)
 	// {
 	// 	write(cgi.getFdOut(), "status: 500\r\n\r\n", 15);
 	// 	cgi.closeFds();
 	// 	return ;
 	// }
-	close(cgi.getFdIn());
 	dup2(cgi.getFdOut(), STDOUT_FILENO);
-	// execve(program, argv, env);
+	cgi.closeFds();
 	execve(argv[0], argv, env);
-
 }
 
 int cgiHandler(const Uri& uri, connection *conn, int epollFd)

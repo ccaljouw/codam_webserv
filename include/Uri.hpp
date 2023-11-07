@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   Uri.hpp                                            :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: carlo <carlo@student.codam.nl>               +#+                     */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:12:15 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/07 09:06:40 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/07 13:40:21 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,15 @@ class Uri {
 		std::string		getScheme(void) const;
 		std::string		getAuthority(void) const;
 		std::string		getPath(void) const;
+		std::string		getRelPath(void) const;
 		std::string		getQuery(void) const;
 		std::string		getFragment(void) const;
 		std::string		getUserInfo(void) const;
 		std::string		getHost(void) const;
 		int				getPort(void) const;
 
-		std::string		getPathInfo(void);
-		std::string		getExecutable(void);
+		std::string		getPathInfo(void) const;
+		std::string		getExecutable(void) const;
 
 
 		
