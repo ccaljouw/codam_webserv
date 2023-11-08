@@ -6,12 +6,10 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/07 08:56:43 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/08 10:38:58 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-//todo :1: parse error and response  2:  when in cgi  3: cgi succes 4:handle not cgi
 
 #pragma once
 #ifndef WEBSERV_H
@@ -32,6 +30,9 @@
 #include "eventloop.hpp"
 #include <algorithm>
 #include <unistd.h>
+
+
+//todo: list possible content-types
 
 
 // Success 2xx /  Error 4xx, 5xx / Redirection 3xx 
