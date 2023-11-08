@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include <webserv.hpp>
+#include <webserv.hpp>
 #include <Server.hpp>
 
 /*
@@ -28,12 +28,13 @@ Server::Server( const Server & src )
 
 Server::Server(uint16_t port, int epollFd)
 {
-	this->_fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
-    this->_serverAddr.sin_family = AF_INET;
-	this->_serverAddr.sin_addr.s_addr = INADDR_ANY;
-	this->_serverAddr.sin_port = htons(port);
-	this->_port = port; // remove?
+	_fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
+    _serverAddr.sin_family = AF_INET;
+	_serverAddr.sin_addr.s_addr = INADDR_ANY;
+	_serverAddr.sin_port = htons(port);
+	_port = port; // remove?
 
+	setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<struct sockaddr*>(&_serverAddr), sizeof(_serverAddr));
 	assign_name();
 	set_to_listen(5);
 	register_server(epollFd, this->_fd);
