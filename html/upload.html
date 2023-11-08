@@ -6,9 +6,9 @@
 </head>
 <body>
 	<h1>Upload File</h1>
-	<form action="/cgi-bin/upload.py">
-		<input type="file" id="myFile" name="filename">
-		<input type="submit">
+	<form enctype="multipart/form-data" action="./cgi-bin/upload.py" method="post">
+		<p><input type="file" name="filename" /></p>
+		<P><input type="submit" value="Upload" /></p>
 	</form>
 </body>
 </html>
