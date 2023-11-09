@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/08 10:38:58 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/09 11:39:19 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,6 @@
 #include <algorithm>
 #include <unistd.h>
 
-
-//todo: list possible content-types
 
 
 // Success 2xx /  Error 4xx, 5xx / Redirection 3xx 
