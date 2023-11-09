@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   CGI_Handler.cpp                                    :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/09 09:39:27 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   CGI_Handler.cpp                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/06 12:51:38 by bfranco           #+#    #+#             */
+/*   Updated: 2023/11/09 14:44:49 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void	execChild(const Uri& uri, CGI &cgi, char **env)
 	// char	**env = uri.getHeadersArray();
 	getProgramPath(uri, program);
 	
-	std::cout << "program = " << argv[0] << std::endl;
+	std::cerr << "program = " << argv[0] << std::endl;
 	// if (dup2(cgi.getFdOut(), STDOUT_FILENO) == -1)
 	// {
 	// 	write(cgi.getFdOut(), "status: 500\r\n\r\n", 15);
@@ -82,6 +82,7 @@ void	execChild(const Uri& uri, CGI &cgi, char **env)
 	dup2(cgi.getFdOut(), STDOUT_FILENO);
 	// cgi.closeFds();
 	close(cgi.getFdIn());
+	std::cerr << "before execve" << std::endl;
 	execve(argv[0], argv, env);
 }
 
@@ -89,6 +90,7 @@ int cgiHandler(const Uri& uri, connection *conn, int epollFd, char **env)
 {
 	CGI	cgi(epollFd, conn);
 
+	std::cerr << "in CGI" << std::endl;
 	if (cgi.getStatus() == 1)
 	{
 		cgi.closeFds();

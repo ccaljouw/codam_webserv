@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   handlers.cpp                                       :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/09 09:45:57 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   handlers.cpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
+/*   Updated: 2023/11/09 14:37:27 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ void handleRequest(int epollFd, connection *conn)
 			if (cgiHandler(request.getUri(), conn, epollFd, request.getEnvArray()) == 1 ) 
 				setErrorResponse(conn, 500);	
 			else
+				// conn->state = CLOSING;
 				conn->state = IN_CGI;
 		}	
 		else if (request.getMethod() == "GET") {
@@ -103,15 +104,15 @@ void readCGI(int epollFd, connection *conn)
     }
 	if (bytesRead < BUFFER_SIZE)
 	{
-		std::cout << "close pipe" << std::endl;
+		std::cout << "\033[34;1m" << buffer << "\033[0m\n" << std::endl;
 		close(conn->cgiFd);
 		epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->cgiFd, nullptr);
 		conn->state = WRITING;
 	}
 	if (conn->response.empty() || bytesRead == -1)
 	{
-		std::cout << "error reading CGI" << std::endl;
 		setErrorResponse(conn, 500);
+		std::cout << "error reading CGI" << std::endl;
 	}
 }
 
@@ -121,7 +122,7 @@ void writeData(connection *conn)
 	int			len;
 	
 	conn->state = WRITING;
-	std::cout << "\n\033[34;1m" << conn->response << "\033[0m\n" << std::endl;
+	std::cout << "\033[32;1m" << conn->response << "\033[0m\n" << std::endl;
 	len = std::min(static_cast<int>(conn->response.length()), BUFFER_SIZE);
     len = send(conn->fd, conn->response.c_str(), conn->response.length(), 0);
 	if (len == -1)
