@@ -1,17 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   webServ.hpp                                        :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/09 09:45:10 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   webServ.hpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/03 16:57:19 by carlo             #+#    #+#             */
+/*   Updated: 2023/11/09 14:02:03 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-//todo :1: parse error and response  2:  when in cgi  3: cgi succes 4:handle not cgi
 
 #pragma once
 #ifndef WEBSERV_H
@@ -32,7 +30,6 @@
 #include "CGI_Handler.hpp"
 #include <algorithm>
 #include <unistd.h>
-
 
 // utils.cpp
 void	checkTimeout(connection *conn);

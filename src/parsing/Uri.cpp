@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/07 22:20:55 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/09 11:39:13 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,12 @@
 // #include <unistd.h>
 #include <cstring>
 
+//todo: move this 
+std::vector<std::string> acceptedExtensions = {
+	"txt",
+	"html",
+	"ico"
+};
 
 Uri::Uri() : _scheme(), _authority(), _path(), _query(), _queryMap(), _fragment(), _userinfo(), _host(), _port()  {}
 
@@ -175,4 +181,16 @@ void Uri::mapQueries() {
 			_queryMap[token] = "";
 		}
 	}
+}
+
+bool	Uri::isValidExtension()
+{
+	size_t periodPos = _path.rfind('.');
+	if (periodPos != std::string::npos) {
+		std::string actualExtention = _path.substr(periodPos + 1);
+		for (std::string& checker : acceptedExtensions)
+			if (checker == actualExtention)
+				return true;
+	}
+	return false;
 }

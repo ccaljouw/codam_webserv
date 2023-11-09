@@ -21,7 +21,7 @@
 std::string getTimeStamp();
 
 
-HttpResponse::HttpResponse() : _protocol(HTTP_PROTOCOL), _statusCode(200), _headers(), _body() {
+HttpResponse::HttpResponse() : _protocol(HTTP_PROTOCOL), _statusCode(200), _headerMap(), _body() {
 	fillStandardHeaders();
 }
 
@@ -44,8 +44,8 @@ const HttpResponse& HttpResponse::operator=(const HttpResponse& rhs) {
 	if (this != &rhs) {
 		_protocol		= rhs._protocol;
 		_statusCode		= rhs._statusCode;
-		_headers.clear();
-		_headers		= rhs._headers;
+		_headerMap.clear();
+		_headerMap		= rhs._headerMap;
 		_body			= rhs._body;
 	}
 	setHeader("Last-Modified", getTimeStamp());
@@ -54,23 +54,7 @@ const HttpResponse& HttpResponse::operator=(const HttpResponse& rhs) {
 
 
 HttpResponse::~HttpResponse() {
-	_headers.clear();
-}
-
-
-std::string HttpResponse::serializeHeaders() {
-	std::string serializedHeaders;
-	for(const auto& headerPair : _headers) {
-		serializedHeaders += headerPair.first + ": " + headerPair.second + LINE_END;
-	}
-	return serializedHeaders;
-}
-
-
-std::string HttpResponse::serializeResponse() {
-	std::string serializedResponse;
-	serializedResponse += _protocol + " " + std::to_string(_statusCode) + LINE_END + serializeHeaders() + LINE_END + _body + LINE_END;
-	return serializedResponse;
+	_headerMap.clear();
 }
 
 
@@ -94,20 +78,20 @@ void HttpResponse::setStatusCode(int status) {
 
 
 void HttpResponse::addHeader(const std::string& key, const std::string& value) {
-	_headers.insert(std::make_pair(key, value));
+	_headerMap.insert(std::make_pair(key, value));
 
 	setHeader("Last-Modified", getTimeStamp());
 }
 
 
 void HttpResponse::setHeader(const std::string& key, const std::string& value) {
-	for (auto& headerPair : _headers) {
+	for (auto& headerPair : _headerMap) {
 		if (key == headerPair.first) {
 			headerPair.second = value;
 			return;
 		}
 	}
-	_headers.insert(std::make_pair(key, value));
+	_headerMap.insert(std::make_pair(key, value));
 }
 
 
@@ -146,6 +130,25 @@ void HttpResponse::fillStandardHeaders() {
 	setHeader("Content-Length", std::to_string(bodyLength));
 	setHeader("Last-Modified", getTimeStamp());
 }
+
+
+//===== Other =============
+
+std::string HttpResponse::serializeHeaders() {
+	std::string serializedHeaders;
+	for(const auto& headerPair : _headerMap) {
+		serializedHeaders += headerPair.first + ": " + headerPair.second + LINE_END;
+	}
+	return serializedHeaders;
+}
+
+
+std::string HttpResponse::serializeResponse() {
+	std::string serializedResponse;
+	serializedResponse += _protocol + " " + std::to_string(_statusCode) + LINE_END + serializeHeaders() + LINE_END + _body + LINE_END;
+	return serializedResponse;
+}
+
 
 
 //todo:
