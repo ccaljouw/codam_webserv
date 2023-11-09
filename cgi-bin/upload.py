@@ -23,7 +23,7 @@ body = f"""<html>
 	<body>
 		<h1>{message}</h1>
 	</body>
-</html>"""
+</html>\0"""
 
 header = f"""HTTP/1.1 200\r
 Content-Length: {len(body)}\r
