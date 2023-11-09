@@ -19,11 +19,11 @@ else:
 x = datetime.datetime.now()
 date = x.strftime("%a, %d %b %Y %H:%M:%S GMT")
 
-body = f"""<html>
+body = f"<html>
 	<body>
 		<h1>KEKW File Upload</h1>
 	</body>
-</html>"""
+</html>"
 
 header = f"""HTTP/1.1 200\r
 Content-Length: {len(body)}\r

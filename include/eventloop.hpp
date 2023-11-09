@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   eventloop.hpp                                      :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 18:13:17 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/06 20:37:05 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/09 12:19:13 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 # include <Server.hpp>
 
 # define MAX_EVENTS 10
-# define BUFFER_SIZE 1024
+# define BUFFER_SIZE 10240
 
 enum	states {
 	LISTENING,

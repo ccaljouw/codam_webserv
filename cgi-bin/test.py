@@ -4,7 +4,7 @@ import datetime
 
 x = datetime.datetime.now()
 date = x.strftime("%a, %d %b %Y %H:%M:%S GMT")
-body = "<html><body><h1>It works!</h1></body></html>"
+body = "<html><body><h1>It works!</h1></body></html>\r\n"
 
 header = f"HTTP/1.1 200\r\n\
 Content-Length: {len(body)}\r\n\
