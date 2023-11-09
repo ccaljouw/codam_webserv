@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/07 10:07:34 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/08 14:05:14 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,19 +27,16 @@ int main() {
 			connection *conn = static_cast<connection *>(events[i].data.ptr);
             if (conn->state == LISTENING && events[i].events & EPOLLIN)
 				newConnection(epollFd, conn->fd);
-			if ((conn->state == CONNECTED || conn->state == READING) \
-								&& events[i].events & EPOLLIN)
-				readData(epollFd, conn);
+			if (conn->state == CLOSING || events[i].events & EPOLLERR || events[i].events & EPOLLHUP)
+				closeConnection(epollFd, conn);
+			if ((conn->state == READING) && events[i].events & EPOLLIN)
+				readData(conn);
 			if (conn->state == HANDLING)
 				handleRequest(epollFd, conn);
 			if (conn->state == IN_CGI && events[i].events & EPOLLIN)
 				readCGI(epollFd, conn);
 			if (conn->state == WRITING && events[i].events & EPOLLOUT)
-				writeData(epollFd, conn);
-			if (events[i].events & EPOLLERR || events[i].events & EPOLLHUP)
-				handleError(conn);
-			if (conn->state == CLOSING)
-				closeConnection(epollFd, conn);
+				writeData(conn);
         }
     }
     return 0;

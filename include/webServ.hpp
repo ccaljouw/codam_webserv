@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/07 08:56:43 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/09 09:45:10 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,18 @@
 #include<vector>
 #include<string>
 
+#include "eventloop.hpp"
 #include "HttpRequest.hpp"
 #include "HttpResponse.hpp"
 #include "CGI_Handler.hpp"
-#include "eventloop.hpp"
 #include <algorithm>
 #include <unistd.h>
 
+
+// utils.cpp
+void	checkTimeout(connection *conn);
+void	setResponse(connection *conn, HttpResponse resp);
+void	setErrorResponse(connection *conn, int error);
 
 // Success 2xx /  Error 4xx, 5xx / Redirection 3xx 
 // std::map<int, std::string> HttpStatusCodes = {
