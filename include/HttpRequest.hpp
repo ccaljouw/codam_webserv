@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/10 15:55:06 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/10 19:41:37 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,12 +43,12 @@ class HttpRequest {
 			
 
 	// ============= Setters ================
-		void		setMethod(const std::string& method);
-		void		setProtocol(const std::string& protocol);
-		void		setBody(const std::string& body);
-		void		setUri(const std::string& str);
-		void		addHeader(const std::string& key, const std::string& value);
-		void		setRequestStatus(int value);
+		void										setMethod(const std::string& method);
+		void										setProtocol(const std::string& protocol);
+		void										setBody(const std::string& body);
+		void										setUri(const std::string& str);
+		void										addHeader(const std::string& key, const std::string& value);
+		void										setRequestStatus(int value);
 
 
 	// ============= exception ================

@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/09 11:39:13 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/10 16:56:04 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,17 +16,22 @@
 #include <regex>
 #include <exception>
 #include <sstream>
-// #include <unistd.h>
 #include <cstring>
 
-//todo: move this 
-std::vector<std::string> acceptedExtensions = {
-	"txt",
-	"html",
-	"ico"
+
+std::map<std::string, std::string> acceptedExtensions = {
+	{	".txt", "text/plain"	},
+	{	".html", "text/html"	},
+	{	".jpeg", "image/jpeg"	},
+	{	".jpg", "image/jpg"		},
+	{	".png", "image/png"		},
+	{	".gif", "image/gif"		},
+	{	".bmp", "image/bmp"		},
+	{	".ico", "image/x-icon"	},
 };
 
-Uri::Uri() : _scheme(), _authority(), _path(), _query(), _queryMap(), _fragment(), _userinfo(), _host(), _port()  {}
+
+Uri::Uri() : _scheme(), _authority(), _path(), _extension(), _query(), _queryMap(), _fragment(), _userinfo(), _host(), _port() {}
 
 
 // regex teken directly from RFC 2396 : ^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))? added R for ignoring escape characterss
@@ -35,7 +40,8 @@ Uri::Uri(const std::string& uri) {
 	
 	std::smatch matches;
 	
-	if(std::regex_match(uri, matches, uriRegex)) {
+	if(std::regex_match(uri, matches, uriRegex))
+	{
 		_scheme 	= matches[2].str();
 		_authority 	= matches[4].str();
 		_path 		= matches[5].str();
@@ -51,6 +57,7 @@ Uri::Uri(const std::string& uri) {
 	std::transform(_scheme.begin(), _scheme.end(), _scheme.begin(), ::tolower);
 	std::transform(_host.begin(), _host.end(), _host.begin(), ::tolower);
 
+	setExtension();
 	mapQueries();
 }
 
@@ -59,10 +66,12 @@ Uri::Uri(const Uri& origin) {
 }
 
 const Uri& Uri::operator=(const Uri& rhs) {
-	if (this != &rhs) {
+	if (this != &rhs)
+	{
 		_scheme			= rhs._scheme;
 		_authority		= rhs._authority;
 		_path			= rhs._path;
+		_extension		= rhs._extension;
 		_query			= rhs._query;
 		_queryMap.clear();
 		_queryMap		= rhs._queryMap;
@@ -86,7 +95,8 @@ void	Uri::splitAuthority() {
 
 	//check for optional userinfo	
 	size_t atPos	= _authority.find("@");
-	if (atPos != std::string::npos) {
+	if (atPos != std::string::npos)
+	{
 		_userinfo	= _authority.substr(0, atPos);
 		_host		= _authority.substr(atPos + 1);
 	} 
@@ -95,7 +105,8 @@ void	Uri::splitAuthority() {
 
 	//check for optional port
 	size_t columPos	= _host.find(":");
-	if (columPos != std::string::npos) {
+	if (columPos != std::string::npos)
+	{
 		_port = stoi(_host.substr(columPos + 1));
 		_host = _host.substr(0, columPos);
 	}
@@ -111,7 +122,8 @@ std::string	Uri::serializeUri() {
 	if (!_authority.empty())
 		serializedUri += "//" + _authority;
 
-	if (!_path.empty()) {
+	if (!_path.empty())
+	{
 		if (_path[0] != '/')
 			serializedUri += "/";
 		serializedUri += _path;
@@ -131,6 +143,7 @@ std::string	Uri::serializeUri() {
 std::string	Uri::getScheme() const								{	return _scheme;		}
 std::string	Uri::getAuthority() const							{	return _authority;	}
 std::string	Uri::getPath() const								{	return _path; 		}
+std::string	Uri::getExtension() const							{	return _extension;	}
 std::string	Uri::getQuery() const								{	return _query;		}
 std::string	Uri::getFragment() const							{	return _fragment;	}
 std::string	Uri::getUserInfo() const							{	return _userinfo;	}
@@ -139,15 +152,14 @@ int			Uri::getPort() const								{	return _port;		}
 std::map<std::string, std::string> Uri::getQueryMap(void) const	{	return _queryMap;	}
 
 
-
 std::string	Uri::getExecutable(void) const {
 	std::string temp = _path;
 	if (temp[0] == '/')
 		temp = temp.substr(1);
 	size_t slash = temp.find("/");
-	if (slash != std::string::npos) {
+	if (slash != std::string::npos)
 		return temp.substr(0, slash);
-	}
+	
 	return ""; //todo error
 }
 
@@ -157,9 +169,9 @@ std::string	Uri::getPathInfo(void) const {
 	if (temp[0] == '/')
 		temp = temp.substr(1);
 	size_t slash = temp.find("/");
-	if (slash != std::string::npos) {
+	if (slash != std::string::npos)
 		return  temp.substr(slash + 1);
-	}
+	
 	return "";	//todo error
 }
 
@@ -170,27 +182,52 @@ void Uri::mapQueries() {
 	std::istringstream qurieStream(_query);
 	
 	std::string token;
-	while(getline(qurieStream, token, '&')) {
+	while(getline(qurieStream, token, '&'))
+	{
 		size_t equalPosition = token.find('=');
-		if (equalPosition != std::string::npos) {
+		if (equalPosition != std::string::npos)
+		{
 			std::string key = token.substr(0, equalPosition);
 			std::string value = token.substr(equalPosition + 1); //todo: URL-decode key and value is needed
 			_queryMap[key] = value;
 		}
-		else {
+		else
 			_queryMap[token] = "";
-		}
 	}
 }
 
-bool	Uri::isValidExtension()
+std::string	Uri::getMime(std::string key) const
+{
+	for (const auto& pair : acceptedExtensions )
+	{
+		if ( key == pair.first)
+			return pair.second;
+	}
+	return "";
+}
+
+
+
+void	Uri::setExtension()
 {
 	size_t periodPos = _path.rfind('.');
-	if (periodPos != std::string::npos) {
-		std::string actualExtention = _path.substr(periodPos + 1);
-		for (std::string& checker : acceptedExtensions)
-			if (checker == actualExtention)
-				return true;
-	}
+	if (periodPos != std::string::npos)
+		_extension = _path.substr(periodPos);
+	
+	else
+		_extension = "";
+}
+
+void	Uri::setPath(std::string path) {
+	_path = path;
+}
+
+
+bool	Uri::isValidExtension() {
+	std::string actualExtension = getExtension();
+	for (const auto& pair : acceptedExtensions)
+		if (pair.first == actualExtension)
+			return true;
 	return false;
 }
+

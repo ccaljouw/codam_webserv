@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/10 15:18:24 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/10 19:41:31 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@
 HttpRequest::HttpRequest() : uri(), _method(), _protocol(), _headers(), _body(), _requestStatus(200) {};
 
 HttpRequest::HttpRequest(const std::string& request) : uri(), _requestStatus(200) {
-//todo: slip into helper functions mapHeaders
+
+//todo: switch into helper functions mapHeaders
 // 1. === parse request line === 
 try {
 	std::size_t RequestLineEnd = request.find("\r\n");
@@ -37,21 +38,22 @@ try {
 	RequestLineStream >> _method >> tempUriString >> _protocol;
 	
 	//check protocol //todo test does not work
-	if (_protocol != HTTP_PROTOCOL) {
+	if (_protocol != HTTP_PROTOCOL)
 		throw parsingException(505, "Version not supported");
-	}
+
 
 	// check method
 	bool isMethodSupported = false;
-	for (const auto& target : this->supportedMethods) {
-		if (target == _method) {
+	for (const auto& target : this->supportedMethods)
+	{
+		if (target == _method)
+		{
 			isMethodSupported = true;
 			break;
 		}
 	}
-	if (isMethodSupported == false) {
+	if (isMethodSupported == false)
 		throw parsingException(405, "Method not Allowed");
-	}
 	
 	uri = Uri(tempUriString);
 	
@@ -70,9 +72,11 @@ try {
 	std::istringstream HeaderStream(HeaderBlock);
 	std::string headerLine;
 	
-	while(std::getline(HeaderStream, headerLine)) {
+	while(std::getline(HeaderStream, headerLine))
+	{
 		std::size_t columPos = headerLine.find(":");
-		if (columPos != std::string::npos) {
+		if (columPos != std::string::npos)
+		{
 			std::string key = headerLine.substr(0,columPos);
 			std::string value = headerLine.substr(columPos + 1);
 
@@ -88,10 +92,10 @@ try {
 
 // 3. === parse body ===
 	_body = request.substr(headersEnd + 4);
-	
-	
-	//catch errors	
-	} catch (const parsingException& exception) {
+	}
+	//catch block	
+	catch (const parsingException& exception)
+	{
 		_requestStatus = exception.getErrorCode();
 		std::cerr << exception.what() << std::endl; 
 	}
@@ -104,7 +108,8 @@ HttpRequest::HttpRequest(const HttpRequest& origin) {
 
 
 const HttpRequest& HttpRequest::operator=(const HttpRequest& rhs) {
-	if (this != &rhs) {
+	if (this != &rhs)
+	{
 		uri				= rhs.uri;
 		_method			= rhs._method;
 		_protocol		= rhs._protocol;
@@ -136,17 +141,18 @@ char**		HttpRequest::getEnvArray(void) const {
 	// merge headers map and queries map into one map
 	std::multimap<std::string, std::string> mergedMap;
 	
-	for (const auto& headerPair : _headers) {
+	for (const auto& headerPair : _headers)
 		mergedMap.insert(headerPair);
-	}
-	for (const auto& queryPair : uri.getQueryMap()) {
+	
+	for (const auto& queryPair : uri.getQueryMap())
 		mergedMap.insert(queryPair);
-	}
+	
 	
 	// make c_string array frrom multimap. first a vector of c_strings.	
 	std::vector<char*> c_strings;
 	
-	for (auto& pair : mergedMap) {
+	for (auto& pair : mergedMap)
+	{
 		std::string line = pair.first + ": " + pair.second;
 		c_strings.push_back(strdup(line.c_str()));
 	}
@@ -167,6 +173,7 @@ void HttpRequest::setProtocol(const std::string& protocol) 						{	_protocol = p
 void HttpRequest::setBody(const std::string& body) 								{	_body = body; 				}
 void HttpRequest::setUri(const std::string& string) 							{	uri = Uri(string);			}		
 void HttpRequest::setRequestStatus(int value) 									{	_requestStatus = value;		}
-void HttpRequest::addHeader(const std::string& key, const std::string& value)	{
+
+void HttpRequest::addHeader(const std::string& key, const std::string& value) {
 	_headers.insert(std::make_pair(key, value));
 }

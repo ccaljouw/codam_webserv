@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   webServ.hpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 16:57:19 by carlo             #+#    #+#             */
-/*   Updated: 2023/11/09 14:02:03 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   webServ.hpp                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
+/*   Updated: 2023/11/10 15:28:28 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,18 @@
 #include "CGI_Handler.hpp"
 #include <algorithm>
 #include <unistd.h>
+#include <filesystem>
+
 
 // utils.cpp
 void	checkTimeout(connection *conn);
 void	setResponse(connection *conn, HttpResponse resp);
 void	setErrorResponse(connection *conn, int error);
+
+//defined in Uri.cpp
+extern std::map<std::string, std::string> acceptedExtensions;
+
+
 
 // Success 2xx /  Error 4xx, 5xx / Redirection 3xx 
 // std::map<int, std::string> HttpStatusCodes = {

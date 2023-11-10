@@ -41,7 +41,8 @@ HttpResponse::HttpResponse(const HttpResponse& origin) {
 
 
 const HttpResponse& HttpResponse::operator=(const HttpResponse& rhs) {
-	if (this != &rhs) {
+	if (this != &rhs)
+	{
 		_protocol		= rhs._protocol;
 		_statusCode		= rhs._statusCode;
 		_headerMap.clear();
@@ -85,8 +86,10 @@ void HttpResponse::addHeader(const std::string& key, const std::string& value) {
 
 
 void HttpResponse::setHeader(const std::string& key, const std::string& value) {
-	for (auto& headerPair : _headerMap) {
-		if (key == headerPair.first) {
+	for (auto& headerPair : _headerMap)
+	{
+		if (key == headerPair.first)
+		{
 			headerPair.second = value;
 			return;
 		}
@@ -100,35 +103,37 @@ void HttpResponse::setBody(const std::string& filePath)	{
 	if (inputFile.is_open()) {
 
 		std::string line;
-		while(std::getline(inputFile, line)) {
+		while(std::getline(inputFile, line))
+		{
 			_body += line;
 			_body += LINE_END;
 		}
 		inputFile.close();
 
-	} else { 
-		throw HttpRequest::parsingException(422, "Unprocessable Entity");
 	}
+	else
+		throw HttpRequest::parsingException(422, "Unprocessable Entity");
+	
 	size_t bodyLength = _body.length();
 
-	setHeader("Content-Length", std::to_string(bodyLength));
 	setHeader("Last-Modified", getTimeStamp());
+	setHeader("Content-Length", std::to_string(bodyLength));
 }
 
 
 void HttpResponse::fillStandardHeaders() {
 	// addHeader("Connection", "keep-alive:);
-	// addHeader("Cache-Control",  "max-age=0");
 	// addHeader("Keep-Alive", "timeout=5, max=997");
 	// addHeader("Set-Cookie", "...");
 	// addHeader("Transfer-Encoding", "chunked");
+	// addHeader("Content-type", "text/html");
+	addHeader("Cache-Control",  "public, max-age=86400");
 	addHeader("Date", getTimeStamp());
-	addHeader("Content-type", "text/html; charset=utf-8");
 	addHeader("Server", "CODAM_WEBSERV");
 	
 	size_t bodyLength = _body.length();
-	setHeader("Content-Length", std::to_string(bodyLength));
 	setHeader("Last-Modified", getTimeStamp());
+	setHeader("Content-Length", std::to_string(bodyLength));
 }
 
 
@@ -136,9 +141,9 @@ void HttpResponse::fillStandardHeaders() {
 
 std::string HttpResponse::serializeHeaders() {
 	std::string serializedHeaders;
-	for(const auto& headerPair : _headerMap) {
+	for(const auto& headerPair : _headerMap)
 		serializedHeaders += headerPair.first + ": " + headerPair.second + LINE_END;
-	}
+	
 	return serializedHeaders;
 }
 
@@ -152,13 +157,7 @@ std::string HttpResponse::serializeResponse() {
 
 
 //todo:
-//check method protocol, some headers
 //checks before sending (status code set, stc)
 //check WHITE_SPACE
 //check capitalseensitivity
 //check duplicate headers
-//check valid status code
-//add content type
-//add content_lenght
-//add data
-//add set_last_modified to all set functions
