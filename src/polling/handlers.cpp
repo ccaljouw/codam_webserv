@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/10 19:41:41 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/10 19:46:44 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void handleRequest(int epollFd, connection *conn)
 
 	try {
 		// Process the request data
-		HttpRequest request(conn->request);
+		HttpRequest request(conn->request, conn->server);
 	
 		// Handle parsing error
 		if (request.getRequestStatus() != 200) {

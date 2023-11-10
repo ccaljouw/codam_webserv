@@ -6,11 +6,13 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/10 19:41:31 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/10 20:28:12 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HttpRequest.hpp"
+#include "eventloop.hpp"
+#include "config.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -19,9 +21,9 @@
 #include <cstring>
 
 
-HttpRequest::HttpRequest() : uri(), _method(), _protocol(), _headers(), _body(), _requestStatus(200) {};
+HttpRequest::HttpRequest(const Server *server) : uri(), _method(), _protocol(), _headers(), _body(), _requestStatus(200) { (void)server; };
 
-HttpRequest::HttpRequest(const std::string& request) : uri(), _requestStatus(200) {
+HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri(), _requestStatus(200) {
 
 //todo: switch into helper functions mapHeaders
 // 1. === parse request line === 
@@ -41,10 +43,14 @@ try {
 	if (_protocol != HTTP_PROTOCOL)
 		throw parsingException(505, "Version not supported");
 
-
+	// todo: get location and resulting location settings
+	uri = Uri(tempUriString);
+	std::cout << "path? " << uri.getScheme() << std::endl;
+	struct LocationSettings location = server->get_locations().front();
+	
 	// check method
 	bool isMethodSupported = false;
-	for (const auto& target : this->supportedMethods)
+	for (const auto& target : location._allowedMethods)
 	{
 		if (target == _method)
 		{
@@ -55,7 +61,6 @@ try {
 	if (isMethodSupported == false)
 		throw parsingException(405, "Method not Allowed");
 	
-	uri = Uri(tempUriString);
 	
 
 // 2. === parse headers ===

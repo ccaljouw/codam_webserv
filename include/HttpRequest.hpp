@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/10 19:41:37 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/10 20:01:29 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,9 @@
 class HttpRequest {
 
 	public:
-		HttpRequest(void);
-		HttpRequest(const std::string& request);
+		HttpRequest() = delete;
+		HttpRequest(const Server *server);
+		HttpRequest(const std::string& request, const Server *server);
 		HttpRequest(const HttpRequest& origin);
 		const HttpRequest& operator=(const HttpRequest& rhs);
 		~HttpRequest(void);
@@ -71,7 +72,7 @@ class HttpRequest {
 		std::string								_body;
 		int										_requestStatus;
 
-		std::vector<std::string> supportedMethods = { "GET", "POST", "DELETE" }; //todo: make configurable
+		// std::vector<std::string> supportedMethods = { "GET", "POST", "DELETE" }; //todo: make configurable
 };
 
 #endif
