@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   handlers.cpp                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/09 14:37:27 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   handlers.cpp                                       :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
+/*   Updated: 2023/11/10 11:23:04 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 // TODO: check errors, check duplicates
 // TODO: check what to do if backlog is full?
-void	newConnection(int epollFd, int serverFd) 
+void	newConnection(int epollFd, int serverFd, Server *server) 
 {
 	int					fd;
 	
@@ -22,7 +22,7 @@ void	newConnection(int epollFd, int serverFd)
 	fd = accept(serverFd, nullptr, nullptr);
 	if (fd == -1)
 		return ;
-	if (register_client(epollFd,  fd) == -1)
+	if (register_client(epollFd,  fd, server) == -1)
 	{
 		//send internal server error cannot use write via epoll??
 		close(fd);

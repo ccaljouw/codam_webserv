@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/09 16:41:26 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/10 11:40:58 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ struct ServerSettings
 {
 	std::string							_serverName;
 	std::string							_rootFolder;
-	unsigned int						_port;
+	uint16_t							_port;
+	// in_addr_t							_host;
 	std::string							_index;
 	std::list<struct LocationSettings>	_locations;
 	// std::list<ErrorPages>		_errorPages;
@@ -63,13 +64,16 @@ class Config
 		Config &		operator=( Config const & rhs );
 		
 		std::list<struct ServerSettings>	getServers() const;
+
+		void								setFile(std::string filename);
+		
 	
 	private:
-		std::string					_filename;
+		std::string							_filename;
 		std::list<struct ServerSettings>	_servers;
 
-		void						_readServerSettings();
-		void						_parseConfigFile();
+		void								_readServerSettings();
+		void								_parseConfigFile();
 };
 
 #endif

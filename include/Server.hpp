@@ -14,33 +14,40 @@
 # define SERVER_HPP
 
 #include <eventloop.hpp>
+#include "Config.hpp"
 
 class Server
 {
 
 	public:
 
-		Server(uint16_t port, int epollFd);
+		Server() = delete;
+		Server(struct ServerSettings const & settings, int epollFd);
+		Server( Server const & src ) = delete;
+		Server &operator=( Server const & rhs ) = delete;
 		~Server();
 
-		Server &		operator=( Server const & rhs );
 		
 		void	assign_name();
 		void	set_to_listen(int backlog);
 
-		int		get_FD();
+		int		get_FD() const;
 		
 	private:
 
-		Server();
-		Server( Server const & src );
 		
-		int 				_fd;
-		int 				_port;
-		struct sockaddr_in	_serverAddr;
+		int 								_fd;
+		struct sockaddr_in					_serverAddr; //?
+		std::string							_serverName;
+		std::string							_rootFolder;
+		uint16_t							_port;
+		// in_addr_t							_host;
+		std::string							_index;
+		std::list<struct LocationSettings>	_locations;
+		// std::list<ErrorPages>		_errorPages;
 
 } ;
 
-std::ostream &			operator<<( std::ostream & o, Server const & i );
+std::list<Server *> initServers(std::list<struct ServerSettings> settings, int epollFd);
 
 #endif /* **************************************************** Server_H */

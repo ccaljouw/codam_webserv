@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/09 16:37:28 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/10 11:41:08 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,11 @@ Config::Config(std::string configFile) : _filename(configFile)
 Config::~Config() {}
 
 std::list<struct ServerSettings>	Config::getServers() const {	return (_servers);	}
+
+void								Config::setFile(std::string filename) {
+	_filename = filename;
+	_readServerSettings();
+}
 
 void	Config::_parseConfigFile()
 {
@@ -52,6 +57,16 @@ void	Config::_readServerSettings()
 
 		server._locations.push_back(html); //extra locations ???
 		_servers.push_back(server);
+		
+		// ****** test
+		struct ServerSettings	server2;
+		server2._serverName = "Codam_Webserv2";
+		server2._port = 4242;
+		server2._rootFolder = "./data/html";
+		server2._index = "index.html";
+		server2._locations.push_back(html); //extra locations ???
+		_servers.push_back(server2);
+		// end test ********
 	}
 	else
 	{

@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/10 09:14:32 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/10 11:55:15 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,21 +15,17 @@
 
 int main(int argc, char **argv) {
 
-	if (argc == 1) {
-		Config conf;
-		std::cout << conf.getServers().front()._serverName << std::endl;}
-	else if (argc == 2)
-		Config conf(argv[1]);
-	else
+	Config conf;
+	
+	if (argc == 2) // deze check verplaatsen naar binnen Config class?
+		conf.setFile(argv[1]);
+	else if (argc != 1)
 		return (1);
-
 
 	// Create epoll file descriptor
     int 				epollFd = epoll_create(1);
     struct epoll_event	events[MAX_EVENTS];
-    
-	// Create and init socket for the server
-	Server server(8080, epollFd);
+	std::list<Server *> servers = initServers(conf.getServers(), epollFd);
 	
 	// loop for events
     while (true) {
@@ -38,7 +34,7 @@ int main(int argc, char **argv) {
         for (int i = 0; i < numEvents; i++) {
 			connection *conn = static_cast<connection *>(events[i].data.ptr);
             if (conn->state == LISTENING && events[i].events & EPOLLIN)
-				newConnection(epollFd, conn->fd);
+				newConnection(epollFd, conn->fd, conn->server);
 			if (conn->state == CLOSING || events[i].events & EPOLLERR || events[i].events & EPOLLHUP)
 				closeConnection(epollFd, conn);
 			if ((conn->state == READING) && events[i].events & EPOLLIN)
@@ -51,5 +47,6 @@ int main(int argc, char **argv) {
 				writeData(conn);
         }
     }
+	// clear serverlist in signal handler!!
     return 0;
 }
