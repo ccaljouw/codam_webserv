@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/10 16:50:04 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/10 16:59:08 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ HttpRequest::HttpRequest() : uri(), _method(), _protocol(), _headers(), _body(),
 
 HttpRequest::HttpRequest(const std::string& request) : uri(), _requestStatus(200) {
 
-//todo: slip into helper functions mapHeaders
+//todo: switch into helper functions mapHeaders
 // 1. === parse request line === 
 try {
 	std::size_t RequestLineEnd = request.find("\r\n");
@@ -54,7 +54,6 @@ try {
 	}
 	if (isMethodSupported == false)
 		throw parsingException(405, "Method not Allowed");
-
 	
 	uri = Uri(tempUriString);
 	
@@ -174,6 +173,7 @@ void HttpRequest::setProtocol(const std::string& protocol) 						{	_protocol = p
 void HttpRequest::setBody(const std::string& body) 								{	_body = body; 				}
 void HttpRequest::setUri(const std::string& string) 							{	uri = Uri(string);			}		
 void HttpRequest::setRequestStatus(int value) 									{	_requestStatus = value;		}
-void HttpRequest::addHeader(const std::string& key, const std::string& value)	{
+
+void HttpRequest::addHeader(const std::string& key, const std::string& value) {
 	_headers.insert(std::make_pair(key, value));
 }
