@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/10 19:46:44 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/10 21:09:42 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,13 +129,11 @@ void handleRequest(int epollFd, connection *conn)
 				else
 					throw HttpRequest::parsingException(501, "Extension not supported");
 			}
-
+			
 			// handle unsupported methods
 			else
 				throw HttpRequest::parsingException(405, "METHOD not supported");
 		}
-
-		
 	} 
 	catch (const HttpRequest::parsingException& exception)
 	{

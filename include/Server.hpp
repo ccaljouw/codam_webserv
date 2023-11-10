@@ -15,6 +15,7 @@
 
 #include <eventloop.hpp>
 #include "Config.hpp"
+#include <string.h>
 
 class Server
 {
@@ -39,6 +40,18 @@ class Server
 		std::string	get_index() const;
 		std::list<struct LocationSettings>	get_locations() const;
 		// std::list<ErrorPages>	get_errorPages() const;
+		
+		// ============= exception ================
+		class ServerException : public std::exception {
+			public:
+				ServerException(const std::string& message) {
+					_message = message + std::string(strerror(errno));
+				}
+				const char*	what() const noexcept override		{	return _message.c_str();	}
+
+			private:
+				std::string						_message;
+		};
 	
 	private:
 

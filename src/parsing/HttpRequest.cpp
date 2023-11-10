@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/10 20:48:53 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/10 21:06:34 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,9 @@ try {
 	if (_protocol != HTTP_PROTOCOL)
 		throw parsingException(505, "Version not supported");
 
-	// todo: get location and resulting location settings
 	uri = Uri(tempUriString);
+	
+	// todo: get location and resulting location settings
 	struct LocationSettings location = server->get_locations().front();
 	
 	// check method

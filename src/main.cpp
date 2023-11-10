@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/10 16:12:17 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/10 21:39:08 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,9 @@ int main(int argc, char **argv) {
 		else if (argc > 2) // wiilen we dit of negeren we gewoon de rest als er meer is meegegeven?
 			throw std::runtime_error("invallid nr of arguments");
 		if ((epollFd = epoll_create(1)) == -1)
-			throw std::runtime_error(std::string(strerror(errno)) + " in epoll_create");
+			throw std::runtime_error("epoll_create: " + std::string(strerror(errno)));
 		if ((servers = initServers(conf.getServers(), epollFd)).size() == 0)
-			throw std::runtime_error("no succesfull server configuration");
+			throw std::runtime_error("no succesfull server configuration, terminating programm");
 	}
 	catch(const std::runtime_error& e)
 	{
