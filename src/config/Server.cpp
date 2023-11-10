@@ -47,8 +47,9 @@ int Server::initServer(struct ServerSettings const & settings, int epollFd)
 {
 	_fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
 	// _fd = 0;
-	_port = settings._port; // remove?
-	// _serverName = settings._serverName;
+	_port = settings._port;
+	_serverName = settings._serverName;
+	_locations = settings._locations;
     _serverAddr.sin_family = AF_INET;
 	_serverAddr.sin_addr.s_addr = INADDR_ANY;
 	_serverAddr.sin_port = htons(_port);
@@ -85,7 +86,7 @@ std::list<Server> initServers(std::list<struct ServerSettings> settings, int epo
 	for (std::list<struct ServerSettings>::iterator it = settings.begin(); it != settings.end(); ++it)
 	{
 		servers.push_back(Server());
-		if (servers.end()->initServer(*it, epollFd) == 1)
+		if (servers.back().initServer(*it, epollFd) == 1)
 			servers.pop_back();
 	}
 	return (servers);
