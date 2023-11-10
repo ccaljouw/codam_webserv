@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/10 09:57:04 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/10 12:37:02 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,24 +19,20 @@
 // #include <unistd.h>
 #include <cstring>
 
+
 //todo: move this to config class
 std::vector<std::string> acceptedExtensions = {
 	".txt",
-	".css",
 	".html",
-	".json",
 	".jgeg",
 	".jpg",
 	".png",
 	".gif",
 	".bmp",
 	".ico",
-	".pdf",
-	".csv",
 };
 	
-	
-Uri::Uri() : _scheme(), _authority(), _path(), _query(), _queryMap(), _fragment(), _userinfo(), _host(), _port()  {}
+Uri::Uri() : _scheme(), _authority(), _path(), _extension(), _query(), _queryMap(), _fragment(), _userinfo(), _host(), _port()  {}
 
 
 // regex teken directly from RFC 2396 : ^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))? added R for ignoring escape characterss
@@ -61,6 +57,7 @@ Uri::Uri(const std::string& uri) {
 	std::transform(_scheme.begin(), _scheme.end(), _scheme.begin(), ::tolower);
 	std::transform(_host.begin(), _host.end(), _host.begin(), ::tolower);
 
+	setExtension();
 	mapQueries();
 }
 
@@ -73,6 +70,7 @@ const Uri& Uri::operator=(const Uri& rhs) {
 		_scheme			= rhs._scheme;
 		_authority		= rhs._authority;
 		_path			= rhs._path;
+		_extension		= rhs._extension;
 		_query			= rhs._query;
 		_queryMap.clear();
 		_queryMap		= rhs._queryMap;
@@ -141,13 +139,13 @@ std::string	Uri::serializeUri() {
 std::string	Uri::getScheme() const								{	return _scheme;		}
 std::string	Uri::getAuthority() const							{	return _authority;	}
 std::string	Uri::getPath() const								{	return _path; 		}
+std::string	Uri::getExtension() const							{	return _extension;	}
 std::string	Uri::getQuery() const								{	return _query;		}
 std::string	Uri::getFragment() const							{	return _fragment;	}
 std::string	Uri::getUserInfo() const							{	return _userinfo;	}
 std::string	Uri::getHost() const								{	return _host;		}
 int			Uri::getPort() const								{	return _port;		}
 std::map<std::string, std::string> Uri::getQueryMap(void) const	{	return _queryMap;	}
-
 
 
 std::string	Uri::getExecutable(void) const {
@@ -193,17 +191,29 @@ void Uri::mapQueries() {
 	}
 }
 
-bool	Uri::isValidExtension()
-{
+
+void	Uri::setExtension() {
 	size_t periodPos = _path.rfind('.');
 	if (periodPos != std::string::npos) {
-		std::string actualExtention = _path.substr(periodPos);
-		for (std::string& checker : acceptedExtensions)
-			if (checker == actualExtention) {
-				std::cout << "matched extention: " << checker << "\n" << std::endl; 	//todo remove
-				return true;
-			}
+		_extension = _path.substr(periodPos);
 	}
+	else
+		_extension = "";
+}
+
+void	Uri::setPath(std::string path) {
+	_path = path;
+}
+
+
+bool	Uri::isValidExtension()
+{
+	std::string actualExtension = getExtension();
+	for (std::string& checker : acceptedExtensions)
+		if (checker == actualExtension) {
+			return true;
+		}
 	std::cout << "no matching extention for this path " << _path << "\n" << std::endl; 	//todo remove
 	return false;
 }
+

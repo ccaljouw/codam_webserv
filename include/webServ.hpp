@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/10 09:14:34 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/10 10:55:58 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,9 @@
 #include "CGI_Handler.hpp"
 #include <algorithm>
 #include <unistd.h>
+#include <filesystem>
+
+
 
 // utils.cpp
 void	checkTimeout(connection *conn);
