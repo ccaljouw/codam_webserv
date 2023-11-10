@@ -6,7 +6,7 @@
 #    By: ccaljouw <ccaljouw@student.42.fr>            +#+                      #
 #                                                    +#+                       #
 #    Created: 2023/06/21 08:27:49 by wingessorac   #+#    #+#                  #
-#    Updated: 2023/11/09 09:41:17 by cariencaljo   ########   odam.nl          #
+#    Updated: 2023/11/10 15:13:18 by carlo         ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ include common.mk
 
 TARGET	 	=	webserv
 OBJ_FILES	=	$(addprefix obj/, main.o utils.o \
-				$(addprefix parsing/, Uri.o HttpRequest.o HttpResponse.o helpers.o) \
+				$(addprefix parsing/, Uri.o HttpRequest.o HttpResponse.o) \
 				$(addprefix polling/, handlers.o registerEvents.o) \
 				$(addprefix config/, Server.o) \
 				$(addprefix CGI/, CGI_Handler.o))

@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/10 12:37:02 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/10 15:17:53 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,20 +16,30 @@
 #include <regex>
 #include <exception>
 #include <sstream>
-// #include <unistd.h>
 #include <cstring>
 
 
 //todo: move this to config class
-std::vector<std::string> acceptedExtensions = {
-	".txt",
-	".html",
-	".jgeg",
-	".jpg",
-	".png",
-	".gif",
-	".bmp",
-	".ico",
+// std::vector<std::string> allowedExtensions = {
+// 	".txt",
+// 	".html",
+// 	".jgeg",
+// 	".jpg",
+// 	".png",
+// 	".gif",
+// 	".bmp",
+// 	".ico",
+// };
+
+std::map<std::string, std::string> acceptedExtensions = {
+	{	".txt", "text/plain"	},
+	{	".html", "text/html"	},
+	{	".jpeg", "images/jpeg"	},
+	{	".jpg", "images/jpg"	},
+	{	".png", "images/png"	},
+	{	".gif", "images/gif"	},
+	{	".bmp", "images/bmp"	},
+	{	".ico", "images/ico"	},
 };
 	
 Uri::Uri() : _scheme(), _authority(), _path(), _extension(), _query(), _queryMap(), _fragment(), _userinfo(), _host(), _port()  {}
@@ -209,8 +219,8 @@ void	Uri::setPath(std::string path) {
 bool	Uri::isValidExtension()
 {
 	std::string actualExtension = getExtension();
-	for (std::string& checker : acceptedExtensions)
-		if (checker == actualExtension) {
+	for (auto& pair : acceptedExtensions)
+		if (pair.first == actualExtension) {
 			return true;
 		}
 	std::cout << "no matching extention for this path " << _path << "\n" << std::endl; 	//todo remove
