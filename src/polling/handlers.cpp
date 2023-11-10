@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/10 11:23:04 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/10 14:41:16 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,7 @@ void	newConnection(int epollFd, int serverFd, Server *server)
 	fd = accept(serverFd, nullptr, nullptr);
 	if (fd == -1)
 		return ;
-	if (register_client(epollFd,  fd, server) == -1)
-	{
-		//send internal server error cannot use write via epoll??
-		close(fd);
-	}
+	register_client(epollFd,  fd, server);
 }
 
 void readData(connection *conn) 

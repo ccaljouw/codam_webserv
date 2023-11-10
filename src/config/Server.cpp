@@ -13,6 +13,9 @@
 #include "webServ.hpp"
 #include <Server.hpp>
 #include "Config.hpp"
+#include <string.h>
+
+// ============= con-/destructors ================
 
 Server::Server() {}
 
@@ -20,43 +23,52 @@ Server::Server( Server const & src ) { (void)src; }
 
 Server::~Server() {	close(_fd); }
 
-/*
-** --------------------------------- METHODS ----------------------------------
-*/
+// ============= Methods ================
 
-void	Server::assign_name()
+int	Server::assign_name()
 {
-	if (bind(_fd, reinterpret_cast<struct sockaddr*>(&_serverAddr), sizeof(_serverAddr)))
-		std::cout << "error in bind" << std::endl;
+	if (bind(_fd, nullptr, 0) == -1) { // get adress
+		std::cerr << " error in bind\n";
+		return 1;
+	}
+	return 0;
 }
 
-void	Server::set_to_listen(int backlog)
+int	Server::set_to_listen(int backlog)
 {
-	if (listen(_fd, backlog))
-		std::cout << "error in listen" << std::endl;;
+	if (listen(_fd, backlog) == -1) {
+		std::cerr << " error in listen\n";
+		return 1;
+	}
+	return 0;
 }
 
-void Server::initServer(struct ServerSettings const & settings, int epollFd)
+int Server::initServer(struct ServerSettings const & settings, int epollFd)
 {
 	_fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
+	// _fd = 0;
+	_port = settings._port; // remove?
+	// _serverName = settings._serverName;
     _serverAddr.sin_family = AF_INET;
 	_serverAddr.sin_addr.s_addr = INADDR_ANY;
-	_port = settings._port; // remove?
 	_serverAddr.sin_port = htons(_port);
 
 	if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<struct sockaddr*>(&_serverAddr), sizeof(_serverAddr)))
-		std::cout << "error in setsockopt" << std::endl;
-	assign_name();
-	set_to_listen(5);
+	{
+		std::cerr << "\033[31;1mError " << settings._serverName << "\n" << strerror(errno) << " in setsockopt\033[0m" << std::endl;
+		return 1;
+	}
+	if (assign_name())
+		return 1;
+	if (set_to_listen(5))
+		return 1;
 	if (register_server(epollFd, this->_fd, this))
-		std::cout << "error in register event" << std::endl;;
-
+		return 1;
 	std::cout << "\033[32;1mServer: " << settings._serverName << ", listening on port "  << _port << "\033[0m" << std::endl;
+	return 0;
 }
-/*
-** --------------------------------- ACCESSOR ---------------------------------
-*/
 
+// ============= Getters ================
 int	Server::get_FD() const { return _fd; }
 std::string	Server::get_serverName() const { return _serverName; }
 std::string	Server::get_rootFolder() const { return _rootFolder; }
@@ -73,7 +85,8 @@ std::list<Server> initServers(std::list<struct ServerSettings> settings, int epo
 	for (std::list<struct ServerSettings>::iterator it = settings.begin(); it != settings.end(); ++it)
 	{
 		servers.push_back(Server());
-		servers.end()->initServer(*it, epollFd);
+		if (servers.end()->initServer(*it, epollFd) == 1)
+			servers.pop_back();
 	}
 	return (servers);
 }

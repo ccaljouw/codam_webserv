@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/07 22:13:44 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/10 15:18:24 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ try {
 	//catch errors	
 	} catch (const parsingException& exception) {
 		_requestStatus = exception.getErrorCode();
-		std::cout << exception.what() << std::endl; 
+		std::cerr << exception.what() << std::endl; 
 	}
 }
 

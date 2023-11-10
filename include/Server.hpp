@@ -21,16 +21,18 @@ class Server
 
 	public:
 
+		// ============= con-/destructors ================
 		Server();
 		Server( Server const & src );
 		Server &operator=( Server const & rhs ) = delete;
 		~Server();
 
-		
-		void	assign_name();
-		void	set_to_listen(int backlog);
-		void	initServer(struct ServerSettings const & settings, int epollFd);
+		// ============= methods ================
+		int	assign_name();
+		int	set_to_listen(int backlog);
+		int	initServer(struct ServerSettings const & settings, int epollFd);
 
+		// ============= getters ================
 		int			get_FD() const;
 		std::string	get_serverName() const;
 		std::string	get_rootFolder() const;
@@ -38,7 +40,6 @@ class Server
 		std::list<struct LocationSettings>	get_locations() const;
 		// std::list<ErrorPages>	get_errorPages() const;
 	
-		
 	private:
 
 		

@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/10 11:41:08 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/10 16:45:51 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,9 +62,9 @@ void	Config::_readServerSettings()
 		struct ServerSettings	server2;
 		server2._serverName = "Codam_Webserv2";
 		server2._port = 4242;
-		server2._rootFolder = "./data/html";
-		server2._index = "index.html";
-		server2._locations.push_back(html); //extra locations ???
+		server._rootFolder = "./data/html";
+		server._index = "index.html";
+		// server2._locations.push_back(html);
 		_servers.push_back(server2);
 		// end test ********
 	}

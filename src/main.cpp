@@ -6,34 +6,41 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/10 14:14:25 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/10 16:12:17 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "eventloop.hpp"
 #include "Config.hpp"
+ #include <string.h>
 
 int main(int argc, char **argv) {
 
-	Config conf;
-	
-	if (argc == 2) // deze check verplaatsen naar binnen Config class?
-		conf.setFile(argv[1]);
-	else if (argc != 1)
-		return (1);
-
-	// Create epoll file descriptor
-    int 				epollFd = epoll_create(1);
-    struct epoll_event	events[MAX_EVENTS];
-	std::list<Server> servers = initServers(conf.getServers(), epollFd);
-	
-	// loop for events
-    while (true) {
-        int numEvents = epoll_wait(epollFd, events, MAX_EVENTS, 0);
+	int 				epollFd;
+	struct epoll_event	events[MAX_EVENTS];
+	std::list<Server>	servers;
+	try {
+		Config conf;
+		if (argc == 2) // deze check verplaatsen naar binnen Config class?
+			conf.setFile(argv[1]);
+		else if (argc > 2) // wiilen we dit of negeren we gewoon de rest als er meer is meegegeven?
+			throw std::runtime_error("invallid nr of arguments");
+		if ((epollFd = epoll_create(1)) == -1)
+			throw std::runtime_error(std::string(strerror(errno)) + " in epoll_create");
+		if ((servers = initServers(conf.getServers(), epollFd)).size() == 0)
+			throw std::runtime_error("no succesfull server configuration");
+	}
+	catch(const std::runtime_error& e)
+	{
+		std::cerr << "\033[31;1mError\n" << e.what() << "\033[0m" << std::endl;
+		return 1;
+	}
+	while (true) {
+		int numEvents = epoll_wait(epollFd, events, MAX_EVENTS, 0);
 		
-        for (int i = 0; i < numEvents; i++) {
+		for (int i = 0; i < numEvents; i++) {
 			connection *conn = static_cast<connection *>(events[i].data.ptr);
-            if (conn->state == LISTENING && events[i].events & EPOLLIN)
+			if (conn->state == LISTENING && events[i].events & EPOLLIN)
 				newConnection(epollFd, conn->fd, conn->server);
 			if (conn->state == CLOSING || events[i].events & EPOLLERR || events[i].events & EPOLLHUP)
 				closeConnection(epollFd, conn);
@@ -45,8 +52,8 @@ int main(int argc, char **argv) {
 				readCGI(epollFd, conn);
 			if (conn->state == WRITING && events[i].events & EPOLLOUT)
 				writeData(conn);
-        }
-    }
-	// clear serverlist in signal handler!!
+		}
+	}
+	// delete remaining conn structs by setting flag in signal handling?
     return 0;
 }

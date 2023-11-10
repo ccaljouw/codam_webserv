@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 18:13:17 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/10 11:23:23 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/10 15:12:46 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ struct connection
 	states		state;
 	std::string	request;
 	std::string	response;
+	// int			requests; 
 	Server		*server;
 };
 
@@ -55,7 +56,7 @@ void	closeConnection(int epollFd, connection *conn);
 
 // registerEvents.cpp
 int		register_server(int epollFd, int fd, Server *server);
-int		register_client(int epollFd, int severFd, Server *Server);
+void	register_client(int epollFd, int severFd, Server *Server);
 int		register_CGI(int epollFd, int cgiFd, connection *conn);
 
 #endif
