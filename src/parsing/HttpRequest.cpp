@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/10 20:28:12 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/10 20:30:51 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ try {
 
 	// todo: get location and resulting location settings
 	uri = Uri(tempUriString);
-	std::cout << "path? " << uri.getScheme() << std::endl;
 	struct LocationSettings location = server->get_locations().front();
 	
 	// check method
