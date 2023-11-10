@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/10 16:15:42 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/10 16:37:57 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,7 @@ void handleRequest(int epollFd, connection *conn)
 					HttpResponse response(request);
 					response.setBody(request.uri.getPath());
 					response.addHeader("Content-type", contentType);
+					response.addHeader("Set-Cookie", "psst this is a test cookie. jum jum..");
 					setResponse(conn, response);
 					} 
 					
