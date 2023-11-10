@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 18:13:17 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/10 19:47:12 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/10 22:35:02 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	closeConnection(int epollFd, connection *conn);
 
 // registerEvents.cpp
 int		register_server(int epollFd, int fd, Server *server);
-void	register_client(int epollFd, int severFd, Server *Server);
+int		register_client(int epollFd, int severFd, Server *Server);
 int		register_CGI(int epollFd, int cgiFd, connection *conn);
 
 #endif

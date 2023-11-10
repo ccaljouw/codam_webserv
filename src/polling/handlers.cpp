@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/10 21:09:42 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/10 22:45:32 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,18 @@
 // TODO: check what to do if backlog is full?
 void	newConnection(int epollFd, int serverFd, Server *server) 
 {
-	int					fd;
+	int	fd;
 	
 	std::cout << "new connection request" << std::endl;
-	fd = accept(serverFd, nullptr, nullptr);
-	if (fd == -1)
-		return ;
-	register_client(epollFd,  fd, server);
+	try {
+		if ((fd = accept(serverFd, nullptr, nullptr)) == -1)
+			throw std::runtime_error("accept: " + std::string(strerror(errno)));
+		if (register_client(epollFd,  fd, server))
+			throw std::runtime_error("register client: " + std::string(strerror(errno)));
+	}
+	catch (std::runtime_error& e) {
+		std::cerr << "\033[31;1mError\n" << e.what() << "\n\033[0m";
+	}
 }
 
 void readData(connection *conn) 
@@ -39,11 +44,11 @@ void readData(connection *conn)
 	switch(bytesRead)
 	{
 		case -1:
-			std::cout << "error reading" << std::endl; // for testing
+			std::cerr << "error reading" << std::endl; // for testing
 			setErrorResponse(conn, 500);
 			break;
 		case 0:
-			std::cout << "nothing to read" << std::endl; //for testing
+			std::cerr << "nothing to read" << std::endl; //for testing
 			checkTimeout(conn);
 			break;
 		case BUFFER_SIZE:
@@ -161,7 +166,7 @@ void readCGI(int epollFd, connection *conn)
 	if (conn->response.empty() || bytesRead == -1)
 	{
 		setErrorResponse(conn, 500);
-		std::cout << "error reading CGI" << std::endl;
+		std::cerr << "\033[31;1mError\nproblem reading CGI\033[0m" << std::endl;
 	}
 }
 

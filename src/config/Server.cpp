@@ -26,7 +26,7 @@ Server::~Server() {	close(_fd); }
 
 int	Server::assign_name()
 {
-	if (bind(_fd, reinterpret_cast<struct sockaddr*>(&_serverAddr), sizeof(_serverAddr)) == -1) { // get adress
+	if (bind(_fd, reinterpret_cast<struct sockaddr*>(&_serverAddr), sizeof(_serverAddr)) == -1) { // check adress
 		return 1;
 	}
 	return 0;

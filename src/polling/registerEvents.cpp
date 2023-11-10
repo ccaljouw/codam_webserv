@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:48:35 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/10 21:47:11 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/10 22:36:12 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	register_server(int epollFd, int fd, Server *server)
 }
 
 // TODO: check connection
-void	register_client(int epollFd, int fd, Server *server)
+int	register_client(int epollFd, int fd, Server *server)
 {
 	struct epoll_event 	event;
 	connection			*conn;
@@ -42,10 +42,11 @@ void	register_client(int epollFd, int fd, Server *server)
     event.data.ptr = conn;
 	if (epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, &event) == -1)
 	{
-		std::cerr << "\033[31;1mError'n " << strerror(errno) << " in register client\033[0m" << std::endl;
 		close(fd);
 		delete conn;
+		return 1;
 	}
+	return 0;
 }
 
 int	register_CGI(int epollFd, int cgiFd, connection *conn)
