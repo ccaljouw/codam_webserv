@@ -57,10 +57,12 @@ void Server::initServer(struct ServerSettings const & settings, int epollFd)
 ** --------------------------------- ACCESSOR ---------------------------------
 */
 
-int		Server::get_FD() const
-{
-	return this->_fd;
-}
+int	Server::get_FD() const { return _fd; }
+std::string	Server::get_serverName() const { return _serverName; }
+std::string	Server::get_rootFolder() const { return _rootFolder; }
+std::string	Server::get_index() const { return _index; }
+std::list<struct LocationSettings>	Server::get_locations() const { return _locations; }
+// std::list<ErrorPages>	Server::get_errorPages() const { return _errorPages; }
 
 /* ************************************************************************** */
 

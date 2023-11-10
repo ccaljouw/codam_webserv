@@ -31,7 +31,13 @@ class Server
 		void	set_to_listen(int backlog);
 		void	initServer(struct ServerSettings const & settings, int epollFd);
 
-		int		get_FD() const;
+		int			get_FD() const;
+		std::string	get_serverName() const;
+		std::string	get_rootFolder() const;
+		std::string	get_index() const;
+		std::list<struct LocationSettings>	get_locations() const;
+		// std::list<ErrorPages>	get_errorPages() const;
+	
 		
 	private:
 
