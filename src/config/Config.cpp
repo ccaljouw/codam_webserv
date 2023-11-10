@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/10 19:57:02 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/10 20:48:34 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,9 @@ void	Config::_readServerSettings()
 		
 		html._locationName = "/html";
 		html._rootFolder = "./data/html";
-		html._allowedMethods.push_back("GET");
-		html._allowedMethods.push_back("POST");
-		html._allowedMethods.push_back("DELETE");
+		html._allowedMethods.insert("GET");
+		html._allowedMethods.insert("POST");
+		html._allowedMethods.insert("DELETE");
 		html._index = "index.html";
 
 		server._locations.push_back(html); //extra locations ???

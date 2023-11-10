@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/10 11:40:58 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/10 20:41:15 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,14 @@
 #include <list>
 #include <map>
 #include <iostream>
+#include <set>
 
 
 struct LocationSettings
 {
 	std::string					_locationName;
 	std::string					_rootFolder;
-	std::list<std::string>		_allowedMethods;
+	std::set<std::string>		_allowedMethods;
 	std::string					_index;
 	bool						_autoindex;
 };

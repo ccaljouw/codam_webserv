@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/10 20:30:51 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/10 20:48:53 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,20 +48,9 @@ try {
 	struct LocationSettings location = server->get_locations().front();
 	
 	// check method
-	bool isMethodSupported = false;
-	for (const auto& target : location._allowedMethods)
-	{
-		if (target == _method)
-		{
-			isMethodSupported = true;
-			break;
-		}
-	}
-	if (isMethodSupported == false)
+	if (location._allowedMethods.find(_method) == location._allowedMethods.end())
 		throw parsingException(405, "Method not Allowed");
 	
-	
-
 // 2. === parse headers ===
 
 	//define block of all headers
