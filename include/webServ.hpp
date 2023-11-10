@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   webServ.hpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 16:57:19 by carlo             #+#    #+#             */
-/*   Updated: 2023/11/09 14:02:03 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   webServ.hpp                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
+/*   Updated: 2023/11/10 09:14:34 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@
 void	checkTimeout(connection *conn);
 void	setResponse(connection *conn, HttpResponse resp);
 void	setErrorResponse(connection *conn, int error);
+
+
 
 // Success 2xx /  Error 4xx, 5xx / Redirection 3xx 
 // std::map<int, std::string> HttpStatusCodes = {

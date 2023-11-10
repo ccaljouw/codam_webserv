@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   handlers.cpp                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/09 14:37:27 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   handlers.cpp                                       :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
+/*   Updated: 2023/11/10 09:58:18 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void readData(connection *conn)
 	}
 }
 
-// TODO: a lot :)
+// TODO: switch tree with utils helpers
 void handleRequest(int epollFd, connection *conn) 
 {
 	(void)epollFd;
@@ -66,31 +66,62 @@ void handleRequest(int epollFd, connection *conn)
 		// Process the request data
 		HttpRequest request(conn->request);
 	
-		//case parsing error:
+		// Handle parsing error
 		if (request.getRequestStatus() != 200) {
-			setResponse(conn, HttpResponse(request));
+			setErrorResponse(conn, request.getRequestStatus());
 		} 
+		
+		// handle CGI
 		else if (request.uri.getExecutable() == "cgi-bin") { //todo:make configurable
-			// call CGI handler
 			//case error in cgi handler
 			if (cgiHandler(request.getUri(), conn, epollFd, request.getEnvArray()) == 1 ) 
 				setErrorResponse(conn, 500);	
 			else
 				// conn->state = CLOSING;
 				conn->state = IN_CGI;
-		}	
+		}
+		
+		//handle GET
 		else if (request.getMethod() == "GET") {
+			if (request.uri.isValidExtension() ) {
 				HttpResponse response(request);
-				response.setBody("." + request.uri.getPath()); //todo ugly solution maybe better parsing?
+				response.setBody("." + request.uri.getPath());
 				setResponse(conn, response);
+			}
+			else
+				throw HttpRequest::parsingException(501, "Extension not supported"); 
 		}
-		else { //anyrhing but CGI and GET for now
-			setResponse(conn, HttpResponse(request));
+		
+		//handle POST		
+		else if (request.getMethod() == "POST") {
+			if (request.uri.isValidExtension() ) {
+				std::cout << "add code for cgi POST" << std::endl;
+				throw HttpRequest::parsingException(405, "POST METHOD not supported yet"); // todo: remove line
+
+			}
+			else
+				throw HttpRequest::parsingException(501, "Extension not supported"); 
 		}
+
+		// handle DELETE
+		else if (request.getMethod() == "DELETE") {
+			if (request.uri.isValidExtension() ) {
+				std::cout << "add code for cgi DELete" << std::endl;
+				throw HttpRequest::parsingException(405, "DELETE METHOD not supported yet"); // todo: remove line
+			}
+			else
+				throw HttpRequest::parsingException(501, "Extension not supported");
+		}
+
+		// handle unsupported methods
+		else
+			throw HttpRequest::parsingException(405, "METHOD not supported");
+
+		
 	} catch (const HttpRequest::parsingException& exception) {
 		std::cout << "Error: " << exception.what() << std::endl;
-		setErrorResponse(conn, 404); // can catch multiple errors?
-	}
+		setErrorResponse(conn, exception.getErrorCode());
+		}
 }
 
 void readCGI(int epollFd, connection *conn)
@@ -115,6 +146,7 @@ void readCGI(int epollFd, connection *conn)
 		std::cout << "error reading CGI" << std::endl;
 	}
 }
+
 
 // TODO: check errors
 void writeData(connection *conn) 

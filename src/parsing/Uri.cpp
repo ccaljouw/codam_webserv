@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/09 11:39:13 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/10 09:57:04 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,23 @@
 // #include <unistd.h>
 #include <cstring>
 
-//todo: move this 
+//todo: move this to config class
 std::vector<std::string> acceptedExtensions = {
-	"txt",
-	"html",
-	"ico"
+	".txt",
+	".css",
+	".html",
+	".json",
+	".jgeg",
+	".jpg",
+	".png",
+	".gif",
+	".bmp",
+	".ico",
+	".pdf",
+	".csv",
 };
-
+	
+	
 Uri::Uri() : _scheme(), _authority(), _path(), _query(), _queryMap(), _fragment(), _userinfo(), _host(), _port()  {}
 
 
@@ -187,10 +197,13 @@ bool	Uri::isValidExtension()
 {
 	size_t periodPos = _path.rfind('.');
 	if (periodPos != std::string::npos) {
-		std::string actualExtention = _path.substr(periodPos + 1);
+		std::string actualExtention = _path.substr(periodPos);
 		for (std::string& checker : acceptedExtensions)
-			if (checker == actualExtention)
+			if (checker == actualExtention) {
+				std::cout << "matched extention: " << checker << "\n" << std::endl; 	//todo remove
 				return true;
+			}
 	}
+	std::cout << "no matching extention for this path " << _path << "\n" << std::endl; 	//todo remove
 	return false;
 }
