@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/10 16:08:24 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/10 16:15:42 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,56 +80,58 @@ void handleRequest(int epollFd, connection *conn)
 			else
 				// conn->state = CLOSING;
 				conn->state = IN_CGI;
-		}
 		
-		//handle GET
-		else if (request.getMethod() == "GET") {
+		} else {
 			std::string extension = request.uri.getExtension();
 			std::string contentType = request.uri.getMime(extension);
-			if (!contentType.empty())  {
-							
-				std::filesystem::path fullPath = "data/" + contentType + request.uri.getPath();
-				if (std::filesystem::is_regular_file(fullPath)) {
-					request.uri.setPath(fullPath.generic_string());
+			
+			//handle GET
+			if (request.getMethod() == "GET") {
+				if (!contentType.empty())  {
+								
+					std::filesystem::path fullPath = "data/" + contentType + request.uri.getPath();
+					if (std::filesystem::is_regular_file(fullPath)) {
+						request.uri.setPath(fullPath.generic_string());
+					}
+					else
+						throw HttpRequest::parsingException(404, "Path not found");
+		
+					HttpResponse response(request);
+					response.setBody(request.uri.getPath());
+					response.addHeader("Content-type", contentType);
+					setResponse(conn, response);
+					} 
+					
+				else
+					throw HttpRequest::parsingException(501, "Extension not supported");
+				}
+		
+		
+			//handle POST		
+			else if (request.getMethod() == "POST") {
+				if (!contentType.empty())  {
+					std::cout << "add code for cgi POST" << std::endl;
+					throw HttpRequest::parsingException(405, "POST METHOD not supported yet"); // todo: remove line
+
 				}
 				else
-					throw HttpRequest::parsingException(404, "Path not found");
-	
-				HttpResponse response(request);
-				response.setBody(request.uri.getPath());
-				response.addHeader("Content-type", contentType);
-				setResponse(conn, response);
-				} 
-				
-			else
-				throw HttpRequest::parsingException(501, "Extension not supported");
+					throw HttpRequest::parsingException(501, "Extension not supported"); 
 			}
-		
-		
-		//handle POST		
-		else if (request.getMethod() == "POST") {
-			if (request.uri.isValidExtension() ) {
-				std::cout << "add code for cgi POST" << std::endl;
-				throw HttpRequest::parsingException(405, "POST METHOD not supported yet"); // todo: remove line
 
+			// handle DELETE
+			else if (request.getMethod() == "DELETE") {
+				if (!contentType.empty())  {
+					std::cout << "add code for cgi DELETE" << std::endl;
+					throw HttpRequest::parsingException(405, "DELETE METHOD not supported yet"); // todo: remove line
+				}
+				else
+					throw HttpRequest::parsingException(501, "Extension not supported");
 			}
+
+			// handle unsupported methods
 			else
-				throw HttpRequest::parsingException(501, "Extension not supported"); 
+				throw HttpRequest::parsingException(405, "METHOD not supported");
 		}
-
-		// handle DELETE
-		else if (request.getMethod() == "DELETE") {
-			if (request.uri.isValidExtension() ) {
-				std::cout << "add code for cgi DELETE" << std::endl;
-				throw HttpRequest::parsingException(405, "DELETE METHOD not supported yet"); // todo: remove line
-			}
-			else
-				throw HttpRequest::parsingException(501, "Extension not supported");
-		}
-
-		// handle unsupported methods
-		else
-			throw HttpRequest::parsingException(405, "METHOD not supported");
 
 		
 	} catch (const HttpRequest::parsingException& exception) {
