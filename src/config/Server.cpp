@@ -27,7 +27,7 @@ Server::~Server() {	close(_fd); }
 
 int	Server::assign_name()
 {
-	if (bind(_fd, nullptr, 0) == -1) { // get adress
+	if (bind(_fd, reinterpret_cast<struct sockaddr*>(&_serverAddr), sizeof(_serverAddr)) == -1) { // get adress
 		std::cerr << " error in bind\n";
 		return 1;
 	}
