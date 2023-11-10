@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/10 15:17:53 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/10 16:09:10 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,18 +19,6 @@
 #include <cstring>
 
 
-//todo: move this to config class
-// std::vector<std::string> allowedExtensions = {
-// 	".txt",
-// 	".html",
-// 	".jgeg",
-// 	".jpg",
-// 	".png",
-// 	".gif",
-// 	".bmp",
-// 	".ico",
-// };
-
 std::map<std::string, std::string> acceptedExtensions = {
 	{	".txt", "text/plain"	},
 	{	".html", "text/html"	},
@@ -41,8 +29,9 @@ std::map<std::string, std::string> acceptedExtensions = {
 	{	".bmp", "images/bmp"	},
 	{	".ico", "images/ico"	},
 };
-	
-Uri::Uri() : _scheme(), _authority(), _path(), _extension(), _query(), _queryMap(), _fragment(), _userinfo(), _host(), _port()  {}
+
+
+Uri::Uri() : _scheme(), _authority(), _path(), _extension(), _query(), _queryMap(), _fragment(), _userinfo(), _host(), _port() {}
 
 
 // regex teken directly from RFC 2396 : ^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))? added R for ignoring escape characterss
@@ -201,6 +190,15 @@ void Uri::mapQueries() {
 	}
 }
 
+std::string	Uri::getMime(std::string key) const {
+	for (const auto& pair : acceptedExtensions ) {
+		if ( key == pair.first)
+			return pair.second;
+	}
+	return "";
+}
+
+
 
 void	Uri::setExtension() {
 	size_t periodPos = _path.rfind('.');
@@ -219,7 +217,7 @@ void	Uri::setPath(std::string path) {
 bool	Uri::isValidExtension()
 {
 	std::string actualExtension = getExtension();
-	for (auto& pair : acceptedExtensions)
+	for (const auto& pair : acceptedExtensions)
 		if (pair.first == actualExtension) {
 			return true;
 		}

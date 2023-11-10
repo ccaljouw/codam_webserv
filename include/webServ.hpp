@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/10 10:55:58 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/10 15:28:28 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,13 @@
 #include <filesystem>
 
 
-
 // utils.cpp
 void	checkTimeout(connection *conn);
 void	setResponse(connection *conn, HttpResponse resp);
 void	setErrorResponse(connection *conn, int error);
+
+//defined in Uri.cpp
+extern std::map<std::string, std::string> acceptedExtensions;
 
 
 

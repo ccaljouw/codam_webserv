@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/10 12:37:48 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/10 16:08:24 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,39 +84,27 @@ void handleRequest(int epollFd, connection *conn)
 		
 		//handle GET
 		else if (request.getMethod() == "GET") {
-			if (request.uri.isValidExtension() ) {
-				
-				//default to html
-				std::filesystem::path htmlPath = "data/html" + request.uri.getPath();
-				std::filesystem::path imgPath = "data/images" + request.uri.getPath();
-				std::string extension = request.uri.getExtension();
-
-				//check if HTML path is valid and set it
-				if (std::filesystem::is_regular_file(htmlPath)) {
-					request.uri.setPath(htmlPath.generic_string());
+			std::string extension = request.uri.getExtension();
+			std::string contentType = request.uri.getMime(extension);
+			if (!contentType.empty())  {
+							
+				std::filesystem::path fullPath = "data/" + contentType + request.uri.getPath();
+				if (std::filesystem::is_regular_file(fullPath)) {
+					request.uri.setPath(fullPath.generic_string());
 				}
-				
-				//case not html or txt > img
-				else if(extension != ".html" && extension != ".txt") {
-
-					//check if IMG path is valid and set it
-					if (std::filesystem::is_regular_file(imgPath)) {
-						request.uri.setPath(imgPath.generic_string());
-					}
-					else
-						throw HttpRequest::parsingException(404, "Path not found");
-				} 
 				else
 					throw HttpRequest::parsingException(404, "Path not found");
-								
+	
 				HttpResponse response(request);
 				response.setBody(request.uri.getPath());
-				//todo: set content type
+				response.addHeader("Content-type", contentType);
 				setResponse(conn, response);
-			}
+				} 
+				
 			else
 				throw HttpRequest::parsingException(501, "Extension not supported");
-		}
+			}
+		
 		
 		//handle POST		
 		else if (request.getMethod() == "POST") {

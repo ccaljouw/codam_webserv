@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:12:15 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/10 10:45:30 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/10 15:33:07 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,10 @@ class Uri {
 		int									getPort(void) const;
 		std::map<std::string, std::string>	getQueryMap(void) const;
 
-		
+		std::string							getMime(std::string key) const;
 		std::string							getExecutable(void) const;
 		std::string							getPathInfo(void) const;
+		
 
 
 		// ========== Setters ===========
@@ -52,8 +53,9 @@ class Uri {
 		void								setExtension(void);
 		void								setPath(std::string path);
 
+		// ========== other ==========
 		bool								isValidExtension(void);
-		
+
 	private:
 		void								splitAuthority(void);
 		
@@ -67,6 +69,7 @@ class Uri {
 		std::string							_userinfo;
 		std::string							_host;
 		int									_port;
+		
 };
 
 

@@ -123,7 +123,7 @@ void HttpResponse::fillStandardHeaders() {
 	// addHeader("Set-Cookie", "...");
 	// addHeader("Transfer-Encoding", "chunked");
 	addHeader("Date", getTimeStamp());
-	addHeader("Content-type", "text/html; charset=utf-8");
+	// addHeader("Content-type", "text/html");
 	addHeader("Server", "CODAM_WEBSERV");
 	
 	size_t bodyLength = _body.length();
