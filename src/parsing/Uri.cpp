@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/10 16:09:10 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/10 16:34:45 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,12 @@
 std::map<std::string, std::string> acceptedExtensions = {
 	{	".txt", "text/plain"	},
 	{	".html", "text/html"	},
-	{	".jpeg", "images/jpeg"	},
-	{	".jpg", "images/jpg"	},
-	{	".png", "images/png"	},
-	{	".gif", "images/gif"	},
-	{	".bmp", "images/bmp"	},
-	{	".ico", "images/ico"	},
+	{	".jpeg", "image/jpeg"	},
+	{	".jpg", "image/jpg"	},
+	{	".png", "image/png"	},
+	{	".gif", "image/gif"	},
+	{	".bmp", "image/bmp"	},
+	{	".ico", "image/x-icon"	},
 };
 
 

@@ -111,24 +111,24 @@ void HttpResponse::setBody(const std::string& filePath)	{
 	}
 	size_t bodyLength = _body.length();
 
-	setHeader("Content-Length", std::to_string(bodyLength));
 	setHeader("Last-Modified", getTimeStamp());
+	setHeader("Content-Length", std::to_string(bodyLength));
 }
 
 
 void HttpResponse::fillStandardHeaders() {
 	// addHeader("Connection", "keep-alive:);
-	// addHeader("Cache-Control",  "max-age=0");
+	addHeader("Cache-Control",  "public, max-age=86400");
 	// addHeader("Keep-Alive", "timeout=5, max=997");
 	// addHeader("Set-Cookie", "...");
 	// addHeader("Transfer-Encoding", "chunked");
-	addHeader("Date", getTimeStamp());
 	// addHeader("Content-type", "text/html");
+	addHeader("Date", getTimeStamp());
 	addHeader("Server", "CODAM_WEBSERV");
 	
 	size_t bodyLength = _body.length();
-	setHeader("Content-Length", std::to_string(bodyLength));
 	setHeader("Last-Modified", getTimeStamp());
+	setHeader("Content-Length", std::to_string(bodyLength));
 }
 
 
