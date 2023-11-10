@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/10 16:37:57 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/10 16:46:14 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,13 +86,15 @@ void handleRequest(int epollFd, connection *conn)
 			std::string contentType = request.uri.getMime(extension);
 			
 			//handle GET
-			if (request.getMethod() == "GET") {
-				if (!contentType.empty())  {
+			if (request.getMethod() == "GET")
+			{
+				if (!contentType.empty())
+				{
 								
 					std::filesystem::path fullPath = "data/" + contentType + request.uri.getPath();
-					if (std::filesystem::is_regular_file(fullPath)) {
+					if (std::filesystem::is_regular_file(fullPath))
 						request.uri.setPath(fullPath.generic_string());
-					}
+					
 					else
 						throw HttpRequest::parsingException(404, "Path not found");
 		
@@ -101,27 +103,30 @@ void handleRequest(int epollFd, connection *conn)
 					response.addHeader("Content-type", contentType);
 					response.addHeader("Set-Cookie", "psst this is a test cookie. jum jum..");
 					setResponse(conn, response);
-					} 
+				} 
 					
 				else
 					throw HttpRequest::parsingException(501, "Extension not supported");
-				}
+			}
 		
 		
 			//handle POST		
-			else if (request.getMethod() == "POST") {
-				if (!contentType.empty())  {
+			else if (request.getMethod() == "POST")
+			{
+				if (!contentType.empty())
+				{
 					std::cout << "add code for cgi POST" << std::endl;
 					throw HttpRequest::parsingException(405, "POST METHOD not supported yet"); // todo: remove line
-
 				}
 				else
 					throw HttpRequest::parsingException(501, "Extension not supported"); 
 			}
 
 			// handle DELETE
-			else if (request.getMethod() == "DELETE") {
-				if (!contentType.empty())  {
+			else if (request.getMethod() == "DELETE")
+			{
+				if (!contentType.empty())
+				{
 					std::cout << "add code for cgi DELETE" << std::endl;
 					throw HttpRequest::parsingException(405, "DELETE METHOD not supported yet"); // todo: remove line
 				}
@@ -135,10 +140,12 @@ void handleRequest(int epollFd, connection *conn)
 		}
 
 		
-	} catch (const HttpRequest::parsingException& exception) {
+	} 
+	catch (const HttpRequest::parsingException& exception)
+	{
 		std::cout << "Error: " << exception.what() << std::endl;
 		setErrorResponse(conn, exception.getErrorCode());
-		}
+	}
 }
 
 void readCGI(int epollFd, connection *conn)
