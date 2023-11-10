@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/10 11:55:15 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/10 14:14:25 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
 	// Create epoll file descriptor
     int 				epollFd = epoll_create(1);
     struct epoll_event	events[MAX_EVENTS];
-	std::list<Server *> servers = initServers(conf.getServers(), epollFd);
+	std::list<Server> servers = initServers(conf.getServers(), epollFd);
 	
 	// loop for events
     while (true) {

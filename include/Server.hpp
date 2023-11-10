@@ -21,15 +21,15 @@ class Server
 
 	public:
 
-		Server() = delete;
-		Server(struct ServerSettings const & settings, int epollFd);
-		Server( Server const & src ) = delete;
+		Server();
+		Server( Server const & src );
 		Server &operator=( Server const & rhs ) = delete;
 		~Server();
 
 		
 		void	assign_name();
 		void	set_to_listen(int backlog);
+		void	initServer(struct ServerSettings const & settings, int epollFd);
 
 		int		get_FD() const;
 		
@@ -48,6 +48,6 @@ class Server
 
 } ;
 
-std::list<Server *> initServers(std::list<struct ServerSettings> settings, int epollFd);
+std::list<Server> initServers(std::list<struct ServerSettings> settings, int epollFd);
 
 #endif /* **************************************************** Server_H */
