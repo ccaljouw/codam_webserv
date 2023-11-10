@@ -2,8 +2,6 @@
 
 import datetime, os, cgi, cgitb
 
-cgitb.enable()
-
 form = cgi.FieldStorage()
 
 if 'filename' in form:
@@ -23,7 +21,7 @@ body = f"""<html>
 	<body>
 		<h1>{message}</h1>
 	</body>
-</html>\0"""
+</html>"""
 
 header = f"""HTTP/1.1 200\r
 Content-Length: {len(body)}\r
@@ -34,3 +32,4 @@ Server: CODAM_WEBSERV\r\n\r"""
 
 print(header)
 print(body)
+print("\0")

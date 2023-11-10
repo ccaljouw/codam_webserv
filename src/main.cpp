@@ -3,16 +3,28 @@
 /*                                                        ::::::::            */
 /*   main.cpp                                           :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/08 14:05:14 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/10 09:14:32 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <eventloop.hpp>
+#include "eventloop.hpp"
+#include "Config.hpp"
 
-int main() {
+int main(int argc, char **argv) {
+
+	if (argc == 1) {
+		Config conf;
+		std::cout << conf.getServers().front()._serverName << std::endl;}
+	else if (argc == 2)
+		Config conf(argv[1]);
+	else
+		return (1);
+
+
+	// Create epoll file descriptor
     int 				epollFd = epoll_create(1);
     struct epoll_event	events[MAX_EVENTS];
     
