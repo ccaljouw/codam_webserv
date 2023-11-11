@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   eventloop.hpp                                      :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 18:13:17 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/09 13:55:05 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/10 11:23:23 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,13 @@
 # include <sys/epoll.h>
 #include <unistd.h>
 
-# include <Server.hpp>
+# include "Server.hpp"
 
 # define MAX_EVENTS 10
 # define BUFFER_SIZE 1024
 
 enum	states {
 	LISTENING,
-	CONNECTED,
 	READING,
 	HANDLING,
 	IN_CGI,
@@ -43,21 +42,20 @@ struct connection
 	states		state;
 	std::string	request;
 	std::string	response;
+	Server		*server;
 };
 
 // handlers.cpp
-void	newConnection(int epollFd, int fd);
-void	readData(int epollFd, connection *conn);
+void	newConnection(int epollFd, int serverFd, Server *server);
+void	readData(connection *conn);
 void	handleRequest(int epollFd, connection *conn);
 void	readCGI(int epollFd, connection *conn);
-void	handleError(connection *conn);
-void	writeData(int epollFd, connection *conn);
+void	writeData(connection *conn);
 void	closeConnection(int epollFd, connection *conn);
 
 // registerEvents.cpp
-void	register_server(int epollFd, int fd);
-void	register_client(int epollFd, int severFd);
-void	register_CGI(int epollFd, int cgiFd, connection *conn);
-void	modifyEvent(int epollFd, int flag, connection *conn);
+int		register_server(int epollFd, int fd, Server *server);
+int		register_client(int epollFd, int severFd, Server *Server);
+int		register_CGI(int epollFd, int cgiFd, connection *conn);
 
 #endif

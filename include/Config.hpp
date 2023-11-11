@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/10 18:58:05 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/11 10:42:02 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
 
-#include <string>	
+#include <string>
 #include <list>
 #include <map>
 #include <iostream>
@@ -33,7 +33,8 @@ struct ServerSettings
 {
 	std::string							_serverName;
 	std::string							_rootFolder;
-	unsigned int						_port;
+	uint16_t							_port;
+	// in_addr_t							_host;
 	std::string							_index;
 	std::list<struct LocationSettings>	_locations;
 	// std::list<ErrorPages>		_errorPages;

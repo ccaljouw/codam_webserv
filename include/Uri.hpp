@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:12:15 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/07 22:21:01 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/09 11:10:58 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,9 @@ class Uri {
 
 		// ========== Setters ===========
 		void								mapQueries(void);
+
+		bool								isValidExtension(void);
+
 
 		
 	private:

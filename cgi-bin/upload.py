@@ -2,8 +2,6 @@
 
 import datetime, os, cgi, cgitb, sys
 
-cgitb.enable()
-
 form = cgi.FieldStorage()
 
 for value in form.keys():

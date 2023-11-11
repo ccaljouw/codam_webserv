@@ -1,17 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   webServ.hpp                                        :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/07 08:56:43 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   webServ.hpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/03 16:57:19 by carlo             #+#    #+#             */
+/*   Updated: 2023/11/09 14:02:03 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-//todo :1: parse error and response  2:  when in cgi  3: cgi succes 4:handle not cgi
 
 #pragma once
 #ifndef WEBSERV_H
@@ -26,13 +24,17 @@
 #include<vector>
 #include<string>
 
+#include "eventloop.hpp"
 #include "HttpRequest.hpp"
 #include "HttpResponse.hpp"
 #include "CGI_Handler.hpp"
-#include "eventloop.hpp"
 #include <algorithm>
 #include <unistd.h>
 
+// utils.cpp
+void	checkTimeout(connection *conn);
+void	setResponse(connection *conn, HttpResponse resp);
+void	setErrorResponse(connection *conn, int error);
 
 // Success 2xx /  Error 4xx, 5xx / Redirection 3xx 
 // std::map<int, std::string> HttpStatusCodes = {

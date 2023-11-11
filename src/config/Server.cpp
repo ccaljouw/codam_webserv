@@ -12,68 +12,13 @@
 
 #include "webServ.hpp"
 #include <Server.hpp>
+#include "Config.hpp"
 
-/*
-** ------------------------------- CONSTRUCTOR --------------------------------
-*/
+Server::Server() {}
 
-Server::Server()
-{
-}
+Server::Server( Server const & src ) { (void)src; }
 
-Server::Server( const Server & src )
-{
-	(void)src;
-}
-
-Server::Server(uint16_t port, int epollFd)
-{
-	_fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
-    _serverAddr.sin_family = AF_INET;
-	_serverAddr.sin_addr.s_addr = INADDR_ANY;
-	_serverAddr.sin_port = htons(port);
-	_port = port; // remove?
-
-	setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<struct sockaddr*>(&_serverAddr), sizeof(_serverAddr));
-	assign_name();
-	set_to_listen(5);
-	register_server(epollFd, this->_fd);
-
-	std::cout << "\033[32;1mServer listening on port " \
-			  << port << "\033[0m" << std::endl;
-}
-
-/*
-** -------------------------------- DESTRUCTOR --------------------------------
-*/
-
-Server::~Server()
-{
-	close(_fd);
-}
-
-
-/*
-** --------------------------------- OVERLOAD ---------------------------------
-*/
-
-Server &				Server::operator=( Server const & rhs )
-{
-	// if ( this != &rhs )
-	// {
-	// 	this->_value = rhs.getValue();
-	// }
-	(void)rhs;
-	return *this;
-}
-
-std::ostream &			operator<<( std::ostream & o, Server const & i )
-{
-	//o << "Value = " << i.getValue();
-	(void)i;
-	return o;
-}
-
+Server::~Server() {	close(_fd); }
 
 /*
 ** --------------------------------- METHODS ----------------------------------
@@ -81,21 +26,54 @@ std::ostream &			operator<<( std::ostream & o, Server const & i )
 
 void	Server::assign_name()
 {
-	bind(_fd, reinterpret_cast<struct sockaddr*>(&_serverAddr), sizeof(_serverAddr));
+	if (bind(_fd, reinterpret_cast<struct sockaddr*>(&_serverAddr), sizeof(_serverAddr)))
+		std::cout << "error in bind" << std::endl;
 }
 
 void	Server::set_to_listen(int backlog)
 {
-	listen(_fd, backlog);
+	if (listen(_fd, backlog))
+		std::cout << "error in listen" << std::endl;;
 }
 
+void Server::initServer(struct ServerSettings const & settings, int epollFd)
+{
+	_fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
+    _serverAddr.sin_family = AF_INET;
+	_serverAddr.sin_addr.s_addr = INADDR_ANY;
+	_port = settings._port; // remove?
+	_serverAddr.sin_port = htons(_port);
+
+	if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<struct sockaddr*>(&_serverAddr), sizeof(_serverAddr)))
+		std::cout << "error in setsockopt" << std::endl;
+	assign_name();
+	set_to_listen(5);
+	if (register_server(epollFd, this->_fd, this))
+		std::cout << "error in register event" << std::endl;;
+
+	std::cout << "\033[32;1mServer: " << settings._serverName << ", listening on port "  << _port << "\033[0m" << std::endl;
+}
 /*
 ** --------------------------------- ACCESSOR ---------------------------------
 */
 
-int		Server::get_FD()
-{
-	return this->_fd;
-}
+int	Server::get_FD() const { return _fd; }
+std::string	Server::get_serverName() const { return _serverName; }
+std::string	Server::get_rootFolder() const { return _rootFolder; }
+std::string	Server::get_index() const { return _index; }
+std::list<struct LocationSettings>	Server::get_locations() const { return _locations; }
+// std::list<ErrorPages>	Server::get_errorPages() const { return _errorPages; }
 
 /* ************************************************************************** */
+
+std::list<Server> initServers(std::list<struct ServerSettings> settings, int epollFd)
+{
+	std::list<Server> servers;
+
+	for (std::list<struct ServerSettings>::iterator it = settings.begin(); it != settings.end(); ++it)
+	{
+		servers.push_back(Server());
+		servers.end()->initServer(*it, epollFd);
+	}
+	return (servers);
+}
