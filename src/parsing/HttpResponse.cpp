@@ -127,6 +127,8 @@ void HttpResponse::fillStandardHeaders() {
 	// addHeader("Set-Cookie", "...");
 	// addHeader("Transfer-Encoding", "chunked");
 	// addHeader("Content-type", "text/html");
+
+	// setHeader("Set-Cookie", "name=webserv42, id=000, trigger=000");
 	addHeader("Cache-Control",  "public, max-age=86400");
 	addHeader("Date", getTimeStamp());
 	addHeader("Server", "CODAM_WEBSERV");

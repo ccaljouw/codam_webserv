@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/10 16:46:14 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/11 16:28:15 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,14 +58,14 @@ void readData(connection *conn)
 	}
 }
 
-// TODO: switch tree with utils helpers
+// TODO: switch tree with utils helpers, add cookieId to other methods
 void handleRequest(int epollFd, connection *conn) 
 {
-	(void)epollFd;
-
 	try {
 		// Process the request data
 		HttpRequest request(conn->request);
+	
+		std::string cookieId = checkAndSetCookie(conn, request);
 	
 		// Handle parsing error
 		if (request.getRequestStatus() != 200) {
@@ -90,7 +90,6 @@ void handleRequest(int epollFd, connection *conn)
 			{
 				if (!contentType.empty())
 				{
-								
 					std::filesystem::path fullPath = "data/" + contentType + request.uri.getPath();
 					if (std::filesystem::is_regular_file(fullPath))
 						request.uri.setPath(fullPath.generic_string());
@@ -101,7 +100,7 @@ void handleRequest(int epollFd, connection *conn)
 					HttpResponse response(request);
 					response.setBody(request.uri.getPath());
 					response.addHeader("Content-type", contentType);
-					response.addHeader("Set-Cookie", "psst this is a test cookie. jum jum..");
+					response.setHeader("Set-Cookie", cookieId);
 					setResponse(conn, response);
 				} 
 					

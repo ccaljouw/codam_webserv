@@ -1,4 +1,5 @@
 #include<string>
+#include<sstream>
 #include<ctime>
 #include "webServ.hpp"
 
@@ -38,3 +39,36 @@ void	setErrorResponse(connection *conn, int error)
 	setResponse(conn, response);
 }
 
+
+// format for future cookie: setHeader("Set-Cookie", "name=webserv42, id=000, trigger=000"); 
+//todo: more cookies than one	
+std::string		checkAndSetCookie(connection* conn, HttpRequest& request) {
+
+	std::string	cookieValue	=	request.getHeaderValue("cookie");
+
+	//trim leading whitespace	
+	size_t		first		=	cookieValue.find_first_not_of(" ");
+	cookieValue 			=	(first == std::string::npos) ? "" :  cookieValue.substr(first);
+
+	if (!cookieValue.empty())
+	{
+		for (auto& pair : conn->knownClientIds)
+		{
+			if (pair.first == cookieValue)
+			{
+				pair.second += 1;
+				std::cout << "known user_id ("<< cookieValue << "). This ID has visited us " << pair.second << " times!" << std::endl;
+				return cookieValue;
+			}
+		}
+	}
+
+	//set cookie for empty and unknow client using current time-hash
+	std::hash<std::time_t>		timeHash;
+	std::time_t now			=	std::time(nullptr);
+	size_t hashValue		=	timeHash(now);
+
+	std::string newCookieValue = std::to_string(hashValue);
+	conn->knownClientIds.insert(std::make_pair(newCookieValue, 1));
+	return newCookieValue;
+}

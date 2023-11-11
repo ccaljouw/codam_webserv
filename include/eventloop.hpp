@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   eventloop.hpp                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 18:13:17 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/09 15:03:49 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   eventloop.hpp                                      :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 18:13:17 by cariencaljo   #+#    #+#                 */
+/*   Updated: 2023/11/11 16:09:59 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <netinet/in.h>
 # include <sys/epoll.h>
 #include <unistd.h>
+#include <map>
 
 # include "Server.hpp"
 
@@ -35,13 +36,15 @@ enum	states {
 	CLOSING
 };
 
+//todo map > unordered map for faster lookup
 struct connection
 {
-	int			fd;
-	int			cgiFd;
-	states		state;
-	std::string	request;
-	std::string	response;
+	int							fd;
+	int							cgiFd;
+	states						state;
+	std::string					request;
+	std::string					response;
+	std::map<std::string, int>	knownClientIds;
 };
 
 // handlers.cpp
