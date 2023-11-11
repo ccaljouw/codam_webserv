@@ -50,7 +50,7 @@ int Server::initServer(struct ServerSettings const & settings, int epollFd)
 		_serverAddr.sin_addr.s_addr = INADDR_ANY;
 		_serverAddr.sin_port = htons(_port);
 	
-		if ((_fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0)) == -1) 
+		if ((_fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK , 0)) == -1) 
 			throw ServerException(_serverName + " socket: ");
 		if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<struct sockaddr*>(&_serverAddr), sizeof(_serverAddr)))
 			throw ServerException(_serverName + " setsocket: ");
