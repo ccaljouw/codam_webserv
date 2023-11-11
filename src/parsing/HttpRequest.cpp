@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/10 21:06:34 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/11 22:07:32 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,9 @@ try {
 
 // 3. === parse body ===
 	_body = request.substr(headersEnd + 4);
+
+//todoadd check headers for e.g. cookies
+
 	}
 	//catch block	
 	catch (const parsingException& exception)
@@ -128,6 +131,13 @@ std::string	HttpRequest::getUri(void)											{	return uri.serializeUri();	}
 std::multimap<std::string, std::string>	HttpRequest::getHeaders(void) const		{	return _headers; 			}
 int	HttpRequest::getRequestStatus(void) const									{	return _requestStatus;		}
 
+std::string HttpRequest::getHeaderValue(std::string key) const {
+	for (const auto& headerPair : _headers) {
+		if (headerPair.first == key)
+			return headerPair.second;
+	}
+	return "";
+}
 
 
 char**		HttpRequest::getEnvArray(void) const {
@@ -142,7 +152,7 @@ char**		HttpRequest::getEnvArray(void) const {
 		mergedMap.insert(queryPair);
 	
 	
-	// make c_string array frrom multimap. first a vector of c_strings.	
+	// make c_string array from multimap. first a vector of c_strings.	
 	std::vector<char*> c_strings;
 	
 	for (auto& pair : mergedMap)
@@ -158,7 +168,7 @@ char**		HttpRequest::getEnvArray(void) const {
 	
 	return envArray;
 }
-	
+
 
 
 //========= Setters ===============================

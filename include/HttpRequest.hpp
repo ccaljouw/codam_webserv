@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/10 20:01:29 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/11 22:07:16 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ class HttpRequest {
 		std::string									getUri(void);
 		std::multimap<std::string, std::string>		getHeaders(void) const;
 		int											getRequestStatus(void) const;
+		std::string									getHeaderValue(std::string) const;
 		char** 										getEnvArray(void) const; //includes header and queries merged into one array
 			
 

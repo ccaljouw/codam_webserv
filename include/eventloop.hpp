@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 18:13:17 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/10 22:35:02 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/11 22:30:17 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <netinet/in.h>
 # include <sys/epoll.h>
 #include <unistd.h>
+#include <map>
 
 # include "Server.hpp"
 
@@ -35,15 +36,16 @@ enum	states {
 	CLOSING
 };
 
+//todo map > unordered map for faster lookup
 struct connection
 {
-	int			fd;
-	int			cgiFd;
-	states		state;
-	std::string	request;
-	std::string	response;
-	// int			requests; 
+	int							fd;
+	int							cgiFd;
+	states						state;
+	std::string					request;
+	std::string					response;
 	Server		*server;
+	// int			requests; 
 };
 
 // handlers.cpp

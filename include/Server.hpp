@@ -28,10 +28,12 @@ class Server
 		Server &operator=( Server const & rhs ) = delete;
 		~Server();
 
+		
 		// ============= methods ================
 		int	assign_name();
 		int	set_to_listen(int backlog);
 		int	initServer(struct ServerSettings const & settings, int epollFd);
+		void	addClientId(std::string newCookieValue);
 
 		// ============= getters ================
 		int			get_FD() const;
@@ -39,8 +41,10 @@ class Server
 		std::string	get_rootFolder() const;
 		std::string	get_index() const;
 		std::list<struct LocationSettings>	get_locations() const;
+		std::map<std::string, int>	get_knownClientIds() const;
 		// std::list<ErrorPages>	get_errorPages() const;
 		
+
 		// ============= exception ================
 		class ServerException : public std::exception {
 			public:
@@ -64,6 +68,8 @@ class Server
 		// in_addr_t							_host;
 		std::string							_index;
 		std::list<struct LocationSettings>	_locations;
+		std::map<std::string, int>			_knownClientIds;
+
 		// std::list<ErrorPages>		_errorPages;
 
 } ;

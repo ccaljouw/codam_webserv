@@ -69,12 +69,17 @@ int Server::initServer(struct ServerSettings const & settings, int epollFd)
 	return 0;
 }
 
+void	Server::addClientId(std::string newCookieValue) {
+	_knownClientIds.insert(std::make_pair(newCookieValue, 1));
+}
+
 // ============= Getters ================
 int	Server::get_FD() const { return _fd; }
 std::string	Server::get_serverName() const { return _serverName; }
 std::string	Server::get_rootFolder() const { return _rootFolder; }
 std::string	Server::get_index() const { return _index; }
 std::list<struct LocationSettings>	Server::get_locations() const { return _locations; }
+std::map<std::string, int>	Server::get_knownClientIds() const { return _knownClientIds; }
 // std::list<ErrorPages>	Server::get_errorPages() const { return _errorPages; }
 
 /* ************************************************************************** */
