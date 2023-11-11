@@ -131,7 +131,7 @@ void HttpResponse::fillStandardHeaders() {
 	// setHeader("Set-Cookie", "name=webserv42, id=000, trigger=000");
 	addHeader("Cache-Control",  "public, max-age=86400");
 	addHeader("Date", getTimeStamp());
-	addHeader("Server", "CODAM_WEBSERV");
+	addHeader("Server", HOST);
 	
 	size_t bodyLength = _body.length();
 	setHeader("Last-Modified", getTimeStamp());

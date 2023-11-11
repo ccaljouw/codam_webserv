@@ -6,11 +6,12 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/11 16:38:56 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/11 22:07:11 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HttpRequest.hpp"
+#include "webServ.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -83,17 +84,12 @@ try {
 			//header keys are case insensitive
 			std::transform(key.begin(), key.end(), key.begin(), ::tolower);
 				
-			//trim leading and trailing whitespaces from header value (not key)
-			value = value.substr(key.find_first_not_of(WHITE_SPACE));
-			value = value.substr(0, value.find_last_not_of(WHITE_SPACE) + 1);
+			value = removeWhitespaces(value);
 			_headers.insert(std::make_pair(key, value));
 		}
 	}
-
 // 3. === parse body ===
 	_body = request.substr(headersEnd + 4);
-
-//todoadd check headers for e.g. cookies
 
 	}
 	//catch block	
@@ -130,6 +126,7 @@ HttpRequest::~HttpRequest() {
 
 
 //========= Getters ===============================
+
 std::string	HttpRequest::getMethod(void) const									{	return _method;				}
 std::string	HttpRequest::getProtocol(void) const								{	return _protocol;			}
 std::string	HttpRequest::getBody(void) const									{	return _body;				}
@@ -178,6 +175,7 @@ char**		HttpRequest::getEnvArray(void) const {
 
 
 //========= Setters ===============================
+
 void HttpRequest::setMethod(const std::string& method) 							{	_method = method;			}
 void HttpRequest::setProtocol(const std::string& protocol) 						{	_protocol = protocol;		}
 void HttpRequest::setBody(const std::string& body) 								{	_body = body; 				}

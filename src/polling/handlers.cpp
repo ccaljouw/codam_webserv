@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/11 16:28:15 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/11 21:52:58 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void handleRequest(int epollFd, connection *conn)
 		// Process the request data
 		HttpRequest request(conn->request);
 	
-		std::string cookieId = checkAndSetCookie(conn, request);
+		std::string cookieValue = checkAndSetCookie(conn, request);
 	
 		// Handle parsing error
 		if (request.getRequestStatus() != 200) {
@@ -100,7 +100,8 @@ void handleRequest(int epollFd, connection *conn)
 					HttpResponse response(request);
 					response.setBody(request.uri.getPath());
 					response.addHeader("Content-type", contentType);
-					response.setHeader("Set-Cookie", cookieId);
+
+					response.setHeader("Set-Cookie", cookieValue);
 					setResponse(conn, response);
 				} 
 					
