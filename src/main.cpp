@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/09 16:42:32 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/10 18:54:21 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,9 @@
 
 int main(int argc, char **argv) {
 
-	if (argc == 1) {
-		Config conf;
-		std::cout << conf.getServers().front()._serverName << std::endl;}
-	else if (argc == 2)
-		Config conf(argv[1]);
-	else
-		return (1);
-
+	Config conf(argc, argv);
+	if (conf.getError() == true)
+		return 1;
 
 	// Create epoll file descriptor
     int 				epollFd = epoll_create(1);
