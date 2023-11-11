@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 18:13:17 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/11 22:30:17 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/11 22:53:27 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ struct connection
 	states						state;
 	std::string					request;
 	std::string					response;
-	Server		*server;
+	Server						*server;
 	// int			requests; 
 };
 

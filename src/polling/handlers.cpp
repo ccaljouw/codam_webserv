@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/11 22:10:14 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/11 23:10:14 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,15 @@
 void	newConnection(int epollFd, int serverFd, Server *server) 
 {
 	int					fd;
-	struct sockaddr_in 	address;
-	socklen_t			len = sizeof(address);
+	// struct sockaddr_in 	address;
+	// socklen_t			len = sizeof(address);
 	// struct timeval tv;
 
 	// tv.tv_usec  = 20000;
 	std::cout << "new connection request" << std::endl; // for testing
 	try {
-		if ((fd = accept(serverFd, reinterpret_cast<struct sockaddr*>(&address), &len)) == -1)
-		// if ((fd = accept(serverFd, nullptr, nullptr)) == -1)
+		// if ((fd = accept(serverFd, reinterpret_cast<struct sockaddr*>(&address), &len)) == -1)
+		if ((fd = accept(serverFd, nullptr, nullptr)) == -1)
 			throw std::runtime_error("client accept: " + std::string(strerror(errno)));
 		// if (setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(struct timeval)) != 0)
 		// 	throw std::runtime_error("client setsocket: " + std::string(strerror(errno)));
@@ -36,9 +36,9 @@ void	newConnection(int epollFd, int serverFd, Server *server)
 	catch (std::runtime_error& e) {
 		std::cerr << "\033[31;1mError\n" << e.what() << "\n\033[0m";
 	}
-	std::cout << "adress is: " << address.sin_addr.s_addr << std::endl;
-	std::cout << "IP is: " << inet_ntoa(address.sin_addr) << std::endl;
-	std::cout << "port is: " << address.sin_port << std::endl;
+	// std::cout << "adress is: " << address.sin_addr.s_addr << std::endl;
+	// std::cout << "IP is: " << inet_ntoa(address.sin_addr) << std::endl;
+	// std::cout << "port is: " << address.sin_port << std::endl;
 	
 }
 
@@ -77,7 +77,7 @@ void handleRequest(int epollFd, connection *conn)
 		// Process the request data
 		HttpRequest request(conn->request, conn->server);
 	
-		std::string cookieId = checkAndSetCookie(conn, request);
+		std::string cookieValue = checkAndSetCookie(conn, request);
 	
 		// Handle parsing error
 		if (request.getRequestStatus() != 200) {
@@ -112,7 +112,8 @@ void handleRequest(int epollFd, connection *conn)
 					HttpResponse response(request);
 					response.setBody(request.uri.getPath());
 					response.addHeader("Content-type", contentType);
-					response.setHeader("Set-Cookie", cookieId);
+
+					response.setHeader("Set-Cookie", cookieValue);
 					setResponse(conn, response);
 				} 
 					

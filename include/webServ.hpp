@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/11 15:00:14 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/11 22:05:29 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #define LINE_END "\r\n"
 #define WHITE_SPACE " \t\n\v\f\r"
 #define HTTP_PROTOCOL "HTTP/1.1"
-#define HOST "temp host"
+#define HOST "webserv42"
 
 #include<map>
 #include<vector>
@@ -39,6 +39,8 @@ void			checkTimeout(connection *conn);
 void			setResponse(connection *conn, HttpResponse resp);
 void			setErrorResponse(connection *conn, int error);
 std::string		checkAndSetCookie(connection* conn, HttpRequest& request);
+std::string		removeWhitespaces(std::string str);
+
 
 
 //defined in Uri.cpp
