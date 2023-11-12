@@ -3,7 +3,6 @@
 #include<ctime>
 #include "webServ.hpp"
 
-
 std::string getTimeStamp() {
 	//get current time
     std::time_t now = std::time(nullptr);
@@ -17,15 +16,12 @@ std::string getTimeStamp() {
     return buffer;
 }
 
-
 void	setResponse(connection *conn, HttpResponse resp)
 {
 	conn->response = resp.serializeResponse();
 	conn->request.clear();
 	conn->state = WRITING;
 }
-
-
 
 // Some browsers (eg Firefox), check form timeout based on header keep-alive with timeout.
 // others (eg safari) do not close the connection themselves
@@ -105,37 +101,16 @@ std::string		checkAndSetCookie(connection* conn, HttpRequest& request) {
 	}
 
 	//check known id and if found set int +1 and handle trigger
-	// for (auto& pair : conn->server->knownClientIds)
-	// {
-	// 	if (pair.first == cookieId)
-	// 	{
-	// 		pair.second += 1;
-		
-	// 		std::cout << "identified existing user_id :"<< cookieId << std::endl; 
-	// 		std::cout << "ID has visited us " << pair.second << " times!" << std::endl;
-	// 		std::cout << "ID trigger value = '" << cookieTrigger << "'" << std::endl; //todo: remove lines
+	if (!conn->server->checkClientId(cookieId)) {
+		//set cookie for empty and unknow client using current time-hash
+		std::hash<std::time_t>		timeHash;
+		std::time_t now			=	std::time(nullptr);
+		size_t hashValue		=	timeHash(now);
 
-	// 		std::string newCookieValue = "name=" + std::string(HOST) + ", id=" + cookieId + ", trigger=" + cookieTrigger;
-	// 		//todo handl trigger
-	// 		return newCookieValue;
-	// 	}
-	// }
-	if (conn->server->checkClientId(cookieId)) {
-		std::cout << "ID trigger value = '" << cookieTrigger << "'" << std::endl; //todo: remove lines
-		std::string newCookieValue = "name=" + std::string(HOST) + ", id=" + cookieId + ", trigger=" + cookieTrigger;
-		//todo handl trigger
-		return newCookieValue;
+		cookieId = std::to_string(hashValue);
+		conn->server->addClientId(cookieId);
 	}
-
-	//set cookie for empty and unknow client using current time-hash
-	std::hash<std::time_t>		timeHash;
-	std::time_t now			=	std::time(nullptr);
-	size_t hashValue		=	timeHash(now);
-
-	std::string newCookieId = std::to_string(hashValue);
-	// conn->server->knownClientIds.insert(std::make_pair(newCookieId, 1));
-	conn->server->addClientId(newCookieId);
-
-	std::string newCookieValue = "name=" + std::string(HOST) + ", id=" + newCookieId + ", trigger=" + cookieTrigger;
+	std::string newCookieValue = "name=" + std::string(HOST) + ", id=" + cookieId + ", trigger=" + cookieTrigger;
+	std::cout << "new cookie value  = '" << newCookieValue << std::endl; //todo: remove lines
 	return newCookieValue;
 }

@@ -28,14 +28,12 @@ class Server
 		Server &operator=( Server const & rhs ) = delete;
 		~Server();
 
-		std::map<std::string, int>			knownClientIds;
-		
 		// ============= methods ================
-		int	assign_name();
-		int	set_to_listen(int backlog);
-		int	initServer(struct ServerSettings const & settings, int epollFd);
-		void	addClientId(std::string newCookieValue);
+		int		assign_name();
+		int		set_to_listen(int backlog);
+		int		initServer(struct ServerSettings const & settings, int epollFd);
 		int		checkClientId(std::string id);
+		void	addClientId(std::string newCookieValue);
 
 		// ============= getters ================
 		int			get_FD() const;
