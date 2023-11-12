@@ -27,11 +27,21 @@ void	setResponse(connection *conn, HttpResponse resp)
 
 
 
-// to do: make timeout check
+// Some browsers (eg Firefox), check form timeout based on header keep-alive with timeout.
+// others (eg safari) do not close the connection themselves
 void	checkTimeout(connection *conn)
 {
-	if (conn->request.empty()) // and timeout
-		conn->state = CLOSING; 
+	if (conn->request.empty()) 
+	{
+		std::cout << "checkout timeout: " << difftime(std::time(nullptr), conn->time_last_request) << std::endl;
+		if (difftime(std::time(nullptr), conn->time_last_request) > conn->server->get_timeout()) {
+
+			std::cout << CYAN << "Timeout" << RESET << std::endl;
+			conn->state = CLOSING; 
+		}
+		else
+			conn->state = READING;
+	}
 	else
 		conn->state = HANDLING;
 }
@@ -45,9 +55,6 @@ void	setErrorResponse(connection *conn, int error)
 	setResponse(conn, response);
 }
 
-
-
-
 std::string	removeWhitespaces(std::string str) {
 	size_t	index;
 	index = str.find_first_not_of(WHITE_SPACE);
@@ -58,7 +65,6 @@ std::string	removeWhitespaces(std::string str) {
 	 	str	= str.substr(0, index + 1);
 	return str;
 }
-
 
 //todo: more cookies than one	
 std::string		checkAndSetCookie(connection* conn, HttpRequest& request) {

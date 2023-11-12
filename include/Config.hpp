@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/10 20:41:15 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/12 11:58:33 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ struct ServerSettings
 	std::string							_index;
 	std::list<struct LocationSettings>	_locations;
 	// std::list<ErrorPages>		_errorPages;
+	double								_timeout;
+	int									_maxNrOfRequests;
 };
 
 class Config

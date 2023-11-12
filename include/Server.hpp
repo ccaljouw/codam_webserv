@@ -42,6 +42,8 @@ class Server
 		std::string	get_index() const;
 		std::list<struct LocationSettings>	get_locations() const;
 		std::map<std::string, int>	get_knownClientIds() const;
+		double	get_timeout() const;
+		int		get_maxNrOfRequests() const;
 		// std::list<ErrorPages>	get_errorPages() const;
 		
 
@@ -69,6 +71,8 @@ class Server
 		std::string							_index;
 		std::list<struct LocationSettings>	_locations;
 		std::map<std::string, int>			_knownClientIds;
+		double								_timeout;
+		int									_maxNrOfRequests;
 
 		// std::list<ErrorPages>		_errorPages;
 

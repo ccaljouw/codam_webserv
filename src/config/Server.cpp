@@ -46,6 +46,8 @@ int Server::initServer(struct ServerSettings const & settings, int epollFd)
 		_port = settings._port;
 		_serverName = settings._serverName;
 		_locations = settings._locations;
+		_timeout = settings._timeout;
+		_maxNrOfRequests = settings._maxNrOfRequests;
 		_serverAddr.sin_family = AF_INET;
 		_serverAddr.sin_addr.s_addr = INADDR_ANY;
 		_serverAddr.sin_port = htons(_port);
@@ -80,6 +82,8 @@ std::string	Server::get_rootFolder() const { return _rootFolder; }
 std::string	Server::get_index() const { return _index; }
 std::list<struct LocationSettings>	Server::get_locations() const { return _locations; }
 std::map<std::string, int>	Server::get_knownClientIds() const { return _knownClientIds; }
+double	Server::get_timeout() const { return _timeout; }
+int		Server::get_maxNrOfRequests() const { return _maxNrOfRequests; }
 // std::list<ErrorPages>	Server::get_errorPages() const { return _errorPages; }
 
 /* ************************************************************************** */

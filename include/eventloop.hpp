@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 18:13:17 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/11 22:53:27 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/12 11:30:40 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <sys/epoll.h>
 #include <unistd.h>
 #include <map>
+#include <ctime>
 
 # include "Server.hpp"
 
@@ -45,7 +46,8 @@ struct connection
 	std::string					request;
 	std::string					response;
 	Server						*server;
-	// int			requests; 
+	std::time_t					time_last_request;
+	int							nr_of_requests; 
 };
 
 // handlers.cpp

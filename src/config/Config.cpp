@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/10 21:00:12 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/12 12:00:54 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ void	Config::_readServerSettings()
 		server._port = 8080;
 		server._rootFolder = "./data/html";
 		server._index = "index.html";
+		server._timeout = 3;
+		server._maxNrOfRequests = 10;
 		
 		html._locationName = "/html";
 		html._rootFolder = "./data/html";

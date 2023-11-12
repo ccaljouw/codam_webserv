@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/11 22:05:29 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/12 12:24:55 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,13 @@
 #include <filesystem>
 #include <functional>
 
+#define RESET	"\033[0m"
+#define RED		"\033[31;1m"
+#define GREEN	"\033[32;1m"
+#define YELLOW	"\033[33;1m"
+#define BLUE	"\033[34;1m"
+#define PURPLE	"\033[35;1m"
+#define CYAN	"\033[36;1m"
 
 // utils.cpp
 void			checkTimeout(connection *conn);
