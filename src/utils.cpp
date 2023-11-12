@@ -67,56 +67,57 @@ std::string	removeWhitespaces(std::string str) {
 }
 
 //todo: more cookies than one	
+//todo: handle trigger
 std::string		checkAndSetCookie(connection* conn, HttpRequest& request) {
-
-	std::string cookieValue		=	request.getHeaderValue("cookie"); //returns the value part of the cookie
 
 	std::string	cookieName;
 	std::string	cookieId;
 	std::string	cookieTrigger = "placeholder";
 
+	std::string cookieValue	= request.getHeaderValue("cookie"); //returns the value part of the cookie
+
+	size_t ourCookieStart = cookieValue.find("name=" + std::string(HOST));
+	if (ourCookieStart != 0 && ourCookieStart != std::string::npos)
+		cookieValue = cookieValue.substr(ourCookieStart);
+
+	std::istringstream	cookieStream(cookieValue);
+	std::string			keyValuePair;
+
 	//parse cookieValue
-	if(!cookieValue.empty())
+	while(std::getline(cookieStream, keyValuePair, ','))
 	{
-		std::istringstream	cookieStream(cookieValue);
-		std::string			keyValuePair;
-
-		while(std::getline(cookieStream, keyValuePair, ','))
+		size_t equalPos = keyValuePair.find('=');
+		if (equalPos != std::string::npos)
 		{
-			size_t equalPos = keyValuePair.find('=');
-			if (equalPos != std::string::npos)
-			{
-				std::string key		=	keyValuePair.substr(0, equalPos);
-				std::string value	=	keyValuePair.substr(equalPos + 1);
+			std::string key		=	keyValuePair.substr(0, equalPos);
+			std::string value	=	keyValuePair.substr(equalPos + 1);
 
-				key = removeWhitespaces(key);
-				value = removeWhitespaces(value);
+			key = removeWhitespaces(key);
+			value = removeWhitespaces(value);
 
-				if (key == "name")
-					cookieName = value;
-				else if (key == "id")
-					cookieId = value;
-				else if (key == "trigger")
-					cookieTrigger = value;
-			}
+			if (key == "name")
+				cookieName = value;
+			else if (key == "id")
+				cookieId = value;
+			else if (key == "trigger")
+				cookieTrigger = value;
 		}
 	}
-	//todo: handle trigger
-	if (cookieName == "webserv42") //todo:get rid of hard code
-	{
-		for (auto& pair : conn->server->get_knownClientIds())
-		{
-			if (pair.first == cookieId)
-			{
-				pair.second += 1;
-			
-				std::cout << "identified existing user_id :"<< cookieId << std::endl; 
-				std::cout << "ID has visited us " << pair.second << " times!" << std::endl;
-				std::cout << "ID trigger value = '" << cookieTrigger << "'" << std::endl; //todo: remove lines
 
-				std::string newCookieValue = "name=webserv42, id=" + cookieId + ", trigger=" + cookieTrigger;
-				return newCookieValue;
-			}
+	//check known id and if found set int +1 and handle trigger
+	for (auto& pair : conn->server->get_knownClientIds())
+	{
+		if (pair.first == cookieId)
+		{
+			pair.second += 1;
+		
+			std::cout << "identified existing user_id :"<< cookieId << std::endl; 
+			std::cout << "ID has visited us " << pair.second << " times!" << std::endl;
+			std::cout << "ID trigger value = '" << cookieTrigger << "'" << std::endl; //todo: remove lines
+
+			std::string newCookieValue = "name=" + std::string(HOST) + ", id=" + cookieId + ", trigger=" + cookieTrigger;
+			//todo handl trigger
+			return newCookieValue;
 		}
 	}
 
@@ -127,7 +128,7 @@ std::string		checkAndSetCookie(connection* conn, HttpRequest& request) {
 
 	std::string newCookieId = std::to_string(hashValue);
 	conn->server->addClientId(newCookieId);
-//	std::cout << "added to know ids: " << newCookieId << std::endl;
-	std::string newCookieValue = "name=webserv42, id=" + newCookieId + ", trigger=" + cookieTrigger;
+
+	std::string newCookieValue = "name=" + std::string(HOST) + ", id=" + newCookieId + ", trigger=" + cookieTrigger;
 	return newCookieValue;
 }
