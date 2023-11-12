@@ -75,6 +75,21 @@ void	Server::addClientId(std::string newCookieValue) {
 	_knownClientIds.insert(std::make_pair(newCookieValue, 1));
 }
 
+int	Server::checkClientId(std::string id) {
+
+	for (auto& pair : _knownClientIds)
+	{
+		if (pair.first == id)
+		{
+			pair.second += 1;
+			std::cout << "identified existing user_id :"<< id << std::endl; 
+			std::cout << "ID has visited us " << pair.second << " times!" << std::endl;
+			return  1;
+		}
+	}
+	return 0;
+}
+
 // ============= Getters ================
 int	Server::get_FD() const { return _fd; }
 std::string	Server::get_serverName() const { return _serverName; }
