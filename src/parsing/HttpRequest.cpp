@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   HttpRequest.cpp                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/01 14:21:11 by carlo             #+#    #+#             */
-/*   Updated: 2023/11/13 17:29:45 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   HttpRequest.cpp                                    :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
+/*   Updated: 2023/11/13 19:35:44 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,9 @@
 #include <cstring>
 
 
-HttpRequest::HttpRequest(const Server *server) : uri(), _method(), _protocol(), _headers(), _body(), _requestStatus(200) { (void)server; };
+HttpRequest::HttpRequest(const Server *server) : uri(), _method(), _protocol(), _headers(), _body(), _requestStatus(200), _server(server) {};
 
-HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri(), _requestStatus(200) {
+HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri(), _requestStatus(200) ,_server(server) {
 
 //todo: switch into helper functions mapHeaders
 // 1. === parse request line === 
@@ -47,12 +47,13 @@ try {
 	uri = Uri(tempUriString);
 	
 	// todo: get location and resulting location settings
-	struct LocationSettings location = server->get_locations("servername").front();
+	struct LocationSettings location = _server->get_locations("servername").front();
 	
 	// check method
 	if (location._allowedMethods.find(_method) == location._allowedMethods.end())
 		throw parsingException(405, "Method not Allowed");
-	
+
+
 // 2. === parse headers ===
 
 	//define block of all headers
@@ -82,8 +83,12 @@ try {
 			_headers.insert(std::make_pair(key, value));
 		}
 	}
+
+	
 // 3. === parse body ===
 	_body = request.substr(headersEnd + 4);
+
+
 
 	}
 	//catch block	
@@ -110,6 +115,7 @@ const HttpRequest& HttpRequest::operator=(const HttpRequest& rhs) {
 		_headers		= rhs._headers;
 		_body			= rhs._body;
 		_requestStatus	= rhs._requestStatus;
+		_server			= rhs._server;
 	}
 	return *this;
 }

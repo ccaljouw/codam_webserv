@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Config.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/09 14:02:40 by bfranco           #+#    #+#             */
-/*   Updated: 2023/11/13 16:47:27 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Config.hpp                                         :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
+/*   Updated: 2023/11/13 19:28:28 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,15 +20,16 @@
 #include <iostream>
 #include <unistd.h>
 #include <set>
+#include <cstdint>
 
 struct LocationSettings
 {
-	std::string					_locationId;
-	std::set<std::string>		_allowedMethods;
-	std::string					_index; //default
-	bool						_autoindex;
-	std::string					_redirect;
-	std::string					_uploadDir;
+	std::string							_locationId;
+	std::set<std::string>				_allowedMethods;
+	std::string							_index; //default
+	bool								_autoindex;
+	std::string							_redirect;
+	std::string							_uploadDir;
 };
 
 struct ServerSettings
@@ -45,27 +46,6 @@ struct ServerSettings
 	size_t								_maxBodySize;
 };
 
-// struct LocationSettings
-// {
-// 	std::string					_locationName;
-// 	std::string					_rootFolder;
-// 	std::set<std::string>		_allowedMethods;
-// 	std::string					_index;
-// 	bool						_autoindex;
-// };
-
-// struct ServerSettings
-// {
-// 	std::string							_serverName;
-// 	std::string							_rootFolder;
-// 	uint16_t							_port;
-// 	// in_addr_t							_host;
-// 	std::string							_index;
-// 	std::list<struct LocationSettings>	_locations;
-// 	// std::list<ErrorPages>		_errorPages;
-// 	double								_timeout;
-// 	int									_maxNrOfRequests;
-// };
 
 class Config
 {
