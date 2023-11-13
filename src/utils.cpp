@@ -29,7 +29,7 @@ void	checkTimeout(connection *conn)
 {
 	if (conn->request.empty()) 
 	{
-		std::cout << "checkout timeout: " << difftime(std::time(nullptr), conn->time_last_request) << std::endl;
+		// std::cout << "checkout timeout: " << difftime(std::time(nullptr), conn->time_last_request) << std::endl;
 		if (difftime(std::time(nullptr), conn->time_last_request) > conn->server->get_timeout()) {
 
 			std::cout << CYAN << "Timeout" << RESET << std::endl;
@@ -62,7 +62,6 @@ std::string	removeWhitespaces(std::string str) {
 	return str;
 }
 
-//todo: more cookies than one	
 //todo: handle trigger
 std::string		checkAndSetCookie(connection* conn, HttpRequest& request) {
 

@@ -1,17 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   handlers.cpp                                       :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/13 08:01:35 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   handlers.cpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
+/*   Updated: 2023/11/13 12:08:01 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webServ.hpp"
 #include <arpa/inet.h>
+#include <fstream>
+
 
 
 void	newConnection(int epollFd, int serverFd, Server *server) 
@@ -45,7 +47,7 @@ void readData(connection *conn)
 	{
 		case -1:
 			std::cerr << "error reading" << std::endl; // for testing
-			setErrorResponse(conn, 500);
+			setErrorResponse(conn, 500); // segfault?
 			break;
 		case 0:
 			checkTimeout(conn);
@@ -65,13 +67,14 @@ void handleRequest(int epollFd, connection *conn)
 	try {
 		// Process the request data
 		HttpRequest request(conn->request, conn->server);
-	
+		
 		std::string cookieValue = checkAndSetCookie(conn, request);
 	
-		// Handle parsing error
+			// Handle parsing error
 		if (request.getRequestStatus() != 200) {
 			setErrorResponse(conn, request.getRequestStatus());
 		} 
+	
 		
 		// handle CGI
 		else if (request.uri.getExecutable() == "cgi-bin") { //todo:make configurable
@@ -79,21 +82,27 @@ void handleRequest(int epollFd, connection *conn)
 			if (cgiHandler(request.getUri(), conn, epollFd, request.getEnvArray()) == 1 ) 
 				setErrorResponse(conn, 500);	
 			else
+			{
 				// conn->state = CLOSING;
+				conn->request.clear();
 				conn->state = IN_CGI;
+			}
 		
 		} else {
 			std::string extension = request.uri.getExtension();
 			std::string contentType = request.uri.getMime(extension);
+			
+			// todo:check allowed methods for contentType
 			
 			//handle GET
 			if (request.getMethod() == "GET")
 			{
 				if (!contentType.empty())
 				{
-					std::filesystem::path fullPath = "data/" + contentType + request.uri.getPath();
-					if (std::filesystem::is_regular_file(fullPath))
-						request.uri.setPath(fullPath.generic_string());
+					std::string fullPath = "data/" + contentType + request.uri.getPath();
+					std::ifstream f(fullPath);
+					if (f.good())
+						request.uri.setPath(fullPath);
 					
 					else
 						throw HttpRequest::parsingException(404, "Path not found");

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   registerEvents.cpp                                 :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/03 23:48:35 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/13 07:59:21 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   registerEvents.cpp                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/03 23:48:35 by cariencaljo       #+#    #+#             */
+/*   Updated: 2023/11/13 11:24:25 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ int	register_client(int epollFd, int fd, Server *server)
     event.data.ptr = conn;
 	if (epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, &event) == -1)
 	{
+		// try again and if not successfull after 3 times send error and close
 		close(fd);
 		delete conn;
 		return 1;

@@ -1,19 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   HttpRequest.cpp                                    :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/11 22:51:43 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   HttpRequest.cpp                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/01 14:21:11 by carlo             #+#    #+#             */
+/*   Updated: 2023/11/13 11:48:51 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HttpRequest.hpp"
 #include "webServ.hpp"
 #include "eventloop.hpp"
-#include "config.hpp"
+#include "Config.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -110,6 +110,7 @@ const HttpRequest& HttpRequest::operator=(const HttpRequest& rhs) {
 		_headers		= rhs._headers;
 		_body			= rhs._body;
 		_requestStatus	= rhs._requestStatus;
+		_
 	}
 	return *this;
 }
