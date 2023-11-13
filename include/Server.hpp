@@ -36,14 +36,15 @@ class Server
 		void	addClientId(std::string newCookieValue);
 
 		// ============= getters ================
-		int			get_FD() const;
-		std::string	get_serverName() const;
-		std::string	get_rootFolder() const;
-		std::string	get_index() const;
-		std::list<struct LocationSettings>	get_locations() const;
-		std::map<std::string, int>	get_knownClientIds() const;
-		double	get_timeout() const;
-		int		get_maxNrOfRequests() const;
+		int			get_FD(std::string server) const;
+		std::string	get_serverName(std::string server) const;
+		std::string	get_rootFolder(std::string server) const;
+		std::string	get_index(std::string server) const;
+		std::list<struct LocationSettings>	get_locations(std::string server) const;
+		std::map<std::string, int>	get_knownClientIds(std::string server) const;
+		double	get_timeout(std::string server) const;
+		int		get_maxNrOfRequests(std::string server) const;
+		size_t	get_maxBodySize(std::string server) const;
 		// std::list<ErrorPages>	get_errorPages() const;
 		
 
@@ -73,6 +74,7 @@ class Server
 		double								_timeout;
 		int									_maxNrOfRequests;
 		std::map<std::string, int>			_knownClientIds;
+		size_t								_maxBodySize;
 		// std::list<ErrorPages>		_errorPages;
 
 } ;

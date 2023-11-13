@@ -90,14 +90,42 @@ int	Server::checkClientId(std::string id) {
 }
 
 // ============= Getters ================
-int	Server::get_FD() const { return _fd; }
-std::string	Server::get_serverName() const { return _serverName; }
-std::string	Server::get_rootFolder() const { return _rootFolder; }
-std::string	Server::get_index() const { return _index; }
-std::list<struct LocationSettings>	Server::get_locations() const { return _locations; }
-std::map<std::string, int>	Server::get_knownClientIds() const { return _knownClientIds; }
-double	Server::get_timeout() const { return _timeout; }
-int		Server::get_maxNrOfRequests() const { return _maxNrOfRequests; }
+int	Server::get_FD(std::string server) const { 
+	(void)server;
+	return _fd; }
+
+std::string	Server::get_serverName(std::string server) const { 
+	(void)server;
+	return _serverName; }
+
+std::string	Server::get_rootFolder(std::string server) const { 
+	(void)server;
+	return _rootFolder; }
+
+std::string	Server::get_index(std::string server) const { 
+	(void)server;
+	return _index; }
+
+std::list<struct LocationSettings>	Server::get_locations(std::string server) const { 
+	(void)server;
+	return _locations; }
+
+std::map<std::string, int>	Server::get_knownClientIds(std::string server) const { 
+	(void)server;
+	return _knownClientIds; }
+	
+double	Server::get_timeout(std::string server) const { 
+	(void)server;
+	return _timeout; }
+
+int		Server::get_maxNrOfRequests(std::string server) const { 
+	(void)server;
+	return _maxNrOfRequests; }
+
+size_t	Server::get_maxBodySize(std::string server) const {
+	(void)server;
+	return _maxBodySize; }
+
 // std::list<ErrorPages>	Server::get_errorPages() const { return _errorPages; }
 
 /* ************************************************************************** */

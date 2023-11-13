@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 14:21:11 by carlo             #+#    #+#             */
-/*   Updated: 2023/11/13 12:27:57 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/13 16:43:52 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ try {
 	uri = Uri(tempUriString);
 	
 	// todo: get location and resulting location settings
-	struct LocationSettings location = server->get_locations().front();
+	struct LocationSettings location = server->get_locations("servername").front();
 	
 	// check method
 	if (location._allowedMethods.find(_method) == location._allowedMethods.end())

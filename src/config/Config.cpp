@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   Config.cpp                                         :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/13 09:18:14 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   Config.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/09 15:17:36 by bfranco           #+#    #+#             */
+/*   Updated: 2023/11/13 16:53:04 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,7 @@ void	Config::_readServerSettings()
 		server._timeout = 3;
 		server._maxNrOfRequests = 10;
 		
-		html._locationName = "/html";
-		html._rootFolder = "./data/html";
+		html._locationId = "/html";
 		html._allowedMethods.insert("POST");
 		html._allowedMethods.insert("DELETE");
 		html._allowedMethods.insert("GET");

@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/13 12:08:01 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/13 16:44:12 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ void readData(connection *conn)
 		case -1:
 			std::cerr << "error reading" << std::endl; // for testing
 			setErrorResponse(conn, 500); // segfault?
+			// conn->state = CLOSING;
 			break;
 		case 0:
 			checkTimeout(conn);
@@ -202,7 +203,7 @@ void writeData(connection *conn)
 	{
 		std::cout << "Response sent, nr of requsts: " << conn->nr_of_requests << std::endl; //for testing
 		conn->response.clear();
-		if (conn->nr_of_requests == conn->server->get_maxNrOfRequests())
+		if (conn->nr_of_requests == conn->server->get_maxNrOfRequests("servername"))
 		{
 			std::cout << CYAN << "\033[31;1mMax requests on open socket\033[0m" << RESET << std::endl;
 			conn->state = CLOSING;
