@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 14:21:11 by carlo             #+#    #+#             */
-/*   Updated: 2023/11/13 16:43:52 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/13 17:29:45 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,9 +154,10 @@ char**		HttpRequest::getEnvArray(void) const {
 	
 	for (auto& pair : mergedMap)
 	{
-		std::string line = pair.first + ": " + pair.second;
+		std::string line = pair.first + "=" + pair.second;
 		c_strings.push_back(strdup(line.c_str()));
 	}
+	c_strings.push_back(strdup(("body=" + getBody()).c_str())); // should parse form data in stead?
 	c_strings.push_back(nullptr);
 	
 	//malloc an array and copy vector into array

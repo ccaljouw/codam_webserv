@@ -25,6 +25,7 @@ date = x.strftime("%a, %d %b %Y %H:%M:%S GMT")
 body = f"""<html>
 	<body>
 		<h1>{message}</h1>
+		<link rel="icon" href="data:,">
 	</body>
 </html>"""
 
@@ -40,3 +41,4 @@ print(body)
 print("\0")
 
 cgi.print_environ()
+cgi.print_form(form)
