@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/13 09:19:33 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/13 14:01:40 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ struct ServerSettings
 	// in_addr_t							_host;
 	std::string							_index;
 	std::list<struct LocationSettings>	_locations;
-	// std::list<ErrorPages>		_errorPages;
+	std::map<std::string, std::string>	_errorPages;
 	double								_timeout;
 	int									_maxNrOfRequests;
 };
@@ -56,7 +56,7 @@ class Config
 	class InvalidParameterException : public std::exception
 	{
 		virtual const char *	what() const throw() {
-			return ("Invalid parameter in config file");
+			return ("Invalid parameter");
 		}
 	};
 	
@@ -74,8 +74,8 @@ class Config
 		std::list<struct ServerSettings>	_servers;
 		bool								_error;
 
-		void						_readServerSettings();
-		int							_parseConfigFile();
+		void						_readConfigFile();
+		void						_parseConfigFile(const std::string& line);
 		// void						_parseServer(std::string line);    // add later if needed
 		// void						_parseLocation(std::string line);  // add later if needed
 		// void						_parseErrorPage(std::string line); // add later if needed

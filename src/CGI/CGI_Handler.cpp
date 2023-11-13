@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   CGI_Handler.cpp                                    :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/10 21:31:19 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/13 15:21:12 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,8 @@ void	execChild(const Uri& uri, CGI &cgi, char **env)
 	// 	cgi.closeFds();
 	// 	return ;
 	// }
+	for (int i = 0; env[i]; i++)
+		std::cout << "env[" << i << "] = " << env[i] << std::endl;
 	dup2(cgi.getFdOut(), STDOUT_FILENO);
 	// cgi.closeFds();
 	close(cgi.getFdIn());

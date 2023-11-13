@@ -39,4 +39,8 @@ print(header)
 print(body)
 print("\0")
 
-cgi.print_environ()
+for i in os.environ.keys():
+	print(f"{i}={os.environ[i]}")
+
+print("")
+print(os.environ)
