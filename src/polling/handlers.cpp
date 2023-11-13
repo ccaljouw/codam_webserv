@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/12 12:28:01 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/13 08:01:35 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #include <arpa/inet.h>
 
 
-// TODO: check errors, check duplicates
 void	newConnection(int epollFd, int serverFd, Server *server) 
 {
 	int					fd;
@@ -196,7 +195,7 @@ void writeData(connection *conn)
 		conn->response.clear();
 		if (conn->nr_of_requests == conn->server->get_maxNrOfRequests())
 		{
-			std::cout << "\033[31;1mMax requests on open socket\033[0m" << std::endl;
+			std::cout << CYAN << "\033[31;1mMax requests on open socket\033[0m" << RESET << std::endl;
 			conn->state = CLOSING;
 		}
 		else

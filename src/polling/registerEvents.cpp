@@ -6,14 +6,13 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:48:35 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/12 11:31:40 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/13 07:59:21 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webServ.hpp"
 #include <string.h>
 
-// TODO: check connection 
 int	register_server(int epollFd, int fd, Server *server)
 {
 	struct epoll_event 	event;
@@ -31,7 +30,6 @@ int	register_server(int epollFd, int fd, Server *server)
 	return 0;
 }
 
-// TODO: check connection
 int	register_client(int epollFd, int fd, Server *server)
 {
 	struct epoll_event 	event;
