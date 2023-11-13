@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   HttpRequest.cpp                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/01 14:21:11 by carlo             #+#    #+#             */
-/*   Updated: 2023/11/13 12:27:57 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   HttpRequest.cpp                                    :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
+/*   Updated: 2023/11/13 16:59:57 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,8 +142,8 @@ char**		HttpRequest::getEnvArray(void) const {
 	// merge headers map and queries map into one map
 	std::multimap<std::string, std::string> mergedMap;
 	
-	for (const auto& headerPair : _headers)
-		mergedMap.insert(headerPair);
+	// for (const auto& headerPair : _headers)
+	// 	mergedMap.insert(headerPair);
 	
 	for (const auto& queryPair : uri.getQueryMap())
 		mergedMap.insert(queryPair);
@@ -154,7 +154,7 @@ char**		HttpRequest::getEnvArray(void) const {
 	
 	for (auto& pair : mergedMap)
 	{
-		std::string line = pair.first + ": " + pair.second;
+		std::string line = pair.first + "=" + pair.second;
 		c_strings.push_back(strdup(line.c_str()));
 	}
 	c_strings.push_back(nullptr);

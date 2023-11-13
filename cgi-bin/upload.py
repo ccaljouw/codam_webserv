@@ -29,7 +29,7 @@ body = f"""<html>
 </html>"""
 
 header = f"""HTTP/1.1 {status}\r
-Content-Length: {len(body.encode("utf-8"))}\r
+Content-Length: {len(body)}\r
 Content-type: text/html; charset=utf-8\r
 Date: {date}\r
 Last-Modified: {date}\r
