@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/13 15:19:05 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/13 17:38:08 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,7 @@ void	Config::_readConfigFile()
 		server._timeout = 3;
 		server._maxNrOfRequests = 10;
 		
-		html._locationName = "/html";
-		html._rootFolder = "./data/html";
+		html._locationId = "/html";
 		html._allowedMethods.insert("POST");
 		html._allowedMethods.insert("DELETE");
 		html._allowedMethods.insert("GET");

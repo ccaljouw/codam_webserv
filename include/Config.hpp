@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/13 14:01:40 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/13 17:37:55 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,28 +21,51 @@
 #include <unistd.h>
 #include <set>
 
-
 struct LocationSettings
 {
-	std::string					_locationName;
-	std::string					_rootFolder;
+	std::string					_locationId;
 	std::set<std::string>		_allowedMethods;
-	std::string					_index;
+	std::string					_index; //default
 	bool						_autoindex;
+	std::string					_redirect;
+	std::string					_uploadDir;
 };
 
 struct ServerSettings
 {
 	std::string							_serverName;
 	std::string							_rootFolder;
+	std::string							_host;
 	uint16_t							_port;
-	// in_addr_t							_host;
-	std::string							_index;
+	std::string							_index; //default
 	std::list<struct LocationSettings>	_locations;
 	std::map<std::string, std::string>	_errorPages;
 	double								_timeout;
 	int									_maxNrOfRequests;
+	size_t								_maxBodySize;
 };
+
+// struct LocationSettings
+// {
+// 	std::string					_locationName;
+// 	std::string					_rootFolder;
+// 	std::set<std::string>		_allowedMethods;
+// 	std::string					_index;
+// 	bool						_autoindex;
+// };
+
+// struct ServerSettings
+// {
+// 	std::string							_serverName;
+// 	std::string							_rootFolder;
+// 	uint16_t							_port;
+// 	// in_addr_t							_host;
+// 	std::string							_index;
+// 	std::list<struct LocationSettings>	_locations;
+// 	// std::list<ErrorPages>		_errorPages;
+// 	double								_timeout;
+// 	int									_maxNrOfRequests;
+// };
 
 class Config
 {

@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/13 16:59:57 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/13 17:38:21 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ try {
 	uri = Uri(tempUriString);
 	
 	// todo: get location and resulting location settings
-	struct LocationSettings location = server->get_locations().front();
+	struct LocationSettings location = server->get_locations("servername").front();
 	
 	// check method
 	if (location._allowedMethods.find(_method) == location._allowedMethods.end())
@@ -157,6 +157,7 @@ char**		HttpRequest::getEnvArray(void) const {
 		std::string line = pair.first + "=" + pair.second;
 		c_strings.push_back(strdup(line.c_str()));
 	}
+	c_strings.push_back(strdup(("body=" + getBody()).c_str())); // should parse form data in stead?
 	c_strings.push_back(nullptr);
 	
 	//malloc an array and copy vector into array
