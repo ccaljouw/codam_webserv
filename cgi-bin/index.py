@@ -27,7 +27,7 @@ body_end = """	</body>
 body_middle = "		<h1>Index:</h1>\n"
 
 for f in files:
-    body_middle = body_middle + "		<p>" + f + "</p>\n"
+    body_middle = body_middle + f"		<a href={f}> {f} </a><br>"
 
 body = body_start + body_middle + body_end
 

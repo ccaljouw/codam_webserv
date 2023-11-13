@@ -4,9 +4,6 @@ import datetime, os, cgi, cgitb, sys
 
 form = cgi.FieldStorage()
 
-for value in form.keys():
-	print(f"idk {value}", file=sys.stderr)
-
 if 'filename' in form:
 	print("We have a filename", file=sys.stderr)
 	fileitem = form['filename']
@@ -15,9 +12,11 @@ if 'filename' in form:
 	with open(os.path.join(uploadDir, fn), 'wb') as f:
 		f.write(fileitem.file.read())
 	message = fn + '" uploaded successfully'
+	status = 200
 else:
 	print("Sad no filename", file=sys.stderr)
 	message = 'Upload failed'
+	status = 500
 
 x = datetime.datetime.now()
 date = x.strftime("%a, %d %b %Y %H:%M:%S GMT")
@@ -28,7 +27,7 @@ body = f"""<html>
 	</body>
 </html>"""
 
-header = f"""HTTP/1.1 200\r
+header = f"""HTTP/1.1 {status}\r
 Content-Length: {len(body.encode("utf-8"))}\r
 Content-type: text/html; charset=utf-8\r
 Date: {date}\r
