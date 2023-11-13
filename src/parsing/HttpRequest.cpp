@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 14:21:11 by carlo             #+#    #+#             */
-/*   Updated: 2023/11/13 11:48:51 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/13 12:27:57 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,6 @@ const HttpRequest& HttpRequest::operator=(const HttpRequest& rhs) {
 		_headers		= rhs._headers;
 		_body			= rhs._body;
 		_requestStatus	= rhs._requestStatus;
-		_
 	}
 	return *this;
 }
