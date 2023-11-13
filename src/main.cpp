@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/11 22:51:03 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/13 09:18:06 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,9 @@ int main(int argc, char **argv) {
 	struct epoll_event	events[MAX_EVENTS];
 	std::list<Server>	servers;
 	try {
-		Config conf;
-		if (argc == 2) // deze check verplaatsen naar binnen Config class?
-			conf.setFile(argv[1]);
-		else if (argc > 2) // wiilen we dit of negeren we gewoon de rest als er meer is meegegeven?
-			throw std::runtime_error("invallid nr of arguments");
+		Config conf(argc, argv);
+		if (conf.getError() == true)
+			throw std::runtime_error("invallid arguments");
 		if ((epollFd = epoll_create(1)) == -1)
 			throw std::runtime_error("epoll_create: " + std::string(strerror(errno)));
 		if ((servers = initServers(conf.getServers(), epollFd)).size() == 0)

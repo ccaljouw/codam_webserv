@@ -6,34 +6,44 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/12 12:00:54 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/13 09:18:14 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
 
-Config::Config() : _filename("default.conf")
+Config::Config(int argc, char** argv) : _error(false)
 {
-	_readServerSettings();
-}
-
-Config::Config(std::string configFile) : _filename(configFile)
-{
-	_readServerSettings();
+	if (argc == 1)
+		_filename = std::string("default.conf");
+	else if (argc >= 2)
+	{
+		_filename = std::string(argv[1]);
+		if (argc > 2)
+		{
+			_error = true;
+			std::cerr << "Too many arguments... Ignoring all but first" << std::endl;
+		}
+	}
+	try
+	{
+		_readServerSettings();
+	}
+	catch(const std::exception& e)
+	{
+		_error = true;
+		std::cerr << e.what() << std::endl;
+	}
 }
 
 Config::~Config() {}
 
-std::list<struct ServerSettings>	Config::getServers() const {	return (_servers);	}
+std::list<struct ServerSettings>	Config::getServers() const	{	return (_servers);	}
+bool								Config::getError() const	{	return (_error);	}
 
-void								Config::setFile(std::string filename) {
-	_filename = filename;
-	_readServerSettings();
-}
-
-void	Config::_parseConfigFile()
+int	Config::_parseConfigFile()
 {
-	return ;
+	return 0;
 }
 
 void	Config::_readServerSettings()
@@ -72,12 +82,9 @@ void	Config::_readServerSettings()
 	}
 	else
 	{
-		try {
-			_parseConfigFile();
-		}
-		catch (std::exception &e) {
-			std::cout << e.what() << std::endl;
-		}
+		if (access(_filename.c_str(), R_OK) == -1)
+			throw NoSuchFileException();
+		if (_parseConfigFile() == -1)
+			throw InvalidParameterException();
 	}
-
 }

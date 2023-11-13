@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/12 11:58:33 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/13 09:19:33 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <list>
 #include <map>
 #include <iostream>
+#include <unistd.h>
 #include <set>
 
 
@@ -48,7 +49,7 @@ class Config
 	class NoSuchFileException : public std::exception
 	{
 		virtual const char *	what() const throw() {
-			return ("No such file exists");
+			return ("Invalid config file or wrong permissions");
 		}
 	};
 
@@ -60,23 +61,24 @@ class Config
 	};
 	
 	public:
-		Config();
-		Config(std::string configFile);
+		Config(int argc, char **argv);
 		~Config();
 		Config( const Config& src );
 		Config &		operator=( Config const & rhs );
 		
 		std::list<struct ServerSettings>	getServers() const;
-
-		void								setFile(std::string filename);
-		
+		bool								getError() const;
 	
 	private:
 		std::string							_filename;
 		std::list<struct ServerSettings>	_servers;
+		bool								_error;
 
-		void								_readServerSettings();
-		void								_parseConfigFile();
+		void						_readServerSettings();
+		int							_parseConfigFile();
+		// void						_parseServer(std::string line);    // add later if needed
+		// void						_parseLocation(std::string line);  // add later if needed
+		// void						_parseErrorPage(std::string line); // add later if needed
 };
 
 #endif
