@@ -6,19 +6,25 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/14 09:05:38 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/14 09:36:24 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "eventloop.hpp"
 #include "Config.hpp"
- #include <string.h>
+#include "webServ.hpp"
+#include <string.h>
+#include <signal.h>
+
+int	g_shutdown_flag = 0;
 
 int main(int argc, char **argv) {
 
 	int 				epollFd;
 	struct epoll_event	events[MAX_EVENTS];
 	std::list<Server>	servers;
+
+	signal(SIGINT, handleSignal);
 	try {
 		Config conf(argc, argv);
 		if (conf.getError() == true)
@@ -33,7 +39,7 @@ int main(int argc, char **argv) {
 		std::cerr << "\033[31;1mError\n" << e.what() << "\033[0m" << std::endl;
 		return 1;
 	}
-	while (true) {
+	while (!g_shutdown_flag) {
 		int numEvents = epoll_wait(epollFd, events, MAX_EVENTS, 0);
 		
 		for (int i = 0; i < numEvents; i++) {
@@ -52,6 +58,11 @@ int main(int argc, char **argv) {
 				writeData(conn);
 		}
 	}
-	// delete remaining conn structs by setting flag in signal handling?
+	std::cout << CYAN << "clean up" << RESET << std::endl;
+	int numEvents = epoll_wait(epollFd, events, MAX_EVENTS, 0);
+	for (int i = 0; i < numEvents; i++) {
+		connection *conn = static_cast<connection *>(events[i].data.ptr);
+		closeConnection(epollFd, conn);
+	}
     return 0;
 }
