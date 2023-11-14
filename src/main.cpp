@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/13 09:18:06 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/14 09:05:38 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,11 @@ int main(int argc, char **argv) {
 		
 		for (int i = 0; i < numEvents; i++) {
 			connection *conn = static_cast<connection *>(events[i].data.ptr);
-			if (conn->state == LISTENING && events[i].events & EPOLLIN)
+			if (events[i].events & EPOLLIN && conn->state == LISTENING)
 				newConnection(epollFd, conn->fd, conn->server);
-			if (conn->state == CLOSING || events[i].events & EPOLLERR || events[i].events & EPOLLHUP)
+			if (events[i].events & EPOLLERR || events[i].events & EPOLLHUP || conn->state == CLOSING)
 				closeConnection(epollFd, conn);
-			if ((conn->state == READING) && events[i].events & EPOLLIN)
+			if (events[i].events & EPOLLIN && conn->state == READING)
 				readData(conn);
 			if (conn->state == HANDLING)
 				handleRequest(epollFd, conn);

@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/13 19:37:07 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/14 10:42:16 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,9 +164,9 @@ char**		HttpRequest::getEnvArray(void) const {
 	c_strings.push_back(nullptr);
 	
 	//malloc an array and copy vector into array
-	char **envArray = (char**)malloc(sizeof(char *) * c_strings.size());
+	// char **envArray = (char**)malloc(sizeof(char *) * c_strings.size());
+	char **envArray = new char*[c_strings.size()];
 	std::copy(c_strings.begin(), c_strings.end(), envArray);
-	
 	return envArray;
 }
 

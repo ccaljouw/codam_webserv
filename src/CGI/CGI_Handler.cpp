@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/10 21:31:19 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/13 19:25:44 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,13 +97,18 @@ int cgiHandler(const Uri& uri, connection *conn, int epollFd, char **env)
 		cgi.closeFds();
 		return 1;
 	}
-	
 	int pid = fork();
-	if (pid == -1) //close FdIn and FdOut?
+	if (pid == -1)
+	{
+		cgi.closeFds();
 		return 1;
+	}
 	else if (pid == 0)
 		execChild(uri, cgi, env);
 	else
+	{
 		close(cgi.getFdOut());
+		delete env;	
+	}
 	return 0;
 }
