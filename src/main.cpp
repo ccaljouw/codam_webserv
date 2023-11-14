@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/14 09:36:24 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/14 10:24:47 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,16 +46,16 @@ int main(int argc, char **argv) {
 			connection *conn = static_cast<connection *>(events[i].data.ptr);
 			if (events[i].events & EPOLLIN && conn->state == LISTENING)
 				newConnection(epollFd, conn->fd, conn->server);
-			if (events[i].events & EPOLLERR || events[i].events & EPOLLHUP || conn->state == CLOSING)
-				closeConnection(epollFd, conn);
 			if (events[i].events & EPOLLIN && conn->state == READING)
 				readData(conn);
-			if (conn->state == HANDLING)
+			if (conn && conn->state == HANDLING)
 				handleRequest(epollFd, conn);
-			if (conn->state == IN_CGI && events[i].events & EPOLLIN)
+			if (events[i].events & EPOLLIN && conn->state == IN_CGI)
 				readCGI(epollFd, conn);
-			if (conn->state == WRITING && events[i].events & EPOLLOUT)
+			if (events[i].events & EPOLLOUT && conn->state == WRITING)
 				writeData(conn);
+			if (events[i].events & EPOLLERR || events[i].events & EPOLLHUP || conn->state == CLOSING)
+				closeConnection(epollFd, conn);
 		}
 	}
 	std::cout << CYAN << "clean up" << RESET << std::endl;
