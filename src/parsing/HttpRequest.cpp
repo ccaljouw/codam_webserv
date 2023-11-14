@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/13 19:35:44 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/13 19:37:07 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,6 @@ try {
 
 
 // 2. === parse headers ===
-
 	//define block of all headers
 	std::size_t headersStart = RequestLineEnd + 2;
 	std::size_t headersEnd = request.find("\r\n\r\n", headersStart);
@@ -83,11 +82,9 @@ try {
 			_headers.insert(std::make_pair(key, value));
 		}
 	}
-
 	
 // 3. === parse body ===
 	_body = request.substr(headersEnd + 4);
-
 
 
 	}
