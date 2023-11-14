@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Config.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/09 14:02:40 by bfranco           #+#    #+#             */
-/*   Updated: 2023/11/13 16:47:27 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Config.hpp                                         :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
+/*   Updated: 2023/11/13 19:57:24 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ struct ServerSettings
 {
 	std::string							_serverName;
 	std::string							_rootFolder;
-	std::string							_host;
 	uint16_t							_port;
 	std::string							_index; //default
 	std::list<struct LocationSettings>	_locations;

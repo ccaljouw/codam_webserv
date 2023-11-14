@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   registerEvents.cpp                                 :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 23:48:35 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/13 11:24:25 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   registerEvents.cpp                                 :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 23:48:35 by cariencaljo   #+#    #+#                 */
+/*   Updated: 2023/11/14 09:13:08 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	register_server(int epollFd, int fd, Server *server)
 	struct epoll_event 	event;
 	connection			*conn;
 	
-	conn = new connection{fd, 0, LISTENING, "", "", server, std::time(nullptr), 0};
+	conn = new connection{fd, 0, LISTENING, std::string(""), std::string(""), server, std::time(nullptr), 0};
     event.events = EPOLLIN | EPOLLET;
     event.data.ptr = conn;
 	if (epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, &event) == -1)
@@ -35,7 +35,7 @@ int	register_client(int epollFd, int fd, Server *server)
 	struct epoll_event 	event;
 	connection			*conn;
 
-	conn = new connection{fd, 0, READING,  "", "", server, std::time(nullptr), 0};
+	conn = new connection{fd, 0, READING,  std::string(""), std::string(""), server, std::time(nullptr), 0};
 	event.events = EPOLLIN | EPOLLOUT;
     event.data.ptr = conn;
 	if (epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, &event) == -1)
