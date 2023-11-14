@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/12 12:24:55 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/14 09:33:10 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,15 @@
 #define PURPLE	"\033[35;1m"
 #define CYAN	"\033[36;1m"
 
+extern int	g_shutdown_flag;
+
 // utils.cpp
 void			checkTimeout(connection *conn);
 void			setResponse(connection *conn, HttpResponse resp);
 void			setErrorResponse(connection *conn, int error);
 std::string		checkAndSetCookie(connection* conn, HttpRequest& request);
 std::string		removeWhitespaces(std::string str);
+void 			handleSignal(int signal);
 
 
 
