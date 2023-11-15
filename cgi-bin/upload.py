@@ -3,9 +3,12 @@
 import datetime, os, cgi, cgitb, sys
 
 form = cgi.FieldStorage()
+cgitb.enable(display=1, logdir="./logs", format="text")
 
+# cgi.print_form(form)
+print(form.getvalue('filename'))
 
-if 'filename' in form:
+if form.getvalue('filename'):
 	print("We have a filename", file=sys.stderr)
 	fileitem = form['filename']
 	fn = os.path.basename(fileitem.filename.replace("\\", "/"))
@@ -40,9 +43,6 @@ print(header)
 print(body)
 print("\0")
 
-for i in os.environ.keys():
-	print(f"{i}={os.environ[i]}")
-
 print("")
-print(os.environ)
+cgi.print_environ()
 cgi.print_form(form)
