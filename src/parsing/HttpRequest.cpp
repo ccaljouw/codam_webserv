@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/16 13:38:19 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/16 13:55:29 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 #include <cstring>
 
 
-HttpRequest::HttpRequest(const Server *server) : uri(), _method(), _protocol(), _headers(), _body(), _requestStatus(200), _server(server), _settings() {};
+HttpRequest::HttpRequest(const Server *server) : uri(), _method(), _protocol(), _headers(), _body(), _requestStatus(200), _server(server) {};
 
 HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri(), _requestStatus(200) ,_server(server) {
 
@@ -46,16 +46,16 @@ try {
 
 	uri = Uri(tempUriString);
 	
-	// todo: get location and resulting location settings
-	_settings = _server->get_locationSettings(uri.getHost(), uri.getPath());
+	// // todo: get location and resulting location settings
+	// _settings = _server->get_locationSettings(uri.getHost(), uri.getPath());
 
 
-	// check allowd method
-	if (_settings._allowedMethods.find(_method) == std::string::npos);
-		throw parsingException(405, "Method not Allowed");
+	// // check allowd method
+	// if (_settings._allowedMethods.find(_method) == std::string::npos);
+	// 	throw parsingException(405, "Method not Allowed");
 
-	// check is directory
-	if (std::filesystem::is_directory(uri.getPath()))
+	// // check is directory
+	// if (std::filesystem::is_directory(uri.getPath()))
 	
 	
 	
@@ -179,9 +179,6 @@ char**		HttpRequest::getEnvArray(void) {
 	c_strings.push_back(nullptr);
 	
 	//malloc an array and copy vector into array
-	// char **envArray = (char**)malloc(sizeof(char *) * c_strings.size());
-	char **envArray = new char*[c_strings.size()];
-	// char **envArray = (char**)malloc(sizeof(char *) * c_strings.size());
 	char **envArray = new char*[c_strings.size()];
 	std::copy(c_strings.begin(), c_strings.end(), envArray);
 	

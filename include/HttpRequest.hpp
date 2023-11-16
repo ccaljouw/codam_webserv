@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/16 13:25:31 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/16 13:54:38 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,11 +76,9 @@ class HttpRequest {
 		std::string								_body;
 		int										_requestStatus;
 		const Server*							_server;
-		struct LocationSettings&				_settings;
-		
-		
+		// const struct LocationSettings&			_settings;
 
-		// std::vector<std::string> supportedMethods = { "GET", "POST", "DELETE" }; //todo: make configurable
+		
 };
 
 #endif
