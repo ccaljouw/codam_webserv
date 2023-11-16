@@ -17,9 +17,8 @@
 #include <iostream>
 #include <fstream>
 
-//declaration of helper functions
-std::string getTimeStamp();
 
+std::string getTimeStamp();
 
 HttpResponse::HttpResponse() : _protocol(HTTP_PROTOCOL), _statusCode(200), _headerMap(), _body() {
 	fillStandardHeaders();
