@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/15 11:45:05 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/16 11:51:34 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,12 +66,12 @@ char	*getProgramPath(const Uri& uri, char *program)
 	return (program);
 }
 
-void	execChild(const Uri& uri, CGI &cgi, char **env)
+void	execChild(const HttpRequest& req, CGI &cgi)
 {
-	char	program[uri.getPath().size() + 2];
+	char	program[req.uri.getPath().size() + 2];
 	char	*argv[] = {program, NULL};
 	// char	**env = uri.getHeadersArray();
-	getProgramPath(uri, program);
+	getProgramPath(req.uri, program);
 	
 	std::cerr << "program = " << argv[0] << std::endl;
 	// if (dup2(cgi.getFdOut(), STDOUT_FILENO) == -1)
@@ -80,7 +80,6 @@ void	execChild(const Uri& uri, CGI &cgi, char **env)
 	// 	cgi.closeFds();
 	// 	return ;
 	// }
-	(void)env;
 	char	*env2[] = {
 		strdup("AUTH_TYPE=\"\""),
 		strdup("CONTENT_LENGTH=\"1024\""),
@@ -91,6 +90,7 @@ void	execChild(const Uri& uri, CGI &cgi, char **env)
 		strdup("HTTP_ACCEPT_ENCODING=\"\""),
 		strdup("HTTP_ACCEPT_LANGUAGE=\"\""),
 		strdup("HTTP_FORWARDED=\"\""),
+		strdup("HTTP_METHOD=\"POST\""),
 		strdup("HTTP_HOST=\"http://localhost:8080\""),
 		strdup("HTTP_PROXY_AUTHORIZATION=\"\""),
 		strdup("HTTP_USER_AGENT=\"\""),
@@ -113,13 +113,15 @@ void	execChild(const Uri& uri, CGI &cgi, char **env)
 	// for (int i = 0; env[i]; i++)
 	// 	std::cout << "env[" << i << "] = " << env[i] << std::endl;
 	dup2(cgi.getFdOut(), STDOUT_FILENO);
+	std::string body = req.getBody();
+	write(STDIN_FILENO, body.c_str(), body.size());
 	// cgi.closeFds();
-	close(cgi.getFdIn());
+	// close(cgi.getFdIn());
 	std::cerr << "before execve" << std::endl;
 	execve(argv[0], argv, env2);
 }
 
-int cgiHandler(const Uri& uri, connection *conn, int epollFd, char **env)
+int cgiHandler(const HttpRequest& req, connection *conn, int epollFd)
 {
 	CGI	cgi(epollFd, conn);
 
@@ -134,7 +136,7 @@ int cgiHandler(const Uri& uri, connection *conn, int epollFd, char **env)
 	if (pid == -1) //close FdIn and FdOut?
 		return 1;
 	else if (pid == 0)
-		execChild(uri, cgi, env);
+		execChild(req, cgi);
 	else
 		close(cgi.getFdOut());
 	return 0;

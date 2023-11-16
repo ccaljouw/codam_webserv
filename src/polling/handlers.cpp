@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   handlers.cpp                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/13 16:44:12 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   handlers.cpp                                       :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
+/*   Updated: 2023/11/16 11:41:54 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void handleRequest(int epollFd, connection *conn)
 		// handle CGI
 		else if (request.uri.getExecutable() == "cgi-bin") { //todo:make configurable
 			//case error in cgi handler
-			if (cgiHandler(request.getUri(), conn, epollFd, request.getEnvArray()) == 1 ) 
+			if (cgiHandler(request, conn, epollFd) == 1 ) 
 				setErrorResponse(conn, 500);	
 			else
 			{
