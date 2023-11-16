@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/16 14:12:01 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/16 14:56:12 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void readData(connection *conn)
 
 	if ((bytesRead = recv(conn->fd, buffer, sizeof(buffer), 0)) > 0) // what recv flag to use??
 	{
-		// std::cout << YELLOW << buffer << RESET << std::endl; //for testing
+		std::cout << YELLOW << buffer << RESET << std::endl; //for testing
 		std::time(&conn->time_last_request);
 		conn->request.append(buffer, static_cast<long unsigned int>(bytesRead));
 	}
