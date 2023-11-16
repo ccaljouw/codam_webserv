@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/14 11:54:57 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/16 13:33:08 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 #include <cstring>
 
 
-HttpRequest::HttpRequest(const Server *server) : uri(), _method(), _protocol(), _headers(), _body(), _requestStatus(200), _server(server) {};
+HttpRequest::HttpRequest(const Server *server) : uri(), _method(), _protocol(), _headers(), _body(), _requestStatus(200), _server(server), _settings() {};
 
 HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri(), _requestStatus(200) ,_server(server) {
 
@@ -47,11 +47,22 @@ try {
 	uri = Uri(tempUriString);
 	
 	// todo: get location and resulting location settings
-	struct LocationSettings location = _server->get_locations("servername").front();
-	
-	// check method
-	if (location._allowedMethods.find(_method) == location._allowedMethods.end())
+	_settings = _server->get_locationSettings(uri.getHost(), uri.getPath());
+
+
+	// check allowd method
+	if (_settings._allowedMethods.find(_method) == std::string::npos);
 		throw parsingException(405, "Method not Allowed");
+
+	// check is directory
+	if (std::filesystem::is_directory(uri.getPath()))
+	
+	
+	
+
+
+
+
 
 
 // 2. === parse headers ===
