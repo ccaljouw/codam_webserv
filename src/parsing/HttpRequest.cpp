@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/16 14:36:16 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/16 15:02:06 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,8 +193,12 @@ void	HttpRequest::addHeader(const std::string& key, const std::string& value) {
 
 void	HttpRequest::setConfigValues(std::string host) {
 	
+	
+	// add environ .. seperate environ map
 	addHeader("SERVER_NAME", _server->get_serverName(host));
 	//add rest
-
-	addHeader("METHOD", getMethod());
+	addHeader("REQUEST_METHOD", getMethod());
+	//CONTENT_TYPE; (including boundry ...)
+	//QUERY_STRING;
+	//CONTENT_LENGTH
 }
