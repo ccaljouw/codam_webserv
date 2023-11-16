@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/13 19:35:24 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/14 11:44:18 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ class HttpRequest {
 		std::multimap<std::string, std::string>		getHeaders(void) const;
 		int											getRequestStatus(void) const;
 		std::string									getHeaderValue(std::string) const;
-		char** 										getEnvArray(void) const; //includes header and queries merged into one array
+		char** 										getEnvArray(void); //includes header and queries merged into one array
 	
 			
 
@@ -52,6 +52,7 @@ class HttpRequest {
 		void										setUri(const std::string& str);
 		void										addHeader(const std::string& key, const std::string& value);
 		void										setRequestStatus(int value);
+		void										setConfigValues(std::string host);
 
 
 	// ============= exception ================

@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/14 10:42:16 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/14 11:54:57 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,9 @@ try {
 		_requestStatus = exception.getErrorCode();
 		std::cerr << exception.what() << std::endl; 
 	}
+
+//fetch and set config file values in request
+	setConfigValues(uri.getHost());
 }
 
 
@@ -140,7 +143,8 @@ std::string HttpRequest::getHeaderValue(std::string key) const {
 }
 
 
-char**		HttpRequest::getEnvArray(void) const {
+
+char**		HttpRequest::getEnvArray(void) {
 
 	// merge headers map and queries map into one map
 	std::multimap<std::string, std::string> mergedMap;
@@ -167,19 +171,32 @@ char**		HttpRequest::getEnvArray(void) const {
 	// char **envArray = (char**)malloc(sizeof(char *) * c_strings.size());
 	char **envArray = new char*[c_strings.size()];
 	std::copy(c_strings.begin(), c_strings.end(), envArray);
+	
+	
+	int k = c_strings.size();
+	for (int i = 0; i < k;  i++) 
+		std::cout << envArray[i] << std::endl;
+	
 	return envArray;
 }
 
 
-
 //========= Setters ===============================
 
-void HttpRequest::setMethod(const std::string& method) 							{	_method = method;			}
-void HttpRequest::setProtocol(const std::string& protocol) 						{	_protocol = protocol;		}
-void HttpRequest::setBody(const std::string& body) 								{	_body = body; 				}
-void HttpRequest::setUri(const std::string& string) 							{	uri = Uri(string);			}		
-void HttpRequest::setRequestStatus(int value) 									{	_requestStatus = value;		}
+void	HttpRequest::setMethod(const std::string& method) 			{	_method = method;			}
+void	HttpRequest::setProtocol(const std::string& protocol) 		{	_protocol = protocol;		}
+void	HttpRequest::setBody(const std::string& body) 				{	_body = body; 				}
+void	HttpRequest::setUri(const std::string& string) 				{	uri = Uri(string);			}		
+void	HttpRequest::setRequestStatus(int value) 					{	_requestStatus = value;		}
 
-void HttpRequest::addHeader(const std::string& key, const std::string& value) {
+void	HttpRequest::addHeader(const std::string& key, const std::string& value) {
 	_headers.insert(std::make_pair(key, value));
+}
+
+void	HttpRequest::setConfigValues(std::string host) {
+	
+	addHeader("SERVER_NAME", _server->get_serverName(host));
+	//add rest
+
+	addHeader("METHOD", getMethod());
 }
