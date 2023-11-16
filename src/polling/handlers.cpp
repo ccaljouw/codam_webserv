@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   handlers.cpp                                       :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/14 10:23:33 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   handlers.cpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
+/*   Updated: 2023/11/16 14:12:01 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ void handleRequest(int epollFd, connection *conn)
 						throw HttpRequest::parsingException(404, "Path not found");
 		
 					HttpResponse response(request);
-					response.setBody(request.uri.getPath());
+					response.setBody(request.uri.getPath(), request.uri.getIsBinary());
 					response.addHeader("Content-type", contentType);
 
 					response.setHeader("Set-Cookie", cookieValue);

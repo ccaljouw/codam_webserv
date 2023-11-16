@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/16 13:49:51 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/16 14:36:29 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ class HttpResponse {
 		void	setProtocol(const std::string& protocol);
 		void	setStatusCode(int status);
 		void	addHeader(const std::string& key, const std::string& value);
-		void	setBody(const std::string& filePath);
+		void	setBody(const std::string& filePath, bool isBinary);
 		void	setHeader(const std::string& key, const std::string& value);
 		void	fillStandardHeaders(void); //todo: get from config
 		void	updateDateLength(void);

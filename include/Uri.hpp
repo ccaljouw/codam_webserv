@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   Uri.hpp                                            :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/03 12:12:15 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/10 15:33:07 by carlo         ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   Uri.hpp                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/03 12:12:15 by carlo             #+#    #+#             */
+/*   Updated: 2023/11/16 14:01:14 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ class Uri {
 		std::string							getAuthority(void) const;
 		std::string							getPath(void) const;
 		std::string							getExtension(void) const;
+		bool								getIsBinary(void) const;
 		std::string							getQuery(void) const;
 		std::string							getFragment(void) const;
 		std::string							getUserInfo(void) const;
@@ -63,6 +64,7 @@ class Uri {
 		std::string							_authority;
 		std::string							_path;
 		std::string							_extension;
+		bool								_isBinary;
 		std::string							_query;
 		std::map<std::string, std::string>	_queryMap;
 		std::string							_fragment;

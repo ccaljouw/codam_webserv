@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/16 13:55:29 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/16 14:36:16 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,25 +46,13 @@ try {
 
 	uri = Uri(tempUriString);
 	
-	// // todo: get location and resulting location settings
-	// _settings = _server->get_locationSettings(uri.getHost(), uri.getPath());
-
-
-	// // check allowd method
-	// if (_settings._allowedMethods.find(_method) == std::string::npos);
-	// 	throw parsingException(405, "Method not Allowed");
-
-	// // check is directory
-	// if (std::filesystem::is_directory(uri.getPath()))
+	// todo: get location and resulting location settings
+	struct LocationSettings location = server->get_locationSettings("servername", "");
 	
+	// check method
+	if (location._allowedMethods.find(_method) == location._allowedMethods.end())
+		throw parsingException(405, "Method not Allowed");
 	
-	
-
-
-
-
-
-
 // 2. === parse headers ===
 	//define block of all headers
 	std::size_t headersStart = RequestLineEnd + 2;

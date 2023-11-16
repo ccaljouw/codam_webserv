@@ -41,4 +41,4 @@ print(body)
 print("\0")
 
 cgi.print_environ()
-cgi.print_form(form)
+# cgi.print_form(form)
