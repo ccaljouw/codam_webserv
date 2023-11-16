@@ -29,7 +29,7 @@ HttpResponse::HttpResponse() : _protocol(HTTP_PROTOCOL), _statusCode(200), _head
 HttpResponse::HttpResponse(const HttpRequest& request) {
 	_protocol 			= HTTP_PROTOCOL;
 	_statusCode			= request.getRequestStatus();
-	_body				= request.getBody() + LINE_END;
+	_body				= request.getBody();
 
 	fillStandardHeaders();
 }
@@ -98,24 +98,38 @@ void HttpResponse::setHeader(const std::string& key, const std::string& value) {
 }
 
 
-void HttpResponse::setBody(const std::string& filePath)	{
-	std::ifstream inputFile(filePath);
-	if (inputFile.is_open()) {
-
-		std::string line;
-		while(std::getline(inputFile, line))
+void HttpResponse::setBody(const std::string& filePath, bool isBinary)	{
+	if (isBinary)
+	{
+		std::ifstream inputFile(filePath, std::ifstream::binary);
+		if (inputFile)
 		{
-			_body += line;
-			_body += LINE_END;
-		}
-		inputFile.close();
+			inputFile.seekg(0, inputFile.end);
+			int length = inputFile.tellg();
+			inputFile.seekg(0, inputFile.beg);
 
+			char buffer[length];
+			inputFile.read(buffer, length);
+			_body.append(buffer, length);
+			if (!inputFile)
+				std::cout << "could only read " << inputFile.gcount() << " from " << length << " bites" << std::endl; //todo trow error
+			inputFile.close();
+		}	
 	}
-	else
-		throw HttpRequest::parsingException(422, "Unprocessable Entity");
+	else {
+		std::ifstream inputFile(filePath);
+		if (inputFile.is_open()) {
+
+			std::string line;
+			while(std::getline(inputFile, line))
+				_body += line;
+			inputFile.close();
+		}
+		else
+			throw HttpRequest::parsingException(422, "Unprocessable Entity");
+	}
 	
 	size_t bodyLength = _body.length();
-
 	setHeader("Last-Modified", getTimeStamp());
 	setHeader("Content-Length", std::to_string(bodyLength));
 }

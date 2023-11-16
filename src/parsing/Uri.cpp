@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   Uri.cpp                                            :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/10 16:56:04 by carlo         ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   Uri.cpp                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/03 12:17:27 by carlo             #+#    #+#             */
+/*   Updated: 2023/11/16 14:09:39 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ std::map<std::string, std::string> acceptedExtensions = {
 };
 
 
-Uri::Uri() : _scheme(), _authority(), _path(), _extension(), _query(), _queryMap(), _fragment(), _userinfo(), _host(), _port() {}
+Uri::Uri() : _scheme(), _authority(), _path(), _extension(), _isBinary(false), _query(), _queryMap(), _fragment(), _userinfo(), _host(), _port() {}
 
 
 // regex teken directly from RFC 2396 : ^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))? added R for ignoring escape characterss
@@ -72,6 +72,7 @@ const Uri& Uri::operator=(const Uri& rhs) {
 		_authority		= rhs._authority;
 		_path			= rhs._path;
 		_extension		= rhs._extension;
+		_isBinary		= rhs._isBinary;
 		_query			= rhs._query;
 		_queryMap.clear();
 		_queryMap		= rhs._queryMap;
@@ -144,6 +145,7 @@ std::string	Uri::getScheme() const								{	return _scheme;		}
 std::string	Uri::getAuthority() const							{	return _authority;	}
 std::string	Uri::getPath() const								{	return _path; 		}
 std::string	Uri::getExtension() const							{	return _extension;	}
+bool Uri::getIsBinary(void) const								{	return _isBinary;	}
 std::string	Uri::getQuery() const								{	return _query;		}
 std::string	Uri::getFragment() const							{	return _fragment;	}
 std::string	Uri::getUserInfo() const							{	return _userinfo;	}
@@ -213,10 +215,12 @@ void	Uri::setExtension()
 	size_t periodPos = _path.rfind('.');
 	if (periodPos != std::string::npos)
 		_extension = _path.substr(periodPos);
-	
 	else
 		_extension = "";
+	if (_extension == ".png" || _extension == ".ico") // to make config
+		_isBinary =  true;	
 }
+
 
 void	Uri::setPath(std::string path) {
 	_path = path;
@@ -230,4 +234,3 @@ bool	Uri::isValidExtension() {
 			return true;
 	return false;
 }
-

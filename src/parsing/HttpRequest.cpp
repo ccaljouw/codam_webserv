@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   HttpRequest.cpp                                    :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/13 19:21:48 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   HttpRequest.cpp                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/01 14:21:11 by carlo             #+#    #+#             */
+/*   Updated: 2023/11/16 14:12:49 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ try {
 	uri = Uri(tempUriString);
 	
 	// todo: get location and resulting location settings
-	struct LocationSettings location = server->get_locations("servername").front();
+	struct LocationSettings location = server->get_locationSettings("servername", "");
 	
 	// check method
 	if (location._allowedMethods.find(_method) == location._allowedMethods.end())
