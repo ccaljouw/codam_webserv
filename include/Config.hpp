@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/14 10:42:23 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/16 13:37:21 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,12 @@
 
 struct LocationSettings
 {
-	std::string							_locationId;
-	std::set<std::string>				_allowedMethods;
-	std::string							_index; //default
-	bool								_autoindex;
-	std::string							_redirect;
-	std::string							_uploadDir;
+	std::string					_locationId;
+	std::set<std::string>		_allowedMethods;
+	std::string					_redirect;
+	std::string					_index; //default
+	bool						_autoindex;
+	std::string					_uploadDir;
 };
 
 struct ServerSettings
@@ -44,7 +44,6 @@ struct ServerSettings
 	int									_maxNrOfRequests;
 	size_t								_maxBodySize;
 };
-
 
 class Config
 {
