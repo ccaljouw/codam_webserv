@@ -107,9 +107,11 @@ std::string	Server::get_index(std::string host) const {
 	(void)host;
 	return _index; }
 
-std::list<struct LocationSettings>	Server::get_locations(std::string host) const { 
+const struct LocationSettings&	Server::get_locationSettings(std::string host, std::string location) const {
 	(void)host;
-	return _locations; }
+	(void)location;
+	return (_locations.front());
+}
 
 std::map<std::string, int>	Server::get_knownClientIds(std::string host) const { 
 	(void)host;
