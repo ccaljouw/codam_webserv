@@ -92,67 +92,87 @@ int	Server::checkClientId(std::string id) {
 void	Server::addSubDomain(struct ServerSettings const & settings) {	_settings.push_back(settings);	}
 
 // ============= Getters ================
-uint16_t	Server::get_port(void) const {
-	return	_settings.front()._port;
-}
+uint16_t	Server::get_port(void) const {	return	_settings.front()._port;	}
 
-int	Server::get_FD() const { 
-	return _fd; }
+int	Server::get_FD() const { return _fd; }
 
 std::string	Server::get_serverName(std::string host) const { 
-	(void)host;
-	return _settings.front()._serverName; }
-
-std::string	Server::get_rootFolder(std::string host) const { 
-	(void)host;
-	return _settings.front()._rootFolder; }
-
-std::string	Server::get_index(std::string host) const {
-	(void)host;
-	return _settings.front()._index; }
-
-const struct LocationSettings*	Server::get_locationSettings(std::string host, std::string location) const {
-	if (host.empty() || location.empty()) {
-		std::cout << "called get_loactionSettings with empty host or location" << std::endl;
-		return nullptr;
+	const ServerSettings *hostSettings = &_settings.front();
+	for (auto& setting : _settings) {
+		if (setting._serverName == host)
+			hostSettings = &setting;
 	}
-	(void)host;
-	std::cout << "host: " << host << ", location: " << location << std::endl;
-	try {
-		while (!location.empty())
-		{
-			for (auto& loc : _settings.front()._locations) {
-				if (location == loc._locationId) {
-					std::cout << "sending location: " << location << std::endl;
-					return (&loc);
-				}
-			}
-			location.resize(location.rfind('/'));
-		}
-	}
-	catch (const std::length_error& le) {
-		std::cout << "caugt error" << std::endl;
-		return (&_settings.front()._locations.front());
-	}
-	std::cout << "sending default location" << std::endl;
-	return (&_settings.front()._locations.front());
+	return hostSettings->_serverName;
 }
 
-std::map<std::string, int>	Server::get_knownClientIds(std::string host) const {  // dont need to check host
-	(void)host;
-	return _knownClientIds; }
+std::string	Server::get_rootFolder(std::string host) const { 
+	const ServerSettings *hostSettings = &_settings.front();
+	for (auto& setting : _settings) {
+		if (setting._serverName == host)
+			hostSettings = &setting;
+	}
+	return hostSettings->_rootFolder;
+}
+
+std::string	Server::get_index(std::string host) const {
+	const ServerSettings *hostSettings = &_settings.front();
+	for (auto& setting : _settings) {
+		if (setting._serverName == host)
+			hostSettings = &setting;
+	}
+	return hostSettings->_index;
+}
+
+const struct LocationSettings*	Server::get_locationSettings(std::string host, std::string location) const {
+	const ServerSettings *hostSettings = &_settings.front();
+	for (auto& setting : _settings) {
+		if (setting._serverName == host)
+			hostSettings = &setting;
+	}
+	while (!location.empty())
+	{
+		for (auto& loc : hostSettings->_locations) {
+			if (loc._locationId == location) 
+				return (&loc);
+		}
+		size_t pos = location.rfind('/');
+		if (pos == 0 || pos > location.length())
+			location = "/";
+		else
+			location.resize(pos);
+	}	
+	std::cerr << RED << "Error\nincorrect configuration " << hostSettings->_serverName << RESET << std::endl;
+	return (nullptr);
+}
+
+std::map<std::string, int>	Server::get_knownClientIds() const {	return _knownClientIds;	}
 	
 double	Server::get_timeout(std::string host) const { 
-	(void)host;
-	return _settings.front()._timeout; }
+	const ServerSettings *hostSettings = &_settings.front();
+	for (auto& setting : _settings) {
+		if (setting._serverName == host)
+			hostSettings = &setting;
+	}
+	return hostSettings->_timeout; 
+}
 
 int		Server::get_maxNrOfRequests(std::string host) const { 
-	(void)host;
-	return _settings.front()._maxNrOfRequests; }
+	const ServerSettings *hostSettings = &_settings.front();
+	for (auto& setting : _settings) {
+		if (setting._serverName == host)
+			hostSettings = &setting;
+	}
+	return hostSettings->_maxNrOfRequests; 
+}
 
 size_t	Server::get_maxBodySize(std::string host) const {
-	(void)host;
-	return _settings.front()._maxBodySize; }
+	const ServerSettings *hostSettings = &_settings.front();
+	for (auto& setting : _settings) {
+		if (setting._serverName == host)
+			hostSettings = &setting;
+	}
+	return hostSettings->_maxBodySize; 
+}
 
 // std::list<ErrorPages>	Server::get_errorPages() const { return _errorPages; }
 

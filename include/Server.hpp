@@ -43,7 +43,7 @@ class Server
 		std::string	get_rootFolder(std::string host) const;
 		std::string	get_index(std::string host) const;
 		const struct LocationSettings*	get_locationSettings(std::string host, std::string location) const;
-		std::map<std::string, int>	get_knownClientIds(std::string host) const;
+		std::map<std::string, int>	get_knownClientIds() const;
 		double	get_timeout(std::string host) const;
 		int		get_maxNrOfRequests(std::string host) const;
 		size_t	get_maxBodySize(std::string host) const;

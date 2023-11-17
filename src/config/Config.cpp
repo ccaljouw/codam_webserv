@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/17 16:30:00 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/17 17:38:43 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	Config::_readServerSettings()
 		server._timeout = 3;
 		server._maxNrOfRequests = 10;
 		
-		html._locationId = "/html";
+		html._locationId = "/";
 		html._allowedMethods.insert("POST");
 		html._allowedMethods.insert("DELETE");
 		html._allowedMethods.insert("GET");
