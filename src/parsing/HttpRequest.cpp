@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/17 09:00:54 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/17 09:15:35 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,10 @@
 
 
 
-HttpRequest::HttpRequest(const Server *server) : uri(), _method(), _protocol(), _headers(), _body(), _requestStatus(200), _server(server) {};
+HttpRequest::HttpRequest(const Server *server) : uri(), _method(), _protocol(), _headers(), _body(), _requestStatus(200), _server(server), _settings(nullptr) {};
 
-HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri(), _requestStatus(200) ,_server(server) {
+HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri(), _requestStatus(200) ,_server(server), _settings(nullptr) {
+
 
 //todo: switch into helper functions mapHeaders
 // 1. === parse request line === 
@@ -45,11 +46,14 @@ try {
 	uri = Uri(tempUriString);
 	
 	// todo: get location and resulting location settings
-	struct LocationSettings location = server->get_locationSettings("servername", "");
+	_settings = _server->get_locationSettings(uri.getHost(), uri.getPath());
 	
 	// check method
-	if (location._allowedMethods.find(_method) == location._allowedMethods.end())
+	if (_settings->_allowedMethods.find(_method) == _settings->_allowedMethods.end())
 		throw parsingException(405, "Method not Allowed");
+	else
+		std::cout << "method ok" << std::endl;
+	//todo:add all checks etc
 	
 // 2. === parse headers ===
 	//define block of all headers
@@ -91,9 +95,6 @@ try {
 		_requestStatus = exception.getErrorCode();
 		std::cerr << exception.what() << std::endl; 
 	}
-
-//fetch and set config file values in request
-	setConfigValues(uri.getHost());
 }
 
 
@@ -140,7 +141,6 @@ std::string HttpRequest::getHeaderValue(std::string key) const {
 }
 
 
-
 char**		HttpRequest::getEnvArray(void) {
 
 	addHeader("REQUEST_METHOD", getMethod());
@@ -152,8 +152,7 @@ char**		HttpRequest::getEnvArray(void) {
 	
 	for (const auto& queryPair : uri.getQueryMap())
 		mergedMap.insert(queryPair);
-	
-	
+		
 	// make c_string array from multimap. first a vector of c_strings.	
 	//then make pair and capitalize
 	std::vector<char*> c_strings;
@@ -170,8 +169,7 @@ char**		HttpRequest::getEnvArray(void) {
 		c_strings.push_back(strdup(line.c_str()));
 	}
 
-	
-	c_strings.push_back(strdup(("BODY=" + getBody()).c_str())); // should parse form data in stead?
+	c_strings.push_back(strdup(("BODY=" + getBody()).c_str()));
 	c_strings.push_back(nullptr);
 	
 	//malloc an array and copy vector into array
@@ -196,15 +194,4 @@ void	HttpRequest::setRequestStatus(int value) 					{	_requestStatus = value;		}
 
 void	HttpRequest::addHeader(const std::string& key, const std::string& value) {
 	_headers.insert(std::make_pair(key, value));
-}
-
-void	HttpRequest::setConfigValues(std::string host) {
-	
-	
-	// add environ .. seperate environ map
-	addHeader("SERVER_NAME", _server->get_serverName(host));
-	//add rest
-	//CONTENT_TYPE; (including boundry ...)
-	//QUERY_STRING;
-	//CONTENT_LENGTH
 }

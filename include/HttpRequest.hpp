@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/16 14:35:47 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/17 09:06:00 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ class HttpRequest {
 		std::string								_body;
 		int										_requestStatus;
 		const Server*							_server;
-		// const struct LocationSettings&			_settings;
+		const struct LocationSettings*			_settings;
 
 		
 };
