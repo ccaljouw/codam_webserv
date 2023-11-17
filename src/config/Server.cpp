@@ -14,7 +14,6 @@
 #include <Server.hpp>
 #include "Config.hpp"
 #include <map>
-#include <map>
 #include <set>
 #include <algorithm>
 
@@ -181,28 +180,40 @@ size_t	Server::get_maxBodySize(std::string host) const {
 std::list<Server> initServers(std::list<struct ServerSettings> settings, int epollFd)
 {
 	std::list<Server> 				servers;
-	std::map<std::string, uint16_t> serverMap;
+	std::map<uint16_t, std::string> serverMap;
 	std::set<uint16_t>				ports;
+	bool							set = 0;
 
-	for (auto& setting : settings)
-	{
-		std::set<uint16_t>::iterator p = ports.find(setting._port);
-		if (p == ports.end()) {
-			ports.insert(setting._port);
-			std::cout << setting._port << ": added to set" << std::endl;
-			servers.push_back(Server());
-			if (servers.back().initServer(setting, epollFd) == 1)
-				servers.pop_back();
-		}
-		else {
-			for (auto& server : servers) {
-				if (server.get_port() == setting._port) {
-					server.addSubDomain(setting);
-					std::cout << "\033[32;1mServer: " << setting._serverName << ", listening on port "  << setting._port << "\033[0m" << std::endl;
-					break ;
+	try {
+		for (auto& setting : settings)
+		{
+			std::set<uint16_t>::iterator p = ports.find(setting._port);
+			if (p == ports.end()) {
+				ports.insert(setting._port);
+				serverMap.insert(std::make_pair(setting._port, setting._serverName));
+				std::cout << setting._port << ": added to set" << std::endl;
+				servers.push_back(Server());
+				if (servers.back().initServer(setting, epollFd) == 1)
+					servers.pop_back();
+			}
+			else {
+				for (auto& server : servers) {
+					for (auto& pair : serverMap) {
+						if (pair.first == setting._port && pair.second == setting._serverName)
+							throw std::runtime_error(setting._serverName + " allready configured for this port");
+					}
+					if (server.get_port() == setting._port && set == 0) {
+						server.addSubDomain(setting);
+						std::cout << GREEN << setting._serverName << ", listening on port "  \
+															<< setting._port << RESET << std::endl;
+						break ;
+					}
 				}
 			}
 		}
+	}
+	catch (const std::runtime_error& e) {
+		std::cerr << RED << "Error\n" << e.what() << RESET << std::endl;
 	}
 	return (servers);
 }
