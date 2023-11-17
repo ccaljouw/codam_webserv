@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/16 15:02:06 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/17 09:00:54 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,9 @@
 #include "eventloop.hpp"
 #include "Config.hpp"
 
-#include <iostream>
-#include <sstream>
-#include <exception>
 #include <algorithm>
-#include <cstring>
+
+
 
 
 HttpRequest::HttpRequest(const Server *server) : uri(), _method(), _protocol(), _headers(), _body(), _requestStatus(200), _server(server) {};
@@ -145,9 +143,10 @@ std::string HttpRequest::getHeaderValue(std::string key) const {
 
 char**		HttpRequest::getEnvArray(void) {
 
+	addHeader("REQUEST_METHOD", getMethod());
+
 	// merge headers map and queries map into one map
 	std::multimap<std::string, std::string> mergedMap;
-	
 	for (const auto& headerPair : _headers)
 		mergedMap.insert(headerPair);
 	
@@ -156,25 +155,33 @@ char**		HttpRequest::getEnvArray(void) {
 	
 	
 	// make c_string array from multimap. first a vector of c_strings.	
+	//then make pair and capitalize
 	std::vector<char*> c_strings;
 	
 	for (auto& pair : mergedMap)
 	{
 		std::string line = pair.first + "=" + pair.second;
+		for (char& c : line)
+		{	
+			c = toupper(static_cast<unsigned char>(c)); //todo: check if this is required and doesnt break stuff
+			if (c == '-')
+				c = '_';
+		}
 		c_strings.push_back(strdup(line.c_str()));
 	}
-	c_strings.push_back(strdup(("body=" + getBody()).c_str())); // should parse form data in stead?
+
+	
+	c_strings.push_back(strdup(("BODY=" + getBody()).c_str())); // should parse form data in stead?
 	c_strings.push_back(nullptr);
 	
 	//malloc an array and copy vector into array
 	char **envArray = new char*[c_strings.size()];
 	std::copy(c_strings.begin(), c_strings.end(), envArray);
 	
-	
 	int k = c_strings.size();
 	for (int i = 0; i < k;  i++) 
 		std::cout << envArray[i] << std::endl;
-	
+
 	return envArray;
 }
 
@@ -197,7 +204,6 @@ void	HttpRequest::setConfigValues(std::string host) {
 	// add environ .. seperate environ map
 	addHeader("SERVER_NAME", _server->get_serverName(host));
 	//add rest
-	addHeader("REQUEST_METHOD", getMethod());
 	//CONTENT_TYPE; (including boundry ...)
 	//QUERY_STRING;
 	//CONTENT_LENGTH
