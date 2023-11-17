@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/17 09:22:35 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/17 11:05:54 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,7 @@ std::string HttpRequest::getHeaderValue(std::string key) const {
 char**		HttpRequest::getEnvArray(void) {
 
 	addHeader("REQUEST_METHOD", getMethod());
-
+	 
 	// merge headers map and queries map into one map
 	std::multimap<std::string, std::string> mergedMap;
 	for (const auto& headerPair : _headers)
@@ -153,19 +153,19 @@ char**		HttpRequest::getEnvArray(void) {
 	for (const auto& queryPair : uri.getQueryMap())
 		mergedMap.insert(queryPair);
 		
-	// make c_string array from multimap. first a vector of c_strings.	
-	//then make pair and capitalize
+	// make c_string array from multimap. first a vector of c_strings, then make pairs and capitalize
 	std::vector<char*> c_strings;
 	
 	for (auto& pair : mergedMap)
 	{
-		std::string line = pair.first + "=" + pair.second;
-		for (char& c : line)
+		std::string key = pair.first;
+		for (char& c : key)
 		{	
-			c = toupper(static_cast<unsigned char>(c)); //todo: check if this is required and doesnt break stuff
-			if (c == '-')
+			c = toupper(static_cast<unsigned char>(c)); 
+			if (c == '-')//todo: check if this is required and doesnt break stuff
 				c = '_';
 		}
+		std::string line = key + "=" + pair.second;
 		c_strings.push_back(strdup(line.c_str()));
 	}
 
