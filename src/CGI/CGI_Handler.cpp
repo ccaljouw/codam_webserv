@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/17 11:49:11 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/17 11:57:47 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void	execChild(const HttpRequest& req, CGI &cgi)
 {
 	char	program[req.uri.getPath().size() + 2];
 	char	*argv[] = {program, NULL};
-	// char	**env = uri.getHeadersArray();
+	// char	**env = req.uri.getHeadersArray();
 	getProgramPath(req.uri, program);
 	
 	std::cerr << "program = " << argv[0] << std::endl;
@@ -126,7 +126,7 @@ void	execChild(const HttpRequest& req, CGI &cgi)
 int cgiHandler(const HttpRequest& req, connection *conn, int epollFd)
 {
 	CGI	cgi(epollFd, conn);
-
+	
 	std::cerr << "in CGI" << std::endl;
 	if (cgi.getStatus() == 1)
 	{
@@ -144,7 +144,7 @@ int cgiHandler(const HttpRequest& req, connection *conn, int epollFd)
 	else
 	{
 		close(cgi.getFdOut());
-		delete env;	
+		// delete env;
 	}
 	return 0;
 }
