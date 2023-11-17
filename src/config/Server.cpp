@@ -14,6 +14,7 @@
 #include <Server.hpp>
 #include "Config.hpp"
 #include <map>
+#include <map>
 
 // ============= con-/destructors ================
 
@@ -107,10 +108,10 @@ std::string	Server::get_index(std::string host) const {
 	(void)host;
 	return _index; }
 
-const struct LocationSettings&	Server::get_locationSettings(std::string host, std::string location) const {
+const struct LocationSettings*	Server::get_locationSettings(std::string host, std::string location) const {
 	(void)host;
 	(void)location;
-	return (_locations.front());
+	return (&_locations.front());
 }
 
 std::map<std::string, int>	Server::get_knownClientIds(std::string host) const { 

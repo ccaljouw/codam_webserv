@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   HttpResponse.hpp                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 10:27:35 by carlo             #+#    #+#             */
-/*   Updated: 2023/11/16 14:13:19 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   HttpResponse.hpp                                   :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
+/*   Updated: 2023/11/16 14:36:29 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ class HttpResponse {
 	 	HttpResponse(const HttpResponse& origin);
 	 	const HttpResponse& operator=(const HttpResponse& rhs);
 	 	~HttpResponse(void);
-
 
 		
 		// ============= Getters ================

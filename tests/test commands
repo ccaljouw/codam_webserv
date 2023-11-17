@@ -1,7 +1,0 @@
-valid
-curl --http1.1 -X GET -i http://localhost:8080/html/index.html
-
-error 405
-curl --http1.1 -X PUT -i http://localhost:8080/html/index.html  
-
-

@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 14:21:11 by carlo             #+#    #+#             */
-/*   Updated: 2023/11/16 14:12:49 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/17 11:15:29 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,15 @@
 #include "eventloop.hpp"
 #include "Config.hpp"
 
-#include <iostream>
-#include <sstream>
-#include <exception>
 #include <algorithm>
-#include <cstring>
 
 
-HttpRequest::HttpRequest(const Server *server) : uri(), _method(), _protocol(), _headers(), _body(), _requestStatus(200) { (void)server; };
 
-HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri(), _requestStatus(200) {
+
+HttpRequest::HttpRequest(const Server *server) : uri(), _method(), _protocol(), _headers(), _body(), _requestStatus(200), _server(server), _settings(_server->get_locationSettings(uri.getHost(), uri.getPath())) {};
+
+HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri(), _requestStatus(200) ,_server(server), _settings(_server->get_locationSettings(uri.getHost(), uri.getPath())) {
+
 
 //todo: switch into helper functions mapHeaders
 // 1. === parse request line === 
@@ -47,14 +46,15 @@ try {
 	uri = Uri(tempUriString);
 	
 	// todo: get location and resulting location settings
-	struct LocationSettings location = server->get_locationSettings("servername", "");
 	
 	// check method
-	if (location._allowedMethods.find(_method) == location._allowedMethods.end())
+	if (_settings->_allowedMethods.find(_method) == _settings->_allowedMethods.end())
 		throw parsingException(405, "Method not Allowed");
+	else
+		std::cout << "method ok" << std::endl;
+	//todo:add all checks etc
 	
 // 2. === parse headers ===
-
 	//define block of all headers
 	std::size_t headersStart = RequestLineEnd + 2;
 	std::size_t headersEnd = request.find("\r\n\r\n", headersStart);
@@ -82,8 +82,10 @@ try {
 			_headers.insert(std::make_pair(key, value));
 		}
 	}
+	
 // 3. === parse body ===
 	_body = request.substr(headersEnd + 4);
+
 
 	}
 	//catch block	
@@ -110,6 +112,8 @@ const HttpRequest& HttpRequest::operator=(const HttpRequest& rhs) {
 		_headers		= rhs._headers;
 		_body			= rhs._body;
 		_requestStatus	= rhs._requestStatus;
+		_server			= rhs._server;
+		_settings		= rhs._settings;
 	}
 	return *this;
 }
@@ -137,46 +141,51 @@ std::string HttpRequest::getHeaderValue(std::string key) const {
 }
 
 
-char**		HttpRequest::getEnvArray(void) const {
+char**		HttpRequest::getEnvArray(void) {
+
+	// addHeader("REQUEST_METHOD", getMethod());
 
 	// merge headers map and queries map into one map
 	std::multimap<std::string, std::string> mergedMap;
-	
 	for (const auto& headerPair : _headers)
 		mergedMap.insert(headerPair);
 	
 	for (const auto& queryPair : uri.getQueryMap())
 		mergedMap.insert(queryPair);
-	
-	
+		
 	// make c_string array from multimap. first a vector of c_strings.	
+	//then make pair and capitalize
 	std::vector<char*> c_strings;
-	
 	for (auto& pair : mergedMap)
 	{
-		std::string line = pair.first + "=" + pair.second;
+		std::string var = pair.first;
+		std::transform(var.begin(),  var.end(), var.begin(), ::toupper);
+		std::string line = var + "=" + pair.second;
 		c_strings.push_back(strdup(line.c_str()));
 	}
-	c_strings.push_back(strdup(("body=" + getBody()).c_str())); // should parse form data in stead?
+	c_strings.push_back(strdup(("BODY=" + getBody()).c_str()));
 	c_strings.push_back(nullptr);
 	
 	//malloc an array and copy vector into array
-	// char **envArray = (char**)malloc(sizeof(char *) * c_strings.size());
 	char **envArray = new char*[c_strings.size()];
 	std::copy(c_strings.begin(), c_strings.end(), envArray);
+	
+	int k = c_strings.size();
+	for (int i = 0; i < k;  i++) 
+		std::cout << envArray[i] << std::endl;
+
 	return envArray;
 }
 
 
-
 //========= Setters ===============================
 
-void HttpRequest::setMethod(const std::string& method) 							{	_method = method;			}
-void HttpRequest::setProtocol(const std::string& protocol) 						{	_protocol = protocol;		}
-void HttpRequest::setBody(const std::string& body) 								{	_body = body; 				}
-void HttpRequest::setUri(const std::string& string) 							{	uri = Uri(string);			}		
-void HttpRequest::setRequestStatus(int value) 									{	_requestStatus = value;		}
+void	HttpRequest::setMethod(const std::string& method) 			{	_method = method;			}
+void	HttpRequest::setProtocol(const std::string& protocol) 		{	_protocol = protocol;		}
+void	HttpRequest::setBody(const std::string& body) 				{	_body = body; 				}
+void	HttpRequest::setUri(const std::string& string) 				{	uri = Uri(string);			}		
+void	HttpRequest::setRequestStatus(int value) 					{	_requestStatus = value;		}
 
-void HttpRequest::addHeader(const std::string& key, const std::string& value) {
+void	HttpRequest::addHeader(const std::string& key, const std::string& value) {
 	_headers.insert(std::make_pair(key, value));
 }

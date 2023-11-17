@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Config.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/09 14:02:40 by bfranco           #+#    #+#             */
-/*   Updated: 2023/11/16 13:22:04 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Config.hpp                                         :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
+/*   Updated: 2023/11/16 13:37:21 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <set>
+#include <cstdint>
 
 struct LocationSettings
 {

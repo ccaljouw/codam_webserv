@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/14 09:33:10 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/17 08:41:46 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,6 @@
 #define HTTP_PROTOCOL "HTTP/1.1"
 #define HOST "webserv42"
 
-#include<map>
-#include<vector>
-#include<string>
 
 #include "eventloop.hpp"
 #include "HttpRequest.hpp"
@@ -32,6 +29,16 @@
 #include <unistd.h>
 #include <filesystem>
 #include <functional>
+#include <map>
+#include <vector>
+#include <string>
+#include <exception>
+#include <iostream>
+#include <sstream>
+#include <cstring>
+
+
+
 
 #define RESET	"\033[0m"
 #define RED		"\033[31;1m"
