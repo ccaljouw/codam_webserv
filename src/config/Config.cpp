@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Config.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/09 15:17:36 by bfranco           #+#    #+#             */
-/*   Updated: 2023/11/17 11:51:39 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Config.cpp                                         :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
+/*   Updated: 2023/11/17 14:37:07 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void	Config::_readServerSettings()
 		// ****** test
 		struct ServerSettings	server2;
 		server2._serverName = "Codam_Webserv2";
-		server2._port = 4242;
+		server2._port = 8080;
 		server2._rootFolder = "./data_website2/html";
 		server2._index = "index.html";
 		server2._locations.push_back(html);
