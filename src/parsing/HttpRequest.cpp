@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/17 09:15:35 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/17 09:22:35 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@
 
 
 
-HttpRequest::HttpRequest(const Server *server) : uri(), _method(), _protocol(), _headers(), _body(), _requestStatus(200), _server(server), _settings(nullptr) {};
+HttpRequest::HttpRequest(const Server *server) : uri(), _method(), _protocol(), _headers(), _body(), _requestStatus(200), _server(server), _settings(_server->get_locationSettings(uri.getHost(), uri.getPath())) {};
 
-HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri(), _requestStatus(200) ,_server(server), _settings(nullptr) {
+HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri(), _requestStatus(200) ,_server(server), _settings(_server->get_locationSettings(uri.getHost(), uri.getPath())) {
 
 
 //todo: switch into helper functions mapHeaders
@@ -46,7 +46,6 @@ try {
 	uri = Uri(tempUriString);
 	
 	// todo: get location and resulting location settings
-	_settings = _server->get_locationSettings(uri.getHost(), uri.getPath());
 	
 	// check method
 	if (_settings->_allowedMethods.find(_method) == _settings->_allowedMethods.end())
@@ -114,6 +113,7 @@ const HttpRequest& HttpRequest::operator=(const HttpRequest& rhs) {
 		_body			= rhs._body;
 		_requestStatus	= rhs._requestStatus;
 		_server			= rhs._server;
+		_settings		= rhs._settings;
 	}
 	return *this;
 }
