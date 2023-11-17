@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:48:35 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/14 10:28:24 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/17 20:43:49 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ int	register_server(int epollFd, int fd, Server *server)
 {
 	struct epoll_event 	event;
 	connection			*conn;
+	int					tries = 0;
 	
 	// conn = new connection{fd, 0, LISTENING, std::string(""), std::string(""), server, std::time(nullptr), 0};
 	conn = new connection;
@@ -30,12 +31,9 @@ int	register_server(int epollFd, int fd, Server *server)
 	conn->nr_of_requests = 0;
     event.events = EPOLLIN | EPOLLET;
     event.data.ptr = conn;
-	if (epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, &event) == -1)
-	{
-		close (fd);
-		delete conn;
+	server->set_connection(conn);
+	if (epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, &event) == -1 && tries < 3) // try multiple times
 		return 1;
-	}
 	return 0;
 }
 

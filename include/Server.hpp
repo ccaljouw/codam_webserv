@@ -47,8 +47,12 @@ class Server
 		double	get_timeout(std::string host) const;
 		int		get_maxNrOfRequests(std::string host) const;
 		size_t	get_maxBodySize(std::string host) const;
-		// std::list<ErrorPages>	get_errorPages() const;
+		// std::list<ErrorPages>	get_errorPages(std::string host) const;
+		struct connection *get_connection();
 		
+		// ============= setters ================
+		void	set_connection(struct connection *conn);
+
 		// ============= exception ================
 		class ServerException : public std::exception {
 			public:
@@ -63,21 +67,11 @@ class Server
 	
 	private:
 
-		
 		int 								_fd;
-		struct sockaddr_in					_serverAddr; //?
+		struct sockaddr_in					_serverAddr;
 		std::map<std::string, int>			_knownClientIds;
-		// uint16_t							_port;
 		std::list<struct ServerSettings>	_settings;
-		// std::list<ErrorPages>		_errorPages;
-
-		// std::string							_serverName;
-		// std::string							_rootFolder;
-		// std::string							_index;
-		// std::list<struct LocationSettings>	_locations;
-		// double								_timeout;
-		// int									_maxNrOfRequests;
-		// size_t								_maxBodySize;
+		struct connection					*_conn;
 } ;
 
 std::list<Server> initServers(std::list<struct ServerSettings> settings, int epollFd);

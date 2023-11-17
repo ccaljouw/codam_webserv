@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/13 19:25:44 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/17 19:59:06 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ int cgiHandler(const Uri& uri, connection *conn, int epollFd, char **env)
 	else
 	{
 		close(cgi.getFdOut());
-		delete env;	
+		delete [] env;	
 	}
 	return 0;
 }

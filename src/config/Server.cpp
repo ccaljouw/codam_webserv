@@ -19,17 +19,22 @@
 
 // ============= con-/destructors ================
 
-Server::Server() {}
+Server::Server() : _fd(0), _conn(nullptr) {}
 
-Server::Server( Server const & src )  { (void)src; }
+Server::Server( Server const & src ) : _fd(0), _conn(nullptr)  { (void)src; }
 
-Server::~Server() {} // {	close(_fd); }
+Server::~Server() {	
+	if (_fd) 
+		close(_fd); 
+	if (_conn)
+		delete _conn;
+}
 
 // ============= Methods ================
 
 int	Server::assign_name()
 {
-	if (bind(_fd, reinterpret_cast<struct sockaddr*>(&_serverAddr), sizeof(_serverAddr)) == -1) { // check adress
+	if (bind(_fd, reinterpret_cast<struct sockaddr*>(&_serverAddr), sizeof(_serverAddr)) == -1) {
 		return 1;
 	}
 	return 0;
@@ -63,7 +68,7 @@ int Server::initServer(struct ServerSettings const & settings, int epollFd)
 			throw ServerException(settings._serverName + " register: ");
 	}
 	catch (const ServerException& e) {
-		std::cerr << "\033[31;1mError\n" << e.what() << "\033[0m" << std::endl;
+		std::cerr << RED << e.what() << RESET << std::endl;
 		return 1;
 	}
 	std::cout << "\033[32;1mServer: " << settings._serverName << ", listening on port "  << settings._port << "\033[0m" << std::endl;
@@ -128,6 +133,7 @@ const struct LocationSettings*	Server::get_locationSettings(std::string host, st
 		if (setting._serverName == host)
 			hostSettings = &setting;
 	}
+	// check for non existing hostnames? of just go with an available host on the same port?
 	while (!location.empty())
 	{
 		for (auto& loc : hostSettings->_locations) {
@@ -173,7 +179,13 @@ size_t	Server::get_maxBodySize(std::string host) const {
 	return hostSettings->_maxBodySize; 
 }
 
+struct connection *Server::get_connection() {	return _conn;	}
+
 // std::list<ErrorPages>	Server::get_errorPages() const { return _errorPages; }
+
+void	Server::set_connection(struct connection *conn) {
+	_conn = conn;
+}
 
 /* ************************************************************************** */
 
@@ -190,7 +202,6 @@ std::list<Server> initServers(std::list<struct ServerSettings> settings, int epo
 			if (p == ports.end()) {
 				ports.insert(setting._port);
 				serverMap.insert(std::make_pair(setting._port, setting._serverName));
-				std::cout << setting._port << ": added to set" << std::endl;
 				servers.push_back(Server());
 				if (servers.back().initServer(setting, epollFd) == 1)
 					servers.pop_back();
@@ -199,7 +210,7 @@ std::list<Server> initServers(std::list<struct ServerSettings> settings, int epo
 				for (auto& server : servers) {
 					for (auto& pair : serverMap) {
 						if (pair.first == setting._port && pair.second == setting._serverName)
-							throw std::runtime_error(setting._serverName + " allready configured for this port");
+							throw std::runtime_error(setting._serverName + ":" + std::to_string(setting._port) + " allready configured");
 					}
 					if (server.get_port() == setting._port) {
 						server.addSubDomain(setting);

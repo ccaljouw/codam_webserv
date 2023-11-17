@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/17 18:30:35 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/17 19:23:17 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ HttpRequest::HttpRequest(const Server *server) : uri(), _method(), _protocol(), 
 
 HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri(), _requestStatus(200) ,_server(server), _settings(_server->get_locationSettings("Codam_Webserv2", "index.html")) {
 // HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri(), _requestStatus(200) ,_server(server), _settings(_server->get_locationSettings(uri.getHost(), uri.getPath())) {
-
 
 
 //todo: switch into helper functions mapHeaders
