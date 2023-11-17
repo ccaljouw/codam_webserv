@@ -182,7 +182,6 @@ std::list<Server> initServers(std::list<struct ServerSettings> settings, int epo
 	std::list<Server> 				servers;
 	std::map<uint16_t, std::string> serverMap;
 	std::set<uint16_t>				ports;
-	bool							set = 0;
 
 	try {
 		for (auto& setting : settings)
@@ -202,7 +201,7 @@ std::list<Server> initServers(std::list<struct ServerSettings> settings, int epo
 						if (pair.first == setting._port && pair.second == setting._serverName)
 							throw std::runtime_error(setting._serverName + " allready configured for this port");
 					}
-					if (server.get_port() == setting._port && set == 0) {
+					if (server.get_port() == setting._port) {
 						server.addSubDomain(setting);
 						std::cout << GREEN << setting._serverName << ", listening on port "  \
 															<< setting._port << RESET << std::endl;
