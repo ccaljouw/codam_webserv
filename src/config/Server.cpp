@@ -47,11 +47,6 @@ int	Server::set_to_listen(int backlog)
 int Server::initServer(struct ServerSettings const & settings, int epollFd)
 {
 	try {
-		// _port = settings._port;
-		// _serverName = settings._serverName;
-		// _locations = settings._locations;
-		// _timeout = settings._timeout;
-		// _maxNrOfRequests = settings._maxNrOfRequests;
 		_settings.push_back(settings);
 		_serverAddr.sin_family = AF_INET;
 		_serverAddr.sin_addr.s_addr = INADDR_ANY;
@@ -117,24 +112,29 @@ std::string	Server::get_index(std::string host) const {
 	return _settings.front()._index; }
 
 const struct LocationSettings*	Server::get_locationSettings(std::string host, std::string location) const {
+	if (host.empty() || location.empty()) {
+		std::cout << "called get_loactionSettings with empty host or location" << std::endl;
+		return nullptr;
+	}
 	(void)host;
-	// location = "html/html/html";
-	// std::cout << "location: " << location << std::endl;
+	std::cout << "host: " << host << ", location: " << location << std::endl;
 	try {
 		while (!location.empty())
 		{
 			for (auto& loc : _settings.front()._locations) {
-				// std::cout << "id: " << loc._locationId << std::endl;
-				if (location == loc._locationId)
+				if (location == loc._locationId) {
+					std::cout << "sending location: " << location << std::endl;
 					return (&loc);
+				}
 			}
 			location.resize(location.rfind('/'));
-			// std::cout << "location now: " << location << std::endl;
 		}
 	}
 	catch (const std::length_error& le) {
-		return (&_settings.front()._locations.front()); // send default location??
+		std::cout << "caugt error" << std::endl;
+		return (&_settings.front()._locations.front());
 	}
+	std::cout << "sending default location" << std::endl;
 	return (&_settings.front()._locations.front());
 }
 
@@ -178,10 +178,10 @@ std::list<Server> initServers(std::list<struct ServerSettings> settings, int epo
 			for (auto& server : servers) {
 				if (server.get_port() == setting._port) {
 					server.addSubDomain(setting);
+					std::cout << "\033[32;1mServer: " << setting._serverName << ", listening on port "  << setting._port << "\033[0m" << std::endl;
 					break ;
 				}
 			}
-			std::cout << "port already in use" << std::endl;
 		}
 	}
 	return (servers);

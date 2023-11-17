@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/17 14:37:07 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/17 16:30:00 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,10 +68,10 @@ void	Config::_readServerSettings()
 		html._index = "index.html";
 		server._locations.push_back(html); //extra locations ???
 
-		html2._locationId = "/html2";
+		html2._locationId = "/index.html";
 		html2._allowedMethods.insert("POST");
 		html2._allowedMethods.insert("DELETE");
-		html2._allowedMethods.insert("GET");
+		// html2._allowedMethods.insert("GET");
 		html2._index = "index.html";
 		server._locations.push_back(html2);
 		
