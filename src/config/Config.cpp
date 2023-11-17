@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   Config.cpp                                         :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/14 08:50:24 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   Config.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/09 15:17:36 by bfranco           #+#    #+#             */
+/*   Updated: 2023/11/17 11:51:39 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ void	Config::_readServerSettings()
 	{
 		struct ServerSettings	server;
 		struct LocationSettings	html;
+		struct LocationSettings	html2;
 
 		server._serverName = "Codam_Webserv";
 		server._port = 8080;
@@ -65,8 +66,15 @@ void	Config::_readServerSettings()
 		html._allowedMethods.insert("DELETE");
 		html._allowedMethods.insert("GET");
 		html._index = "index.html";
-
 		server._locations.push_back(html); //extra locations ???
+
+		html2._locationId = "/html2";
+		html2._allowedMethods.insert("POST");
+		html2._allowedMethods.insert("DELETE");
+		html2._allowedMethods.insert("GET");
+		html2._index = "index.html";
+		server._locations.push_back(html2);
+		
 		_servers.push_back(server);
 		
 		// ****** test

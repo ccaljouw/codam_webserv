@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 14:21:11 by carlo             #+#    #+#             */
-/*   Updated: 2023/11/17 11:15:29 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/17 11:31:07 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,7 +173,6 @@ char**		HttpRequest::getEnvArray(void) {
 	int k = c_strings.size();
 	for (int i = 0; i < k;  i++) 
 		std::cout << envArray[i] << std::endl;
-
 	return envArray;
 }
 

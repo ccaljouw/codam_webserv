@@ -104,13 +104,29 @@ std::string	Server::get_rootFolder(std::string host) const {
 	(void)host;
 	return _rootFolder; }
 
-std::string	Server::get_index(std::string host) const { 
+std::string	Server::get_index(std::string host) const {
 	(void)host;
 	return _index; }
 
 const struct LocationSettings*	Server::get_locationSettings(std::string host, std::string location) const {
 	(void)host;
-	(void)location;
+	// location = "html/html/html";
+	// std::cout << "location: " << location << std::endl;
+	try {
+		while (!location.empty())
+		{
+			for (auto& loc : _locations) {
+				// std::cout << "id: " << loc._locationId << std::endl;
+				if (location == loc._locationId)
+					return (&loc);
+			}
+			location.resize(location.rfind('/'));
+			// std::cout << "location now: " << location << std::endl;
+		}
+	}
+	catch (const std::length_error& le) {
+		return (&_locations.front()); // send default location??
+	}
 	return (&_locations.front());
 }
 

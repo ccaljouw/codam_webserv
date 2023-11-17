@@ -132,7 +132,7 @@ void HttpResponse::fillStandardHeaders() {
 	// addHeader("Content-type", "text/html");
 
 	// setHeader("Set-Cookie", "name=webserv42, id=000, trigger=000");
-	addHeader("Keep-Alive", "timeout=5, max=3"); // get timout and max requests from server in connection struct
+	addHeader("Keep-Alive", "timeout=5, max=3"); // todo: get timout and max requests from server in connection struct
 	// addHeader("Cache-Control",  "public, max-age=86400");/
 	addHeader("Date", getTimeStamp());
 	addHeader("Server", HOST); // get server name from server in connection struct
