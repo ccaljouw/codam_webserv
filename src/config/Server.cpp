@@ -13,14 +13,16 @@
 #include "webServ.hpp"
 #include <Server.hpp>
 #include "Config.hpp"
+#include <map>
+#include <map>
 
 // ============= con-/destructors ================
 
 Server::Server() {}
 
-Server::Server( Server const & src ) { (void)src; }
+Server::Server( Server const & src )  { (void)src; }
 
-Server::~Server() {	close(_fd); }
+Server::~Server() {} // {	close(_fd); }
 
 // ============= Methods ================
 
@@ -54,7 +56,7 @@ int Server::initServer(struct ServerSettings const & settings, int epollFd)
 	
 		if ((_fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK , 0)) == -1) 
 			throw ServerException(_serverName + " socket: ");
-		if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<struct sockaddr*>(&_serverAddr), sizeof(_serverAddr)))
+		if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &_serverAddr.sin_addr, sizeof(_serverAddr.sin_addr)))
 			throw ServerException(_serverName + " setsocket: ");
 		if (assign_name())
 			throw ServerException(_serverName + " bind: ");
@@ -90,40 +92,42 @@ int	Server::checkClientId(std::string id) {
 }
 
 // ============= Getters ================
-int	Server::get_FD(std::string server) const { 
-	(void)server;
+int	Server::get_FD(std::string host) const { 
+	(void)host;
 	return _fd; }
 
-std::string	Server::get_serverName(std::string server) const { 
-	(void)server;
+std::string	Server::get_serverName(std::string host) const { 
+	(void)host;
 	return _serverName; }
 
-std::string	Server::get_rootFolder(std::string server) const { 
-	(void)server;
+std::string	Server::get_rootFolder(std::string host) const { 
+	(void)host;
 	return _rootFolder; }
 
-std::string	Server::get_index(std::string server) const { 
-	(void)server;
+std::string	Server::get_index(std::string host) const { 
+	(void)host;
 	return _index; }
 
-std::list<struct LocationSettings>	Server::get_locations(std::string server) const { 
-	(void)server;
-	return _locations; }
+const struct LocationSettings*	Server::get_locationSettings(std::string host, std::string location) const {
+	(void)host;
+	(void)location;
+	return (&_locations.front());
+}
 
-std::map<std::string, int>	Server::get_knownClientIds(std::string server) const { 
-	(void)server;
+std::map<std::string, int>	Server::get_knownClientIds(std::string host) const { 
+	(void)host;
 	return _knownClientIds; }
 	
-double	Server::get_timeout(std::string server) const { 
-	(void)server;
+double	Server::get_timeout(std::string host) const { 
+	(void)host;
 	return _timeout; }
 
-int		Server::get_maxNrOfRequests(std::string server) const { 
-	(void)server;
+int		Server::get_maxNrOfRequests(std::string host) const { 
+	(void)host;
 	return _maxNrOfRequests; }
 
-size_t	Server::get_maxBodySize(std::string server) const {
-	(void)server;
+size_t	Server::get_maxBodySize(std::string host) const {
+	(void)host;
 	return _maxBodySize; }
 
 // std::list<ErrorPages>	Server::get_errorPages() const { return _errorPages; }
@@ -133,9 +137,12 @@ size_t	Server::get_maxBodySize(std::string server) const {
 std::list<Server> initServers(std::list<struct ServerSettings> settings, int epollFd)
 {
 	std::list<Server> servers;
+	std::map<std::string, uint16_t> serverMap;
 
 	for (std::list<struct ServerSettings>::iterator it = settings.begin(); it != settings.end(); ++it)
 	{
+		// check if combination name / port already defined
+		// check if port already in use?
 		servers.push_back(Server());
 		if (servers.back().initServer(*it, epollFd) == 1)
 			servers.pop_back();

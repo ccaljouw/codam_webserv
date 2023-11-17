@@ -49,6 +49,5 @@ print(header)
 print(body)
 print("\0")
 
-print("")
-# cgi.print_environ()
+cgi.print_environ()
 # cgi.print_form(form)

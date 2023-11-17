@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/17 10:07:21 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/17 11:49:11 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,13 +133,18 @@ int cgiHandler(const HttpRequest& req, connection *conn, int epollFd)
 		cgi.closeFds();
 		return 1;
 	}
-	
 	int pid = fork();
-	if (pid == -1) //close FdIn and FdOut?
+	if (pid == -1)
+	{
+		cgi.closeFds();
 		return 1;
+	}
 	else if (pid == 0)
 		execChild(req, cgi);
 	else
+	{
 		close(cgi.getFdOut());
+		delete env;	
+	}
 	return 0;
 }

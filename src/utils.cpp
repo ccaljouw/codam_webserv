@@ -111,3 +111,8 @@ std::string		checkAndSetCookie(connection* conn, HttpRequest& request) {
 	std::cout << "new cookie value  = '" << newCookieValue << std::endl; //todo: remove lines
 	return newCookieValue;
 }
+
+void handleSignal(int signal)
+{
+	g_shutdown_flag = signal;
+}

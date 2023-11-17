@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/11 22:07:16 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/17 09:22:20 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,8 @@ class HttpRequest {
 		std::multimap<std::string, std::string>		getHeaders(void) const;
 		int											getRequestStatus(void) const;
 		std::string									getHeaderValue(std::string) const;
-		char** 										getEnvArray(void) const; //includes header and queries merged into one array
+		char** 										getEnvArray(void); //includes header and queries merged into one array
+	
 			
 
 	// ============= Setters ================
@@ -51,6 +52,7 @@ class HttpRequest {
 		void										setUri(const std::string& str);
 		void										addHeader(const std::string& key, const std::string& value);
 		void										setRequestStatus(int value);
+		void										setConfigValues(std::string host);
 
 
 	// ============= exception ================
@@ -65,15 +67,18 @@ class HttpRequest {
 				std::string						_message;
 		};
 	
-		
+
+
 	private:
 		std::string								_method;
 		std::string								_protocol;
 		std::multimap<std::string, std::string>	_headers;
 		std::string								_body;
 		int										_requestStatus;
+		const Server*							_server;
+		const struct LocationSettings*			_settings;
 
-		// std::vector<std::string> supportedMethods = { "GET", "POST", "DELETE" }; //todo: make configurable
+		
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/16 11:41:54 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/17 11:47:37 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ void handleRequest(int epollFd, connection *conn)
 						throw HttpRequest::parsingException(404, "Path not found");
 		
 					HttpResponse response(request);
-					response.setBody(request.uri.getPath());
+					response.setBody(request.uri.getPath(), request.uri.getIsBinary());
 					response.addHeader("Content-type", contentType);
 
 					response.setHeader("Set-Cookie", cookieValue);
@@ -168,7 +168,7 @@ void readCGI(int epollFd, connection *conn)
     }
 	if (bytesRead < BUFFER_SIZE)
 	{
-		std::cout << BLUE << buffer << RESET << std::endl;
+		// std::cout << BLUE << buffer << RESET << std::endl;
 		close(conn->cgiFd);
 		epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->cgiFd, nullptr);
 		conn->state = WRITING;
@@ -185,7 +185,7 @@ void writeData(connection *conn)
 	int			len;
 	
 	conn->state = WRITING;
-	std::cout << PURPLE << conn->response << RESET << std::endl;
+	// std::cout << PURPLE << conn->response << RESET << std::endl; //for testing
 	len = std::min(static_cast<int>(conn->response.length()), BUFFER_SIZE);
     len = send(conn->fd, conn->response.c_str(), conn->response.length(), 0);
 	if (len == -1)
@@ -216,8 +216,8 @@ void writeData(connection *conn)
 void	closeConnection(int epollFd, connection *conn)
 {
 	epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->fd, nullptr);
-    close(conn->fd);
     std::cout << CYAN << "Connection on fd " << conn->fd << " closed" << RESET << std::endl;
+    close(conn->fd);
 	delete conn;
 }
 
