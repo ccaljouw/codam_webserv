@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/06 12:06:07 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/16 11:47:55 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/20 14:58:52 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,6 @@ class CGI
 		int		_fdOut;
 };
 
-int cgiHandler(const HttpRequest& req, connection *conn, int epollFd); // todo : const ref request
+int	cgiHandler(const HttpRequest& req, connection *conn, int epollFd); // todo : const ref request
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/17 12:09:50 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/20 15:05:46 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,10 +169,6 @@ char**		HttpRequest::getEnvArray(void) const {
 	//malloc an array and copy vector into array
 	char **envArray = new char*[c_strings.size()];
 	std::copy(c_strings.begin(), c_strings.end(), envArray);
-	
-	int k = c_strings.size();
-	for (int i = 0; i < k;  i++) 
-		std::cout << envArray[i] << std::endl;
 
 	return envArray;
 }
