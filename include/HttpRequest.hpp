@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   HttpRequest.hpp                                    :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/17 09:22:20 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/17 12:10:12 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ class HttpRequest {
 		std::multimap<std::string, std::string>		getHeaders(void) const;
 		int											getRequestStatus(void) const;
 		std::string									getHeaderValue(std::string) const;
-		char** 										getEnvArray(void); //includes header and queries merged into one array
+		char** 										getEnvArray(void) const; //includes header and queries merged into one array
 	
 			
 

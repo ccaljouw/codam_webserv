@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/17 11:57:47 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/17 16:09:12 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void	execChild(const HttpRequest& req, CGI &cgi)
 {
 	char	program[req.uri.getPath().size() + 2];
 	char	*argv[] = {program, NULL};
-	// char	**env = req.uri.getHeadersArray();
+	char	**env = req.getEnvArray();
 	getProgramPath(req.uri, program);
 	
 	std::cerr << "program = " << argv[0] << std::endl;
@@ -80,47 +80,47 @@ void	execChild(const HttpRequest& req, CGI &cgi)
 	// 	cgi.closeFds();
 	// 	return ;
 	// }
-	char	*env2[] = {
-		strdup("AUTH_TYPE="),
-		strdup("CONTENT_LENGTH=1024"),
-		strdup("CONTENT_TYPE=text/html"),
-		strdup("GATEWAY_INTERFACE="),
-		strdup("HTTP_ACCEPT="),
-		strdup("HTTP_ACCEPT_CHARSET="),
-		strdup("HTTP_ACCEPT_ENCODING="),
-		strdup("HTTP_ACCEPT_LANGUAGE="),
-		strdup("HTTP_FORWARDED="),
-		strdup("HTTP_METHOD=POST"),
-		strdup("HTTP_HOST=http://localhost:8080"),
-		strdup("HTTP_PROXY_AUTHORIZATION="),
-		strdup("HTTP_USER_AGENT="),
-		strdup("PATH_INFO="),
-		strdup("PATH_TRANSLATED="),
-		strdup("QUERY_STRING=name=banana"),
-		strdup("REMOTE_ADDR="),
-		strdup("REMOTE_HOST="),
-		strdup("REMOTE_USER="),
-		strdup("REQUEST_METHOD="),
-		strdup("SCRIPT_NAME=test.py"),
-		strdup("SERVER_NAME="),
-		strdup("SERVER_PORT="),
-		strdup("SERVER_PROTOCOL="),
-		strdup("SERVER_SOFTWARE="),
-		strdup("HTTP_COOKIE=id=hello value=3"),
-		NULL
-	};
+	// char	*env2[] = {
+	// 	strdup("AUTH_TYPE="),
+	// 	strdup("CONTENT_LENGTH=1024"),
+	// 	strdup("CONTENT_TYPE=text/html"),
+	// 	strdup("GATEWAY_INTERFACE="),
+	// 	strdup("HTTP_ACCEPT="),
+	// 	strdup("HTTP_ACCEPT_CHARSET="),
+	// 	strdup("HTTP_ACCEPT_ENCODING="),
+	// 	strdup("HTTP_ACCEPT_LANGUAGE="),
+	// 	strdup("HTTP_FORWARDED="),
+	// 	strdup("HTTP_METHOD=POST"),
+	// 	strdup("HTTP_HOST=http://localhost:8080"),
+	// 	strdup("HTTP_PROXY_AUTHORIZATION="),
+	// 	strdup("HTTP_USER_AGENT="),
+	// 	strdup("PATH_INFO="),
+	// 	strdup("PATH_TRANSLATED="),
+	// 	strdup("QUERY_STRING=name=banana"),
+	// 	strdup("REMOTE_ADDR="),
+	// 	strdup("REMOTE_HOST="),
+	// 	strdup("REMOTE_USER="),
+	// 	strdup("REQUEST_METHOD="),
+	// 	strdup("SCRIPT_NAME=test.py"),
+	// 	strdup("SERVER_NAME="),
+	// 	strdup("SERVER_PORT="),
+	// 	strdup("SERVER_PROTOCOL="),
+	// 	strdup("SERVER_SOFTWARE="),
+	// 	strdup("HTTP_COOKIE=id=hello value=3"),
+	// 	NULL
+	// };
 
-	// for (int i = 0; env[i]; i++)
-	// 	std::cout << "env[" << i << "] = " << env[i] << std::endl;
+	for (int i = 0; env[i]; i++)
+		std::cout << "env[" << i << "] = " << env[i] << std::endl;
 	dup2(cgi.getFdOut(), STDOUT_FILENO);
-	// dup2(cgi.getFdIn(), STDIN_FILENO);
+	dup2(cgi.getFdIn(), STDIN_FILENO);
 	std::string body = req.getBody();
 	if (body.size() > 0)
-		write(STDIN_FILENO, body.c_str(), body.size());
-	// cgi.closeFds();
+		write(STDIN_FILENO, (body+"\0").c_str(), body.size()+1);
 	// close(cgi.getFdIn());
+	cgi.closeFds();
 	std::cerr << "before execve" << std::endl;
-	execve(argv[0], argv, env2);
+	execve(argv[0], argv, env);
 }
 
 int cgiHandler(const HttpRequest& req, connection *conn, int epollFd)
@@ -142,9 +142,6 @@ int cgiHandler(const HttpRequest& req, connection *conn, int epollFd)
 	else if (pid == 0)
 		execChild(req, cgi);
 	else
-	{
 		close(cgi.getFdOut());
-		// delete env;
-	}
 	return 0;
 }

@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/17 11:51:08 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/17 12:09:50 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,7 @@ std::string HttpRequest::getHeaderValue(std::string key) const {
 }
 
 
-char**		HttpRequest::getEnvArray(void) {
+char**		HttpRequest::getEnvArray(void) const {
 
 	// addHeader("REQUEST_METHOD", getMethod());
 
@@ -164,7 +164,6 @@ char**		HttpRequest::getEnvArray(void) {
 		std::string line = var + "=" + pair.second;
 		c_strings.push_back(strdup(line.c_str()));
 	}
-	c_strings.push_back(strdup(("BODY=" + getBody()).c_str()));
 	c_strings.push_back(nullptr);
 	
 	//malloc an array and copy vector into array
