@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/17 11:05:54 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/20 10:50:39 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@
 
 
 
-HttpRequest::HttpRequest(const Server *server) : uri(), _method(), _protocol(), _headers(), _body(), _requestStatus(200), _server(server), _settings(_server->get_locationSettings(uri.getHost(), uri.getPath())) {};
+HttpRequest::HttpRequest(const Server *server) : uri(), _method(), _protocol(), _headers(), _body(), _requestStatus(200), _server(server), _settings()  {};
 
-HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri(), _requestStatus(200) ,_server(server), _settings(_server->get_locationSettings(uri.getHost(), uri.getPath())) {
+HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri(), _requestStatus(200), _server(server)  {
 
 
 //todo: switch into helper functions mapHeaders
@@ -44,14 +44,15 @@ try {
 		throw parsingException(505, "Version not supported");
 
 	uri = Uri(tempUriString);
-	
-	// todo: get location and resulting location settings
-	
+
+	//fetch location specific config settings
+	_settings = _server->get_locationSettings(uri.getHost(), uri.getPath());
+
 	// check method
 	if (_settings->_allowedMethods.find(_method) == _settings->_allowedMethods.end())
 		throw parsingException(405, "Method not Allowed");
 	else
-		std::cout << "method ok" << std::endl;
+		std::cout << "method ok" << std::endl; //todo remove line
 	//todo:add all checks etc
 	
 // 2. === parse headers ===
@@ -159,13 +160,20 @@ char**		HttpRequest::getEnvArray(void) {
 	for (auto& pair : mergedMap)
 	{
 		std::string key = pair.first;
+		std::string value = pair.second;
+		
 		for (char& c : key)
 		{	
 			c = toupper(static_cast<unsigned char>(c)); 
 			if (c == '-')//todo: check if this is required and doesnt break stuff
 				c = '_';
 		}
-		std::string line = key + "=" + pair.second;
+		for (char& c : value)
+		{	
+			if (c == ',')//todo: check if this is required and doesnt break stuff
+				c = ';';
+		}
+		std::string line = key + "=" + value;
 		c_strings.push_back(strdup(line.c_str()));
 	}
 
@@ -178,7 +186,7 @@ char**		HttpRequest::getEnvArray(void) {
 	
 	int k = c_strings.size();
 	for (int i = 0; i < k;  i++) 
-		std::cout << envArray[i] << std::endl;
+		std::cout << envArray[i] << "HELLO" << std::endl;
 
 	return envArray;
 }
