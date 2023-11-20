@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/20 11:09:44 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/20 15:12:57 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,10 @@
 
 #include <algorithm>
 
+std::string getTimeStamp();
 
 
-
-HttpRequest::HttpRequest(const Server *server) : uri(), _method(), _protocol(), _headers(), _body(), _requestStatus(200), _server(server), _settings()  {};
+HttpRequest::HttpRequest(const Server *server) : uri(), _method(), _protocol(), _headers(), _environVars(), _body(), _requestStatus(200), _server(server), _settings()  {};
 
 HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri(), _requestStatus(200), _server(server)  {
 
@@ -51,8 +51,8 @@ try {
 	// check method
 	if (_settings->_allowedMethods.find(_method) == _settings->_allowedMethods.end())
 		throw parsingException(405, "Method not Allowed");
-	else
-		std::cout << "method ok" << std::endl; //todo remove line
+	// else
+	// 	std::cout << "method ok" << std::endl; //todo remove line
 	//todo:add all checks etc
 	
 // 2. === parse headers ===
@@ -80,12 +80,20 @@ try {
 			std::transform(key.begin(), key.end(), key.begin(), ::tolower);
 				
 			value = removeWhitespaces(value);
-			_headers.insert(std::make_pair(key, value));
+			_headers[key] = value;
 		}
 	}
+
+	addHeader("Last-Modified", getTimeStamp());
+	
+	// std::cout << getHeadersString() << std::endl;	//todo: remove
+
 	
 // 3. === parse body ===
 	_body = request.substr(headersEnd + 4);
+
+// 4. ==== setenvironvars ====
+	addEnvironVar("REQUEST_METHOD", getMethod());
 
 
 	}
@@ -96,6 +104,7 @@ try {
 		std::cerr << exception.what() << std::endl; 
 	}
 }
+
 
 
 HttpRequest::HttpRequest(const HttpRequest& origin) {
@@ -130,8 +139,83 @@ std::string	HttpRequest::getMethod(void) const									{	return _method;				}
 std::string	HttpRequest::getProtocol(void) const								{	return _protocol;			}
 std::string	HttpRequest::getBody(void) const									{	return _body;				}
 std::string	HttpRequest::getUri(void)											{	return uri.serializeUri();	}
-std::multimap<std::string, std::string>	HttpRequest::getHeaders(void) const		{	return _headers; 			}
 int	HttpRequest::getRequestStatus(void) const									{	return _requestStatus;		}
+std::map<std::string, std::string>	HttpRequest::getHeaders(void) const			{	return _headers; 			}
+
+
+char*	HttpRequest::getHeadersString(void) const {
+	std::ostringstream os;
+	
+	for (const auto& pair : _headers)
+		os << pair.first << ":" << pair.second << "\r\n";
+	std::string result = os.str();
+	
+	char* cstring = new char[result.length() + 1];
+	std::strcpy(cstring, result.c_str());
+	cstring[result.length()] = '\0';
+	
+	return cstring;
+}
+
+char*	HttpRequest::getQueryString(void) const {
+	std::ostringstream os;
+	
+	std::map<std::string, std::string> queries = uri.getQueryMap();
+	for (const auto& pair : queries)
+		os << pair.first << "=" << pair.second << "&";
+	std::string result = os.str();
+	if (!result.empty())
+		result.pop_back(); //remove last &
+	
+	char* cstring = new char[result.length() + 1];
+	std::strcpy(cstring, result.c_str());
+	cstring[result.length()] = '\0';
+	
+	return cstring;
+}
+
+char*	HttpRequest::getEnvString(void) const {
+	std::ostringstream os;
+	
+	for (const auto& pair : _environVars)
+		os << pair.first << "=" << pair.second << ";";
+	std::string result = os.str();
+	
+	char* cstring = new char[result.length() + 1];
+	std::strcpy(cstring, result.c_str());
+	cstring[result.length()] = '\0';
+	
+	return cstring;
+}
+
+char** HttpRequest::getEnvArray(void) const {
+	std::vector<char*> envArray;
+	
+	for (const auto& pair : _environVars) {
+		std::string keyValue = pair.first + "=" + pair.second;
+		char* envString = new char[keyValue.length() + 1];
+		std::strcpy(envString, keyValue.c_str());
+		envString[keyValue.length()] = '\0';
+		envArray.push_back(envString);
+	}
+	char** result = new char*[envArray.size() + 1];
+	size_t index = 0;
+
+	for (const auto& string : envArray)
+		result[index++] = string;
+
+
+	//todo check requirements
+	//add headers
+	result[index++] = getHeadersString();
+
+	//add queries
+	result[index++] = getQueryString();
+
+	result[index] = nullptr;
+	return result;
+}
+
 
 std::string HttpRequest::getHeaderValue(std::string key) const {
 	for (const auto& headerPair : _headers) {
@@ -141,53 +225,6 @@ std::string HttpRequest::getHeaderValue(std::string key) const {
 	return "";
 }
 
-
-char**		HttpRequest::getEnvArray(void) const {
-
-	addHeader("REQUEST_METHOD", getMethod());
-	 
-	// merge headers map and queries map into one map
-	std::multimap<std::string, std::string> mergedMap;
-	
-	for (const auto& headerPair : _headers)
-		mergedMap.insert(headerPair);
-	
-	for (const auto& queryPair : uri.getQueryMap())
-		mergedMap.insert(queryPair);
-		
-	// make c_string array from multimap. first a vector of c_strings, then make pairs and capitalize
-	std::vector<char*> c_strings;
-	for (auto& pair : mergedMap)
-	{
-		std::string key = pair.first;
-		std::string value = pair.second;
-		
-		for (char& c : key)
-		{	
-			c = toupper(static_cast<unsigned char>(c)); 
-			if (c == '-')//todo: check if this is required and doesnt break stuff
-				c = '_';
-		}
-		for (char& c : value)
-		{	
-			if (c == ',')//todo: check if this is required and doesnt break stuff
-				c = ';';
-		}
-		std::string line = key + "=" + value;
-		c_strings.push_back(strdup(line.c_str()));
-	}
-	c_strings.push_back(nullptr);
-	
-	//malloc an array and copy vector into array
-	char **envArray = new char*[c_strings.size()];
-	std::copy(c_strings.begin(), c_strings.end(), envArray);
-	
-	int k = c_strings.size();
-	for (int i = 0; i < k;  i++) 
-		std::cout << envArray[i] << "HELLO" << std::endl;
-
-	return envArray;
-}
 
 
 //========= Setters ===============================
@@ -199,5 +236,9 @@ void	HttpRequest::setUri(const std::string& string) 				{	uri = Uri(string);			}
 void	HttpRequest::setRequestStatus(int value) 					{	_requestStatus = value;		}
 
 void	HttpRequest::addHeader(const std::string& key, const std::string& value) {
-	_headers.insert(std::make_pair(key, value));
+	_headers[key] = value;
+}
+
+void	HttpRequest::addEnvironVar(const std::string& key, const std::string& value) {
+	_environVars[key] = value;
 }

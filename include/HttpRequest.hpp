@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/20 11:09:13 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/20 15:12:06 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,14 @@ class HttpRequest {
 		std::string									getProtocol(void) const;
 		std::string									getBody(void) const;
 		std::string									getUri(void);
-		std::multimap<std::string, std::string>		getHeaders(void) const;
 		int											getRequestStatus(void) const;
+		std::map<std::string, std::string>			getHeaders(void) const;
+		char*										getHeadersString(void) const;
+		char*										getQueryString(void) const;
 		std::string									getHeaderValue(std::string) const;
-		char** 										getEnvArray(void) const; //includes header and queries merged into one array
+		char*										getEnvString(void) const;
+		char**										getEnvArray(void) const;
+
 	
 			
 
@@ -51,6 +55,7 @@ class HttpRequest {
 		void										setBody(const std::string& body);
 		void										setUri(const std::string& str);
 		void										addHeader(const std::string& key, const std::string& value);
+		void										addEnvironVar(const std::string& key, const std::string& value);
 		void										setRequestStatus(int value);
 		void										setConfigValues(std::string host);
 
@@ -72,7 +77,8 @@ class HttpRequest {
 	private:
 		std::string								_method;
 		std::string								_protocol;
-		std::multimap<std::string, std::string>	_headers;
+		std::map<std::string, std::string>		_headers;
+		std::map<std::string, std::string>		_environVars;
 		std::string								_body;
 		int										_requestStatus;
 		const Server*							_server;
