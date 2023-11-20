@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/20 11:09:20 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/20 16:09:54 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ void	Config::_readConfigFile()
 	{
 		struct ServerSettings	server;
 		struct LocationSettings	html;
+		struct LocationSettings	html2;
 
 		server._serverName = "Codam_Webserv";
 		server._port = 8080;
@@ -56,19 +57,26 @@ void	Config::_readConfigFile()
 		server._timeout = 3;
 		server._maxNrOfRequests = 10;
 		
-		html._locationId = "/html";
+		html._locationId = "/";
 		html._allowedMethods.insert("POST");
 		html._allowedMethods.insert("DELETE");
 		html._allowedMethods.insert("GET");
 		html._index = "index.html";
-
 		server._locations.push_back(html); //extra locations ???
+
+		html2._locationId = "/index.html";
+		html2._allowedMethods.insert("POST");
+		html2._allowedMethods.insert("DELETE");
+		// html2._allowedMethods.insert("GET");
+		html2._index = "index.html";
+		server._locations.push_back(html2);
+		
 		_servers.push_back(server);
 		
 		// ****** test
 		struct ServerSettings	server2;
-		server2._serverName = "Codam_Webserv2";
-		server2._port = 4242;
+		server2._serverName = "Codam_Webserv";
+		server2._port = 8080;
 		server2._rootFolder = "./data_website2/html";
 		server2._index = "index.html";
 		server2._locations.push_back(html);
