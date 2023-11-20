@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   CGI_Handler.cpp                                    :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/13 19:25:44 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/17 16:09:12 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,12 +66,12 @@ char	*getProgramPath(const Uri& uri, char *program)
 	return (program);
 }
 
-void	execChild(const Uri& uri, CGI &cgi, char **env)
+void	execChild(const HttpRequest& req, CGI &cgi)
 {
-	char	program[uri.getPath().size() + 2];
+	char	program[req.uri.getPath().size() + 2];
 	char	*argv[] = {program, NULL};
-	// char	**env = uri.getHeadersArray();
-	getProgramPath(uri, program);
+	char	**env = req.getEnvArray();
+	getProgramPath(req.uri, program);
 	
 	std::cerr << "program = " << argv[0] << std::endl;
 	// if (dup2(cgi.getFdOut(), STDOUT_FILENO) == -1)
@@ -80,17 +80,53 @@ void	execChild(const Uri& uri, CGI &cgi, char **env)
 	// 	cgi.closeFds();
 	// 	return ;
 	// }
+	// char	*env2[] = {
+	// 	strdup("AUTH_TYPE="),
+	// 	strdup("CONTENT_LENGTH=1024"),
+	// 	strdup("CONTENT_TYPE=text/html"),
+	// 	strdup("GATEWAY_INTERFACE="),
+	// 	strdup("HTTP_ACCEPT="),
+	// 	strdup("HTTP_ACCEPT_CHARSET="),
+	// 	strdup("HTTP_ACCEPT_ENCODING="),
+	// 	strdup("HTTP_ACCEPT_LANGUAGE="),
+	// 	strdup("HTTP_FORWARDED="),
+	// 	strdup("HTTP_METHOD=POST"),
+	// 	strdup("HTTP_HOST=http://localhost:8080"),
+	// 	strdup("HTTP_PROXY_AUTHORIZATION="),
+	// 	strdup("HTTP_USER_AGENT="),
+	// 	strdup("PATH_INFO="),
+	// 	strdup("PATH_TRANSLATED="),
+	// 	strdup("QUERY_STRING=name=banana"),
+	// 	strdup("REMOTE_ADDR="),
+	// 	strdup("REMOTE_HOST="),
+	// 	strdup("REMOTE_USER="),
+	// 	strdup("REQUEST_METHOD="),
+	// 	strdup("SCRIPT_NAME=test.py"),
+	// 	strdup("SERVER_NAME="),
+	// 	strdup("SERVER_PORT="),
+	// 	strdup("SERVER_PROTOCOL="),
+	// 	strdup("SERVER_SOFTWARE="),
+	// 	strdup("HTTP_COOKIE=id=hello value=3"),
+	// 	NULL
+	// };
+
+	for (int i = 0; env[i]; i++)
+		std::cout << "env[" << i << "] = " << env[i] << std::endl;
 	dup2(cgi.getFdOut(), STDOUT_FILENO);
-	// cgi.closeFds();
-	close(cgi.getFdIn());
+	dup2(cgi.getFdIn(), STDIN_FILENO);
+	std::string body = req.getBody();
+	if (body.size() > 0)
+		write(STDIN_FILENO, (body+"\0").c_str(), body.size()+1);
+	// close(cgi.getFdIn());
+	cgi.closeFds();
 	std::cerr << "before execve" << std::endl;
 	execve(argv[0], argv, env);
 }
 
-int cgiHandler(const Uri& uri, connection *conn, int epollFd, char **env)
+int cgiHandler(const HttpRequest& req, connection *conn, int epollFd)
 {
 	CGI	cgi(epollFd, conn);
-
+	
 	std::cerr << "in CGI" << std::endl;
 	if (cgi.getStatus() == 1)
 	{
@@ -104,11 +140,8 @@ int cgiHandler(const Uri& uri, connection *conn, int epollFd, char **env)
 		return 1;
 	}
 	else if (pid == 0)
-		execChild(uri, cgi, env);
+		execChild(req, cgi);
 	else
-	{
 		close(cgi.getFdOut());
-		delete env;	
-	}
 	return 0;
 }

@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   HttpRequest.cpp                                    :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/20 10:50:39 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/20 11:09:44 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,12 +142,13 @@ std::string HttpRequest::getHeaderValue(std::string key) const {
 }
 
 
-char**		HttpRequest::getEnvArray(void) {
+char**		HttpRequest::getEnvArray(void) const {
 
 	addHeader("REQUEST_METHOD", getMethod());
 	 
 	// merge headers map and queries map into one map
 	std::multimap<std::string, std::string> mergedMap;
+	
 	for (const auto& headerPair : _headers)
 		mergedMap.insert(headerPair);
 	
@@ -156,7 +157,6 @@ char**		HttpRequest::getEnvArray(void) {
 		
 	// make c_string array from multimap. first a vector of c_strings, then make pairs and capitalize
 	std::vector<char*> c_strings;
-	
 	for (auto& pair : mergedMap)
 	{
 		std::string key = pair.first;
@@ -176,8 +176,6 @@ char**		HttpRequest::getEnvArray(void) {
 		std::string line = key + "=" + value;
 		c_strings.push_back(strdup(line.c_str()));
 	}
-
-	c_strings.push_back(strdup(("BODY=" + getBody()).c_str()));
 	c_strings.push_back(nullptr);
 	
 	//malloc an array and copy vector into array

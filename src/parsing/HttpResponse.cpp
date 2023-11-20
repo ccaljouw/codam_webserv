@@ -98,39 +98,30 @@ void HttpResponse::setHeader(const std::string& key, const std::string& value) {
 
 
 void HttpResponse::setBody(const std::string& filePath, bool isBinary)	{
+	std::ifstream inputFile;
+	int length;
+
 	if (isBinary)
+		inputFile.open(filePath, std::ifstream::binary);
+	else
+		inputFile.open(filePath);
+	if (inputFile.good())
 	{
-		std::ifstream inputFile(filePath, std::ifstream::binary);
-		if (inputFile)
-		{
-			inputFile.seekg(0, inputFile.end);
-			int length = inputFile.tellg();
-			inputFile.seekg(0, inputFile.beg);
+		inputFile.seekg(0, inputFile.end);
+		length = inputFile.tellg();
+		inputFile.seekg(0, inputFile.beg);
 
-			char buffer[length];
-			inputFile.read(buffer, length);
-			_body.append(buffer, length);
-			if (!inputFile)
-				std::cout << "could only read " << inputFile.gcount() << " from " << length << " bites" << std::endl; //todo trow error
-			inputFile.close();
-		}	
+		char buffer[length];
+		inputFile.read(buffer, length);
+		_body.append(buffer, length);
+		if (!inputFile)
+			std::cout << "could only read " << inputFile.gcount() << " from " << length << " bites" << std::endl; //todo trow error
+		inputFile.close();
 	}
-	else {
-		std::ifstream inputFile(filePath);
-		if (inputFile.is_open()) {
-
-			std::string line;
-			while(std::getline(inputFile, line))
-				_body += line;
-			inputFile.close();
-		}
-		else
-			throw HttpRequest::parsingException(422, "Unprocessable Entity");
-	}
-	
-	size_t bodyLength = _body.length();
+	else
+		throw HttpRequest::parsingException(422, "Unprocessable Entity");
 	setHeader("Last-Modified", getTimeStamp());
-	setHeader("Content-Length", std::to_string(bodyLength));
+	setHeader("Content-Length", std::to_string(length));
 }
 
 
@@ -142,7 +133,7 @@ void HttpResponse::fillStandardHeaders() {
 
 	// setHeader("Set-Cookie", "name=webserv42, id=000, trigger=000");
 	addHeader("Keep-Alive", "timeout=5, max=3"); // get timout and max requests from server in connection struct
-	// addHeader("Cache-Control",  "public, max-age=86400");/
+	// addHeader("Cache-Control",  "public, max-age=86400");
 	addHeader("Date", getTimeStamp());
 	addHeader("Server", HOST); // get server name from server in connection struct
 	

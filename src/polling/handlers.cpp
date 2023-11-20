@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/17 10:51:49 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/20 11:09:03 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void readData(connection *conn)
 
 	if ((bytesRead = recv(conn->fd, buffer, sizeof(buffer), 0)) > 0) // what recv flag to use??
 	{
-		// std::cout << YELLOW << buffer << RESET << std::endl; //for testing
+		std::cout << YELLOW << buffer << RESET << std::endl; //for testing
 		std::time(&conn->time_last_request);
 		conn->request.append(buffer, static_cast<long unsigned int>(bytesRead));
 	}
@@ -80,7 +80,7 @@ void handleRequest(int epollFd, connection *conn)
 		// handle CGI
 		else if (request.uri.getExecutable() == "cgi-bin") { //todo:make configurable
 			//case error in cgi handler
-			if (cgiHandler(request.getUri(), conn, epollFd, request.getEnvArray()) == 1 ) 
+			if (cgiHandler(request, conn, epollFd) == 1 ) 
 				setErrorResponse(conn, 500);	
 			else
 			{

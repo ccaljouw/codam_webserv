@@ -6,11 +6,14 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/19 13:20:38 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/20 11:09:20 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
+#include <fstream>
+#include <map>
+#include <vector>
 
 Config::Config(int argc, char** argv) : _error(false)
 {
@@ -21,17 +24,15 @@ Config::Config(int argc, char** argv) : _error(false)
 		_filename = std::string(argv[1]);
 		if (argc > 2)
 		{
-			_error = true;
 			std::cerr << "Too many arguments... Ignoring all but first" << std::endl;
 		}
 	}
 	try
 	{
-		_readServerSettings();
+		_readConfigFile();
 	}
 	catch(const std::exception& e)
 	{
-		_error = true;
 		std::cerr << e.what() << std::endl;
 	}
 }
@@ -41,12 +42,7 @@ Config::~Config() {}
 std::list<struct ServerSettings>	Config::getServers() const	{	return (_servers);	}
 bool								Config::getError() const	{	return (_error);	}
 
-int	Config::_parseConfigFile()
-{
-	return 0;
-}
-
-void	Config::_readServerSettings()
+void	Config::_readConfigFile()
 {
 	if (_filename == "default.conf")
 	{
@@ -81,9 +77,48 @@ void	Config::_readServerSettings()
 	}
 	else
 	{
-		if (access(_filename.c_str(), R_OK) == -1)
+		std::ifstream	configFile(_filename.c_str());
+		std::string		line;
+		unsigned int	lineNumber = 0;
+
+		// check if file is valid and open
+		if (!configFile.is_open())
 			throw NoSuchFileException();
-		if (_parseConfigFile() == -1)
-			throw InvalidParameterException();
+
+		// read file line by line
+		while (std::getline(configFile, line, static_cast<char>(std::cout.eof()))) {
+			try {
+				_parseConfigFile(line);
+				lineNumber++;
+			}
+			catch(const std::exception& e) {
+				std::cerr << "Error in line " << lineNumber << ": " << e.what() << std::endl;
+			}
+		}
 	}
+}
+
+void	Config::_parseConfigFile(const std::string& line)
+{
+	// std::map<std::string> blocks = {{"server"}, "location", "errorpages"};
+	size_t	start = line.find_first_not_of(" \t\n\r\f\v");
+	size_t	end = line.find_last_not_of(" \t\n\r\f\v");
+
+	if (start == std::string::npos || line[start] == '#')
+		return ;
+	std::cout << _filename << std::endl;
+	std::string	trimmedLine = line.substr(start, end - start + 1);
+	if (trimmedLine.empty())
+		return ;
+	std::cout << trimmedLine << std::endl;
+	std::vector< std::string > splitLine;
+	start = 0;
+	end = trimmedLine.find_first_of(" \0");
+	while (start != std::string::npos)
+	{
+		splitLine.push_back(trimmedLine.substr(start, end - start + 1));
+		start = end + 1;
+	}
+	// for (auto item : splitLine)
+		// std::cout << item << std::endl
 }

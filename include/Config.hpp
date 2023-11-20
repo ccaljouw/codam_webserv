@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   Config.hpp                                         :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/16 13:37:21 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/17 11:48:57 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ struct ServerSettings
 	uint16_t							_port;
 	std::string							_index; //default
 	std::list<struct LocationSettings>	_locations;
-	// std::list<ErrorPages>		_errorPages;
+	std::map<std::string, std::string>	_errorPages;
 	double								_timeout;
 	int									_maxNrOfRequests;
 	size_t								_maxBodySize;
@@ -57,7 +57,7 @@ class Config
 	class InvalidParameterException : public std::exception
 	{
 		virtual const char *	what() const throw() {
-			return ("Invalid parameter in config file");
+			return ("Invalid parameter");
 		}
 	};
 	
@@ -75,8 +75,8 @@ class Config
 		std::list<struct ServerSettings>	_servers;
 		bool								_error;
 
-		void						_readServerSettings();
-		int							_parseConfigFile();
+		void						_readConfigFile();
+		void						_parseConfigFile(const std::string& line);
 		// void						_parseServer(std::string line);    // add later if needed
 		// void						_parseLocation(std::string line);  // add later if needed
 		// void						_parseErrorPage(std::string line); // add later if needed
