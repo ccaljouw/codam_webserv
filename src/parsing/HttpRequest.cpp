@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/20 15:17:31 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/20 15:55:38 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,12 @@ try {
 
 // 4. ==== setenvironvars ====
 	addEnvironVar("REQUEST_METHOD", getMethod());
+	addEnvironVar("CONTENT_TYPE", getHeaderValue("content-type"));
+	addEnvironVar("CONTENT_LENGTH", getHeaderValue("content-length"));
+	addEnvironVar("QUERY_STRING", getQueryString());
+	addEnvironVar("REMOTE_HOST", uri.getHost());
+
+
 
 
 	}
@@ -207,10 +213,7 @@ char** HttpRequest::getEnvArray(void) const {
 
 	//todo check requirements
 	//add headers
-	result[index++] = getHeadersString();
-
-	//add queries
-	result[index++] = getQueryString();
+	// result[index++] = getHeadersString();
 
 	result[index] = nullptr;
 	return result;

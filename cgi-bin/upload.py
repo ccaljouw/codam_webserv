@@ -2,10 +2,6 @@
 
 import datetime, os, cgi, cgitb, sys
 
-
-os.environ['CONTENT_TYPE'] = 'multipart/form-data;'
-print(sys.stdin.read(), file=sys.stderr)
-
 cgitb.enable(display=1, logdir="./logs", format="text")
 form = cgi.FieldStorage()
 
@@ -23,7 +19,7 @@ if form.getvalue('filename'):
 	uploadDir = os.getcwd() + '/uploads'
 	with open(os.path.join(uploadDir, fn), 'wb') as f:
 		f.write(fileitem.file.read())
-	message = fn + '" uploaded successfully'
+	message = fn + ' uploaded successfully'
 	status = 200
 else:
 	print("Sad no filename", file=sys.stderr)

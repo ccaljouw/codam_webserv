@@ -1,0 +1,28 @@
+carlo:
+	add header class
+	add checks per location / extension in handle request and or request parsing
+	
+	handlers:
+		write delete and post handling
+		make handle requerst shorter (swith of outcomes)
+		move cgi call to methods
+	
+	utils:
+		add complexity to cookie hash
+	
+	request:
+		check server settings in request class
+		check - to _ conversion in env array
+		add all required checks in request build
+		fix cookie format for getEnvArray
+		make request constructor shorter (add helper functions)
+		test protocol check (not workign as expected)
+
+	response:
+		checks before sending (status code set, stc)
+		check WHITE_SPACE
+		check capitalseensitivity
+		check duplicate headers
+
+	uri:
+		add errors
