@@ -159,11 +159,3 @@ std::string HttpResponse::serializeResponse() {
 	serializedResponse += _protocol + " " + std::to_string(_statusCode) + LINE_END + serializeHeaders() + LINE_END + _body + LINE_END;
 	return serializedResponse;
 }
-
-
-
-//todo:
-//checks before sending (status code set, stc)
-//check WHITE_SPACE
-//check capitalseensitivity
-//check duplicate headers

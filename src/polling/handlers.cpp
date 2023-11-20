@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   handlers.cpp                                       :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/17 11:47:37 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/20 11:09:03 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,14 +69,14 @@ void handleRequest(int epollFd, connection *conn)
 		// Process the request data
 		HttpRequest request(conn->request, conn->server);
 		
+		//check and set cookie
 		std::string cookieValue = checkAndSetCookie(conn, request);
 	
-			// Handle parsing error
+		// Handle parsing error
 		if (request.getRequestStatus() != 200) {
 			setErrorResponse(conn, request.getRequestStatus());
 		} 
 	
-		
 		// handle CGI
 		else if (request.uri.getExecutable() == "cgi-bin") { //todo:make configurable
 			//case error in cgi handler
@@ -94,6 +94,7 @@ void handleRequest(int epollFd, connection *conn)
 			std::string contentType = request.uri.getMime(extension);
 			
 			// todo:check allowed methods for contentType
+
 			
 			//handle GET
 			if (request.getMethod() == "GET")
@@ -115,7 +116,6 @@ void handleRequest(int epollFd, connection *conn)
 					response.setHeader("Set-Cookie", cookieValue);
 					setResponse(conn, response);
 				} 
-					
 				else
 					throw HttpRequest::parsingException(501, "Extension not supported");
 			}
@@ -133,6 +133,7 @@ void handleRequest(int epollFd, connection *conn)
 					throw HttpRequest::parsingException(501, "Extension not supported"); 
 			}
 
+
 			// handle DELETE
 			else if (request.getMethod() == "DELETE")
 			{
@@ -145,6 +146,7 @@ void handleRequest(int epollFd, connection *conn)
 					throw HttpRequest::parsingException(501, "Extension not supported");
 			}
 			
+
 			// handle unsupported methods
 			else
 				throw HttpRequest::parsingException(405, "METHOD not supported");

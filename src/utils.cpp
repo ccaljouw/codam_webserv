@@ -108,7 +108,7 @@ std::string		checkAndSetCookie(connection* conn, HttpRequest& request) {
 		conn->server->addClientId(cookieId);
 	}
 	std::string newCookieValue = "name=" + std::string(HOST) + ", id=" + cookieId + ", trigger=" + cookieTrigger;
-	std::cout << "new cookie value  = '" << newCookieValue << std::endl; //todo: remove lines
+	// std::cout << "new cookie value  = '" << newCookieValue << std::endl; //todo: remove lines
 	return newCookieValue;
 }
 
