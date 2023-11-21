@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   CGI_Handler.cpp                                    :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/20 16:09:46 by bfranco       ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   CGI_Handler.cpp                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/06 12:51:38 by bfranco           #+#    #+#             */
+/*   Updated: 2023/11/21 12:14:40 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,18 +79,23 @@ void	execChild(const HttpRequest& req, CGI &cgi, int oldFd)
 	execve(argv[0], argv, env);
 }
 
-int	writeBody(const HttpRequest& req)
+int	writeBody(const HttpRequest& req, int *fd)
 {
-	int			fd[2];
+	
 	std::string	body = req.getBody() + "\0";
-
-	if (pipe(fd) == -1)
-		return (-1);
-	if (write(fd[1], body.c_str(), body.size()) == -1)
+	while (1)
 	{
-		close(fd[0]);
-		close(fd[1]);
-		return (-1);
+		if (write(fd[1], body.c_str(), BUFFER_SIZE) == -1)
+		{
+			std::cerr << strerror(errno) << std::endl;
+			close(fd[0]);
+			close(fd[1]);
+			return (-1);
+		}
+		if (body.length() > BUFFER_SIZE)
+			body = body.substr(BUFFER_SIZE, body.npos);
+		else
+			break;
 	}
 	close(fd[1]);
 	return (fd[0]);
@@ -98,11 +103,11 @@ int	writeBody(const HttpRequest& req)
 
 int cgiHandler(const HttpRequest& req, connection *conn, int epollFd)
 {
-	int	oldFd = writeBody(req);
+	int			fd[2];
 
-	if (oldFd == -1)
-		return (1);
-
+	if (pipe(fd) == -1)
+		return (-1);
+	
 	CGI	cgi(epollFd, conn);
 	if (cgi.getStatus() == 1)
 	{
@@ -117,9 +122,13 @@ int cgiHandler(const HttpRequest& req, connection *conn, int epollFd)
 		return 1;
 	}
 	else if (pid == 0)
-		execChild(req, cgi, oldFd);
+		execChild(req, cgi, fd[0]);
 	else
 	{
+		writeBody(req, fd);
+
+		// if (oldFd == -1)
+		// 	return (1);
 		close(cgi.getFdOut());
 	}
 	return 0;

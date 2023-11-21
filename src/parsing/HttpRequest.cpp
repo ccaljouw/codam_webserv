@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   HttpRequest.cpp                                    :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/21 10:27:59 by carlo         ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   HttpRequest.cpp                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/01 14:21:11 by carlo             #+#    #+#             */
+/*   Updated: 2023/11/21 12:00:05 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,8 +218,8 @@ char** HttpRequest::getEnvArray(void) const {
 	result[index] = nullptr;
 
 	// ************ testing
-	for (int i = 0 ; result[i] != nullptr; i++)
-		std::cout << RED << result[i] << RESET << std::endl;
+	// for (int i = 0 ; result[i] != nullptr; i++)
+	// 	std::cout << RED << result[i] << RESET << std::endl;
 
 	return result;
 }
