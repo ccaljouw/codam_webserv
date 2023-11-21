@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/21 12:14:16 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/21 12:30:52 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,9 +90,9 @@ try {
 	if (_settings->_allowedMethods.find(_method) == _settings->_allowedMethods.end())
 		throw parsingException(405, "Method not Allowed");
 
-	// //check body size
-	// if (_body.length() > _server->get_maxBodySize(getHeaderValue("host")))
-	// 	throw parsingException(405, "Body size to big");
+	//check body size
+	if (_body.length() > _server->get_maxBodySize(getHeaderValue("host")))
+		throw parsingException(405, "Body size to big");
 
 
 // === set environ vars ===
