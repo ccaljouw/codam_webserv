@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/21 11:37:29 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/21 12:45:16 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,10 @@ std::map<std::string, std::string> acceptedExtensions = {
 	{	".gif", "image/gif"		},
 	{	".bmp", "image/bmp"		},
 	{	".ico", "image/x-icon"	},
+};
+
+std::vector<std::string> binaryExtensions = {
+	".png", ".ico" , ".bmp", ".jpg", ".jpeg", ".gif", 	",bmp"
 };
 
 
@@ -230,8 +234,11 @@ void	Uri::setExtension()
 		_extension = _path.substr(periodPos);
 	else
 		_extension = "";
-	if (_extension == ".png" || _extension == ".ico") // to make config
-		_isBinary =  true;	
+	
+	for (const auto& ext : binaryExtensions) {
+		if (ext == _extension)
+			_isBinary =  true;	
+	}
 }
 
 
