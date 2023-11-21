@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/21 09:04:10 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/21 09:34:43 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ class HttpRequest {
 		const HttpRequest& operator=(const HttpRequest& rhs);
 		~HttpRequest(void);
 
-		Uri										uri;
+		Uri											uri;
 
 		
 	// ============= Getters ================

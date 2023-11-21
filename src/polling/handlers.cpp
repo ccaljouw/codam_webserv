@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/20 16:18:19 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/21 09:25:14 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ void readData(connection *conn)
 			checkTimeout(conn);
 			break;
 		case BUFFER_SIZE:
-			std::cout << "reading" << std::endl;
 			conn->state = READING;
 			break;
 		default:

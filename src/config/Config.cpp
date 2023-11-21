@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/20 16:12:44 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/21 09:11:32 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void	Config::_readConfigFile()
 		html2._locationId = "/index.html";
 		html2._allowedMethods.insert("POST");
 		html2._allowedMethods.insert("DELETE");
-		// html2._allowedMethods.insert("GET");
+		html2._allowedMethods.insert("GET");
 		html2._index = "index.html";
 		server._locations.push_back(html2);
 		

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Uri.cpp                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 12:17:27 by carlo             #+#    #+#             */
-/*   Updated: 2023/11/16 14:09:39 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Uri.cpp                                            :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
+/*   Updated: 2023/11/21 10:02:26 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ Uri::Uri() : _scheme(), _authority(), _path(), _extension(), _isBinary(false), _
 
 // regex teken directly from RFC 2396 : ^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))? added R for ignoring escape characterss
 Uri::Uri(const std::string& uri) {
+
 	std::regex uriRegex(R"(^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?)");
 	
 	std::smatch matches;
@@ -48,10 +49,11 @@ Uri::Uri(const std::string& uri) {
 		_query 		= matches[7].str();
 		_fragment 	= matches[9].str();
 
-	} else {
+	} 
+	else 
 		throw HttpRequest::parsingException(400, "bad request");
-	}
-
+	
+	
 	splitAuthority();
 	//scheme and host are case insensitive and as such are normalized here
 	std::transform(_scheme.begin(), _scheme.end(), _scheme.begin(), ::tolower);

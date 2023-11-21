@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/21 09:06:34 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/21 10:01:12 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,11 @@ HttpRequest::HttpRequest(const Server *server) : uri(), _method(), _protocol(), 
 
 HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri(), _requestStatus(200), _server(server)  {
 
-
 //todo: switch into helper functions mapHeaders
+
 // 1. === parse request line === 
 try {
+	
 	std::size_t RequestLineEnd = request.find("\r\n");
 	if (RequestLineEnd == std::string::npos)
 		throw parsingException(405, "Bad request");
@@ -39,10 +40,11 @@ try {
 
 	RequestLineStream >> _method >> tempUriString >> _protocol;
 	
-	//check protocol //todo test does not work
+		//check protocol //todo test does not work
 	if (_protocol != HTTP_PROTOCOL)
 		throw parsingException(505, "Version not supported");
 
+	//set uri object
 	uri = Uri(tempUriString);
 
 	//fetch location specific config settings
@@ -51,8 +53,7 @@ try {
 	// check method
 	if (_settings->_allowedMethods.find(_method) == _settings->_allowedMethods.end())
 		throw parsingException(405, "Method not Allowed");
-	// else
-	// 	std::cout << "method ok" << std::endl; //todo remove line
+
 	//todo:add all checks etc
 	
 // 2. === parse headers ===
@@ -83,28 +84,21 @@ try {
 			_headers[key] = value;
 		}
 	}
-
-	addHeader("Last-Modified", getTimeStamp());
-	addHeader("Keep-Alive", "timeout=5, max=3");
-	
+	// for (auto& pair : getHeaders())
+	// 	std::cout << pair.first << " = " << pair.second << std::endl;
 
 // 3. === parse body ===
 	_body = request.substr(headersEnd + 4);
 
-// 4. ==== setenvironvars ====
+// 4. === set environ vars ===
+	
 	addEnvironVar("REQUEST_METHOD", getMethod());
+	addEnvironVar("QUERY_STRING", getQueryString());
+	addEnvironVar("REMOTE_HOST", getHeaderValue("host"));
 	addEnvironVar("BODY", getBody());
-	addEnvironVar("QUERY_STRING", getQueryString());
-	addEnvironVar("CONTENT_TYPE", getHeaderValue("content-type"));
-	addEnvironVar("CONTENT_LENGTH", getHeaderValue("content-length"));
-	addEnvironVar("QUERY_STRING", getQueryString());
-	addEnvironVar("REMOTE_HOST", uri.getHost());
+}
 
-
-
-
-	}
-	//catch block	
+//catch block	
 	catch (const parsingException& exception)
 	{
 		_requestStatus = exception.getErrorCode();
@@ -204,6 +198,7 @@ std::string	HttpRequest::getQueryString(void) const {
 
 //todo check requirements
 char** HttpRequest::getEnvArray(void) const {
+
 	std::vector<char*> envArray;
 	
 	for (const auto& pair : _environVars) {
@@ -226,6 +221,11 @@ char** HttpRequest::getEnvArray(void) const {
 		result[index++] = string;
 
 	result[index] = nullptr;
+
+	// ************ testing
+	for (int i = 0 ; result[i] != nullptr; i++)
+		std::cout << RED << result[i] << RESET << std::endl;
+
 	return result;
 }
 
@@ -240,11 +240,13 @@ void	HttpRequest::setUri(const std::string& string) 				{	uri = Uri(string);			}
 void	HttpRequest::setRequestStatus(int value) 					{	_requestStatus = value;		}
 
 void	HttpRequest::addHeader(const std::string& key, const std::string& value) {
-	_headers[key] = value;
+	if(!value.empty())
+		_headers[key] = value;
 }
 
 void	HttpRequest::addEnvironVar(const std::string& key, const std::string& value) {
-	_environVars[key] = value;
+	if(!value.empty())
+		_environVars[key] = value;
 }
 
 //todo get from config
