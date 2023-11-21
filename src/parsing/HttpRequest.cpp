@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/21 10:27:59 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/21 12:14:16 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri
 
 //todo: switch into helper functions mapHeaders
 
-// 1. === parse request line === 
+//  === parse request line === 
 try {
 	
 	std::size_t RequestLineEnd = request.find("\r\n");
@@ -44,14 +44,10 @@ try {
 	if (_protocol != HTTP_PROTOCOL)
 		throw parsingException(505, "Version not supported");
 
-	//set uri object
-	uri = Uri(tempUriString);
-
-
 
 	//todo:add all checks etc
 	
-// 2. === parse headers ===
+//  === parse headers ===
 	//define block of all headers
 	std::size_t headersStart = RequestLineEnd + 2;
 	std::size_t headersEnd = request.find("\r\n\r\n", headersStart);
@@ -79,19 +75,27 @@ try {
 		}
 	}
 
-// 3. === parse body ===
+// === parse body ===
 	_body = request.substr(headersEnd + 4);
 
-// 4. fetch location specific config settings
-	std::cout << "path" << uri.getPath() << "host" << getHeaderValue("host") << std::endl;
+// === set uri object === 
+	uri = Uri(tempUriString);
+
+// ==== fetch location specific config settings === 
+
 	_settings = _server->get_locationSettings(getHeaderValue("host"), uri.getPath());
+	fillStandardHeaders();
 
 	// check method
 	if (_settings->_allowedMethods.find(_method) == _settings->_allowedMethods.end())
 		throw parsingException(405, "Method not Allowed");
 
+	// //check body size
+	// if (_body.length() > _server->get_maxBodySize(getHeaderValue("host")))
+	// 	throw parsingException(405, "Body size to big");
 
-// 5. === set environ vars ===
+
+// === set environ vars ===
 	addEnvironVar("REQUEST_METHOD", getMethod());
 	addEnvironVar("QUERY_STRING", getQueryString());
 	addEnvironVar("REMOTE_HOST", getHeaderValue("host"));
@@ -246,11 +250,14 @@ void	HttpRequest::addEnvironVar(const std::string& key, const std::string& value
 
 //todo get from config
 void	HttpRequest::fillStandardHeaders() {
-	// addHeader("Transfer-Encoding", "chunked");
-	// addHeader("Cache-Control",  "public, max-age=86400");
-	addHeader("Keep-Alive", "timeout=5, max=3"); // get timout and max requests from server in connection struct
+
+	std::string timeout = std::to_string(_server->get_timeout(getHeaderValue("host")));
+	addHeader("Keep-Alive", "timeout=" + timeout + ", max=3");
 	addHeader("Date", getTimeStamp());
 	addHeader("Server", HOST); // get server name from server in connection struct
 	addHeader("Last-Modified", getTimeStamp());
 	addHeader("Content-Length", std::to_string(_body.length()));
+
+	// addHeader("Transfer-Encoding", "chunked");
+	// addHeader("Cache-Control",  "public, max-age=86400");
 }

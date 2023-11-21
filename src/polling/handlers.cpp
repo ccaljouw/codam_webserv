@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/21 09:25:14 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/21 10:34:26 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,7 +155,7 @@ void handleRequest(int epollFd, connection *conn)
 	} 
 	catch (const HttpRequest::parsingException& exception)
 	{
-		std::cout << "Error: " << exception.what() << std::endl;
+		std::cout << RED << "Error: " << exception.what() << RESET << std::endl;
 		setErrorResponse(conn, exception.getErrorCode());
 	}
 }
