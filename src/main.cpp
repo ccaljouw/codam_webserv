@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/14 10:24:47 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/17 20:07:23 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
 	}
 	catch(const std::runtime_error& e)
 	{
-		std::cerr << "\033[31;1mError\n" << e.what() << "\033[0m" << std::endl;
+		std::cerr << RED << e.what() << RESET << std::endl;
 		return 1;
 	}
 	while (!g_shutdown_flag) {
@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
 				newConnection(epollFd, conn->fd, conn->server);
 			if (events[i].events & EPOLLIN && conn->state == READING)
 				readData(conn);
-			if (conn && conn->state == HANDLING)
+			if (conn->state == HANDLING)
 				handleRequest(epollFd, conn);
 			if (events[i].events & EPOLLIN && conn->state == IN_CGI)
 				readCGI(epollFd, conn);
@@ -62,7 +62,9 @@ int main(int argc, char **argv) {
 	int numEvents = epoll_wait(epollFd, events, MAX_EVENTS, 0);
 	for (int i = 0; i < numEvents; i++) {
 		connection *conn = static_cast<connection *>(events[i].data.ptr);
-		closeConnection(epollFd, conn);
+		if (conn->state != LISTENING)
+			closeConnection(epollFd, conn);
 	}
+	close (epollFd);
     return 0;
 }

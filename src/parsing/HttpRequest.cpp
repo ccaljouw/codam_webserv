@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/21 09:04:20 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/21 09:06:34 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,10 +85,9 @@ try {
 	}
 
 	addHeader("Last-Modified", getTimeStamp());
+	addHeader("Keep-Alive", "timeout=5, max=3");
 	
-	// std::cout << getHeadersString() << std::endl;	//todo: remove
 
-	
 // 3. === parse body ===
 	_body = request.substr(headersEnd + 4);
 
@@ -96,6 +95,12 @@ try {
 	addEnvironVar("REQUEST_METHOD", getMethod());
 	addEnvironVar("BODY", getBody());
 	addEnvironVar("QUERY_STRING", getQueryString());
+	addEnvironVar("CONTENT_TYPE", getHeaderValue("content-type"));
+	addEnvironVar("CONTENT_LENGTH", getHeaderValue("content-length"));
+	addEnvironVar("QUERY_STRING", getQueryString());
+	addEnvironVar("REMOTE_HOST", uri.getHost());
+
+
 
 
 	}

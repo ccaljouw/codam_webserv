@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   handlers.cpp                                       :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/20 11:09:03 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/20 16:18:19 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void readData(connection *conn)
 
 	if ((bytesRead = recv(conn->fd, buffer, sizeof(buffer), 0)) > 0) // what recv flag to use??
 	{
-		std::cout << YELLOW << buffer << RESET << std::endl; //for testing
+		// std::cout << YELLOW << buffer << RESET << std::endl; //for testing
 		std::time(&conn->time_last_request);
 		conn->request.append(buffer, static_cast<long unsigned int>(bytesRead));
 	}
@@ -54,6 +54,7 @@ void readData(connection *conn)
 			checkTimeout(conn);
 			break;
 		case BUFFER_SIZE:
+			std::cout << "reading" << std::endl;
 			conn->state = READING;
 			break;
 		default:
@@ -87,6 +88,7 @@ void handleRequest(int epollFd, connection *conn)
 				// conn->state = CLOSING;
 				conn->request.clear();
 				conn->state = IN_CGI;
+				
 			}
 		
 		} else {

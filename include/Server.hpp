@@ -34,20 +34,24 @@ class Server
 		int		initServer(struct ServerSettings const & settings, int epollFd);
 		int		checkClientId(std::string id);
 		void	addClientId(std::string newCookieValue);
+		void	addSubDomain(struct ServerSettings const & settings);
 
 		// ============= getters ================
-		int			get_FD(std::string host) const;
+		uint16_t	get_port(void) const;
+		int			get_FD() const;
 		std::string	get_serverName(std::string host) const;
 		std::string	get_rootFolder(std::string host) const;
 		std::string	get_index(std::string host) const;
-		std::list<struct LocationSettings>	get_locations(std::string host) const;
 		const struct LocationSettings*	get_locationSettings(std::string host, std::string location) const;
-		std::map<std::string, int>	get_knownClientIds(std::string host) const;
+		std::map<std::string, int>	get_knownClientIds() const;
 		double	get_timeout(std::string host) const;
 		int		get_maxNrOfRequests(std::string host) const;
 		size_t	get_maxBodySize(std::string host) const;
-		// std::list<ErrorPages>	get_errorPages() const;
+		// std::list<ErrorPages>	get_errorPages(std::string host) const;
+		struct connection *get_connection();
 		
+		// ============= setters ================
+		void	set_connection(struct connection *conn);
 
 		// ============= exception ================
 		class ServerException : public std::exception {
@@ -63,20 +67,11 @@ class Server
 	
 	private:
 
-		
 		int 								_fd;
-		struct sockaddr_in					_serverAddr; //?
-		std::string							_serverName;
-		std::string							_rootFolder;
-		uint16_t							_port;
-		std::string							_index;
-		std::list<struct LocationSettings>	_locations;
-		double								_timeout;
-		int									_maxNrOfRequests;
+		struct sockaddr_in					_serverAddr;
 		std::map<std::string, int>			_knownClientIds;
-		size_t								_maxBodySize;
-		// std::list<ErrorPages>		_errorPages;
-
+		std::list<struct ServerSettings>	_settings;
+		struct connection					*_conn;
 } ;
 
 std::list<Server> initServers(std::list<struct ServerSettings> settings, int epollFd);

@@ -2,31 +2,29 @@
 
 import datetime, os, cgi, cgitb, sys
 
-form = cgi.FieldStorage()
 cgitb.enable(display=1, logdir="./logs", format="text")
+form = cgi.FieldStorage()
 
-# for line in sys.stdin:
-# 	print(line, file=sys.stderr)
-
-print(os.environ.get('REQUEST_METHOD'), file=sys.stderr)
-print(os.environ.get('SERVER_NAME'), file=sys.stderr)
+# print(os.environ.get('REQUEST_METHOD'), file=sys.stderr)
+print(os.environ.get('CONTENT_TYPE'), file=sys.stderr)
 
 # cgi.print_form(form)
-# print(form.getvalue('filename'))
+for key in form.keys():
+	print(key, file=sys.stderr)
 
-# if form.getvalue('filename'):
-# 	print("We have a filename", file=sys.stderr)
-# 	fileitem = form['filename']
-# 	fn = os.path.basename(fileitem.filename.replace("\\", "/"))
-# 	uploadDir = os.getcwd() + '/uploads/'
-# 	with open(os.path.join(uploadDir, fn), 'wb') as f:
-# 		f.write(fileitem.file.read())
-# 	message = fn + '" uploaded successfully'
-# 	status = 200
-# else:
-print("Sad no filename", file=sys.stderr)
-message = 'Upload failed'
-status = 500
+if form.getvalue('filename'):
+	print("We have a filename", file=sys.stderr)
+	fileitem = form['filename']
+	fn = os.path.basename(fileitem.filename.replace("\\", "/"))
+	uploadDir = os.getcwd() + '/uploads'
+	with open(os.path.join(uploadDir, fn), 'wb') as f:
+		f.write(fileitem.file.read())
+	message = fn + ' uploaded successfully'
+	status = 200
+else:
+	print("Sad no filename", file=sys.stderr)
+	message = 'Upload failed!!!!'
+	status = 500
 
 x = datetime.datetime.now()
 date = x.strftime("%a, %d %b %Y %H:%M:%S GMT")
@@ -49,5 +47,5 @@ print(header)
 print(body)
 print("\0")
 
-cgi.print_environ()
+# cgi.print_environ()
 # cgi.print_form(form)
