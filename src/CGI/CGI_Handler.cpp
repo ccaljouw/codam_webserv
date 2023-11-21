@@ -1,18 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   CGI_Handler.cpp                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/06 12:51:38 by bfranco           #+#    #+#             */
-/*   Updated: 2023/11/21 14:36:01 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   CGI_Handler.cpp                                    :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
+/*   Updated: 2023/11/21 15:18:48 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "CGI_Handler.hpp"
 #include "HttpRequest.hpp"
+#include <sys/wait.h>
 #include <string.h>
+#include <signal.h>
 
 CGI::CGI(int epollFd, connection *conn) : _epollFd(epollFd), _status(0), _fdIn(-1), _fdOut(-1)
 {
@@ -72,11 +74,15 @@ void	execChild(const HttpRequest& req, CGI &cgi, int oldFd)
 	char	**env = req.getEnvArray();
 	getProgramPath(req.uri, program);
 
-	dup2(cgi.getFdOut(), STDOUT_FILENO);
-	dup2(oldFd, STDIN_FILENO);
+	if (dup2(cgi.getFdOut(), STDOUT_FILENO) == -1 || dup2(oldFd, STDIN_FILENO) == -1)
+	{
+		cgi.closeFds();
+		// kill(getpid(), SIGKILL);
+	}
 	close(cgi.getFdIn());
-	// cgi.closeFds();
 	execve(argv[0], argv, env);
+	// kill(getpid(), SIGKILL);
+
 }
 
 int	writeBody(const HttpRequest& req, int *fd)
@@ -112,24 +118,26 @@ int cgiHandler(const HttpRequest& req, connection *conn, int epollFd)
 	if (cgi.getStatus() == 1)
 	{
 		cgi.closeFds();
-		return 1;
+		return (1);
 	}
 
 	int	pid = fork();
 	if (pid == -1)
 	{
 		cgi.closeFds();
-		return 1;
+		return (1);
 	}
 	else if (pid == 0)
 		execChild(req, cgi, fd[0]);
 	else
 	{
-		writeBody(req, fd);
-
-		// if (oldFd == -1)
-		// 	return (1);
 		close(cgi.getFdOut());
+		if (writeBody(req, fd) == -1)
+			return (1);
+		// int status;
+		// waitpid(pid, &status, WNOHANG);
+		// if (WIFSIGNALED(status))
+		// 	return (1);
 	}
-	return 0;
+	return (0);
 }
