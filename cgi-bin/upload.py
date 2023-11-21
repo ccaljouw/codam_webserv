@@ -60,10 +60,10 @@ else:
 x = datetime.datetime.now()
 date = x.strftime("%a, %d %b %Y %H:%M:%S GMT")
 
+		# <link rel="icon" href="data:,">
 body = f"""<!DOCTYPE html>
 <html>
 	<head>
-		<link rel="icon" href="data:,">
 		<title>File Upload</title>
 	</head>
 	<body>
