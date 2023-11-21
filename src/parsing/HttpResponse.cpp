@@ -40,8 +40,7 @@ HttpResponse::HttpResponse(const HttpResponse& origin) {
 
 
 const HttpResponse& HttpResponse::operator=(const HttpResponse& rhs) {
-	if (this != &rhs)
-	{
+	if (this != &rhs) {
 		_protocol		= rhs._protocol;
 		_statusCode		= rhs._statusCode;
 		_headerMap.clear();
@@ -85,10 +84,8 @@ void HttpResponse::addHeader(const std::string& key, const std::string& value) {
 
 
 void HttpResponse::setHeader(const std::string& key, const std::string& value) {
-	for (auto& headerPair : _headerMap)
-	{
-		if (key == headerPair.first)
-		{
+	for (auto& headerPair : _headerMap) {
+		if (key == headerPair.first) {
 			headerPair.second = value;
 			return;
 		}
@@ -105,8 +102,7 @@ void HttpResponse::setBody(const std::string& filePath, bool isBinary)	{
 		inputFile.open(filePath, std::ifstream::binary);
 	else
 		inputFile.open(filePath);
-	if (inputFile.good())
-	{
+	if (inputFile.good()) {
 		inputFile.seekg(0, inputFile.end);
 		length = inputFile.tellg();
 		inputFile.seekg(0, inputFile.beg);
@@ -114,12 +110,16 @@ void HttpResponse::setBody(const std::string& filePath, bool isBinary)	{
 		char buffer[length];
 		inputFile.read(buffer, length);
 		_body.append(buffer, length);
+
 		if (!inputFile)
 			std::cout << "could only read " << inputFile.gcount() << " from " << length << " bites" << std::endl; //todo trow error
+		
 		inputFile.close();
 	}
+	
 	else
 		throw HttpRequest::parsingException(422, "Unprocessable Entity");
+	
 	setHeader("Last-Modified", getTimeStamp());
 	setHeader("Content-Length", std::to_string(length));
 }

@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/21 10:02:26 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/21 10:30:03 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,7 @@ Uri::Uri(const std::string& uri) {
 	
 	std::smatch matches;
 	
-	if(std::regex_match(uri, matches, uriRegex))
-	{
+	if(std::regex_match(uri, matches, uriRegex)) {
 		_scheme 	= matches[2].str();
 		_authority 	= matches[4].str();
 		_path 		= matches[5].str();
@@ -50,6 +49,7 @@ Uri::Uri(const std::string& uri) {
 		_fragment 	= matches[9].str();
 
 	} 
+	
 	else 
 		throw HttpRequest::parsingException(400, "bad request");
 	
@@ -68,8 +68,7 @@ Uri::Uri(const Uri& origin) {
 }
 
 const Uri& Uri::operator=(const Uri& rhs) {
-	if (this != &rhs)
-	{
+	if (this != &rhs) {
 		_scheme			= rhs._scheme;
 		_authority		= rhs._authority;
 		_path			= rhs._path;
@@ -98,18 +97,17 @@ void	Uri::splitAuthority() {
 
 	//check for optional userinfo	
 	size_t atPos	= _authority.find("@");
-	if (atPos != std::string::npos)
-	{
+	if (atPos != std::string::npos) {
 		_userinfo	= _authority.substr(0, atPos);
 		_host		= _authority.substr(atPos + 1);
-	} 
+	}
+	
 	else
 		_host = _authority;
 
 	//check for optional port
 	size_t columPos	= _host.find(":");
-	if (columPos != std::string::npos)
-	{
+	if (columPos != std::string::npos) {
 		_port = stoi(_host.substr(columPos + 1));
 		_host = _host.substr(0, columPos);
 	}
@@ -125,8 +123,7 @@ std::string	Uri::serializeUri() {
 	if (!_authority.empty())
 		serializedUri += "//" + _authority;
 
-	if (!_path.empty())
-	{
+	if (!_path.empty()) {
 		if (_path[0] != '/')
 			serializedUri += "/";
 		serializedUri += _path;

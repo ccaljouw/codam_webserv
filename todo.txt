@@ -26,3 +26,4 @@ carlo:
 
 	uri:
 		add errors
+		fix host / authority part 

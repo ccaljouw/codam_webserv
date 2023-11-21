@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/21 10:01:12 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/21 10:27:59 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,7 @@ try {
 	//set uri object
 	uri = Uri(tempUriString);
 
-	//fetch location specific config settings
-	_settings = _server->get_locationSettings(uri.getHost(), uri.getPath());
 
-	// check method
-	if (_settings->_allowedMethods.find(_method) == _settings->_allowedMethods.end())
-		throw parsingException(405, "Method not Allowed");
 
 	//todo:add all checks etc
 	
@@ -69,8 +64,7 @@ try {
 	std::istringstream HeaderStream(HeaderBlock);
 	std::string headerLine;
 	
-	while(std::getline(HeaderStream, headerLine))
-	{
+	while(std::getline(HeaderStream, headerLine)) {
 		std::size_t columPos = headerLine.find(":");
 		if (columPos != std::string::npos)
 		{
@@ -84,14 +78,20 @@ try {
 			_headers[key] = value;
 		}
 	}
-	// for (auto& pair : getHeaders())
-	// 	std::cout << pair.first << " = " << pair.second << std::endl;
 
 // 3. === parse body ===
 	_body = request.substr(headersEnd + 4);
 
-// 4. === set environ vars ===
-	
+// 4. fetch location specific config settings
+	std::cout << "path" << uri.getPath() << "host" << getHeaderValue("host") << std::endl;
+	_settings = _server->get_locationSettings(getHeaderValue("host"), uri.getPath());
+
+	// check method
+	if (_settings->_allowedMethods.find(_method) == _settings->_allowedMethods.end())
+		throw parsingException(405, "Method not Allowed");
+
+
+// 5. === set environ vars ===
 	addEnvironVar("REQUEST_METHOD", getMethod());
 	addEnvironVar("QUERY_STRING", getQueryString());
 	addEnvironVar("REMOTE_HOST", getHeaderValue("host"));
@@ -99,8 +99,7 @@ try {
 }
 
 //catch block	
-	catch (const parsingException& exception)
-	{
+	catch (const parsingException& exception) {
 		_requestStatus = exception.getErrorCode();
 		std::cerr << exception.what() << std::endl; 
 	}
@@ -114,8 +113,7 @@ HttpRequest::HttpRequest(const HttpRequest& origin) {
 
 
 const HttpRequest& HttpRequest::operator=(const HttpRequest& rhs) {
-	if (this != &rhs)
-	{
+	if (this != &rhs) {
 		uri				= rhs.uri;
 		_method			= rhs._method;
 		_protocol		= rhs._protocol;
@@ -157,19 +155,16 @@ std::vector<char*>		HttpRequest::getHeaderVector(void) const {
 	// make c_string array from headers. first a vector of c_strings, then make pairs and capitalize
 	std::vector<char*> c_strings;
 	
-	for (const auto& pair : _headers)
-	{
+	for (const auto& pair : _headers) {
 		std::string key = pair.first;
 		std::string value = pair.second;
 		
-		for (char& c : key)
-		{	
+		for (char& c : key) {	
 			c = toupper(static_cast<unsigned char>(c)); 
 			if (c == '-')//todo: check if this is required and doesnt break stuff
 				c = '_';
 		}
-		for (char& c : value)
-		{	
+		for (char& c : value) {	
 			if (c == ',')//todo: check if this is required and doesnt break stuff
 				c = ';';
 		}
