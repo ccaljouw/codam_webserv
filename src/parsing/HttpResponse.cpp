@@ -126,20 +126,13 @@ void HttpResponse::setBody(const std::string& filePath, bool isBinary)	{
 
 
 void HttpResponse::fillStandardHeaders() {
-	// addHeader("Connection", "keep-alive");
-	// addHeader("Set-Cookie", "...");
 	// addHeader("Transfer-Encoding", "chunked");
-	// addHeader("Content-type", "text/html");
-
-	// setHeader("Set-Cookie", "name=webserv42, id=000, trigger=000");
-	addHeader("Keep-Alive", "timeout=5, max=3"); // get timout and max requests from server in connection struct
 	// addHeader("Cache-Control",  "public, max-age=86400");
+	addHeader("Keep-Alive", "timeout=5, max=3"); // get timout and max requests from server in connection struct
 	addHeader("Date", getTimeStamp());
 	addHeader("Server", HOST); // get server name from server in connection struct
-	
-	size_t bodyLength = _body.length();
-	setHeader("Last-Modified", getTimeStamp());
-	setHeader("Content-Length", std::to_string(bodyLength));
+	addHeader("Last-Modified", getTimeStamp());
+	addHeader("Content-Length", std::to_string(_body.length()));
 }
 
 

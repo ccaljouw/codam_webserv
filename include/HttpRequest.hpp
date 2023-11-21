@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/20 15:12:06 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/21 09:04:10 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,9 @@ class HttpRequest {
 		std::string									getUri(void);
 		int											getRequestStatus(void) const;
 		std::map<std::string, std::string>			getHeaders(void) const;
-		char*										getHeadersString(void) const;
-		char*										getQueryString(void) const;
 		std::string									getHeaderValue(std::string) const;
-		char*										getEnvString(void) const;
+		std::vector<char*>							getHeaderVector(void) const;
+		std::string									getQueryString(void) const;
 		char**										getEnvArray(void) const;
 
 	
@@ -58,6 +57,8 @@ class HttpRequest {
 		void										addEnvironVar(const std::string& key, const std::string& value);
 		void										setRequestStatus(int value);
 		void										setConfigValues(std::string host);
+		void										fillStandardHeaders(void); //todo: get from config
+
 
 
 	// ============= exception ================

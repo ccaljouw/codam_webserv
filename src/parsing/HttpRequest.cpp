@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/20 15:12:57 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/21 09:04:20 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,8 @@ try {
 
 // 4. ==== setenvironvars ====
 	addEnvironVar("REQUEST_METHOD", getMethod());
+	addEnvironVar("BODY", getBody());
+	addEnvironVar("QUERY_STRING", getQueryString());
 
 
 	}
@@ -142,22 +144,45 @@ std::string	HttpRequest::getUri(void)											{	return uri.serializeUri();	}
 int	HttpRequest::getRequestStatus(void) const									{	return _requestStatus;		}
 std::map<std::string, std::string>	HttpRequest::getHeaders(void) const			{	return _headers; 			}
 
-
-char*	HttpRequest::getHeadersString(void) const {
-	std::ostringstream os;
-	
-	for (const auto& pair : _headers)
-		os << pair.first << ":" << pair.second << "\r\n";
-	std::string result = os.str();
-	
-	char* cstring = new char[result.length() + 1];
-	std::strcpy(cstring, result.c_str());
-	cstring[result.length()] = '\0';
-	
-	return cstring;
+std::string HttpRequest::getHeaderValue(std::string key) const {
+	for (const auto& headerPair : _headers) {
+		if (headerPair.first == key)
+			return headerPair.second;
+	}
+	return "";
 }
 
-char*	HttpRequest::getQueryString(void) const {
+
+std::vector<char*>		HttpRequest::getHeaderVector(void) const {
+		
+	// make c_string array from headers. first a vector of c_strings, then make pairs and capitalize
+	std::vector<char*> c_strings;
+	
+	for (const auto& pair : _headers)
+	{
+		std::string key = pair.first;
+		std::string value = pair.second;
+		
+		for (char& c : key)
+		{	
+			c = toupper(static_cast<unsigned char>(c)); 
+			if (c == '-')//todo: check if this is required and doesnt break stuff
+				c = '_';
+		}
+		for (char& c : value)
+		{	
+			if (c == ',')//todo: check if this is required and doesnt break stuff
+				c = ';';
+		}
+		std::string line = key + "=" + value;
+		c_strings.push_back(strdup(line.c_str()));
+	}
+	c_strings.push_back(nullptr);
+	return c_strings;
+}
+
+
+std::string	HttpRequest::getQueryString(void) const {
 	std::ostringstream os;
 	
 	std::map<std::string, std::string> queries = uri.getQueryMap();
@@ -165,29 +190,14 @@ char*	HttpRequest::getQueryString(void) const {
 		os << pair.first << "=" << pair.second << "&";
 	std::string result = os.str();
 	if (!result.empty())
-		result.pop_back(); //remove last &
+		result.pop_back(); //remove last '&'
 	
-	char* cstring = new char[result.length() + 1];
-	std::strcpy(cstring, result.c_str());
-	cstring[result.length()] = '\0';
-	
-	return cstring;
+	return result;
 }
 
-char*	HttpRequest::getEnvString(void) const {
-	std::ostringstream os;
-	
-	for (const auto& pair : _environVars)
-		os << pair.first << "=" << pair.second << ";";
-	std::string result = os.str();
-	
-	char* cstring = new char[result.length() + 1];
-	std::strcpy(cstring, result.c_str());
-	cstring[result.length()] = '\0';
-	
-	return cstring;
-}
 
+
+//todo check requirements
 char** HttpRequest::getEnvArray(void) const {
 	std::vector<char*> envArray;
 	
@@ -198,31 +208,20 @@ char** HttpRequest::getEnvArray(void) const {
 		envString[keyValue.length()] = '\0';
 		envArray.push_back(envString);
 	}
+
+	//add headers
+	std::vector<char*> headers = getHeaderVector();
+	for (const auto& pair : headers)
+		envArray.push_back(pair);
+	
 	char** result = new char*[envArray.size() + 1];
 	size_t index = 0;
 
 	for (const auto& string : envArray)
 		result[index++] = string;
 
-
-	//todo check requirements
-	//add headers
-	result[index++] = getHeadersString();
-
-	//add queries
-	result[index++] = getQueryString();
-
 	result[index] = nullptr;
 	return result;
-}
-
-
-std::string HttpRequest::getHeaderValue(std::string key) const {
-	for (const auto& headerPair : _headers) {
-		if (headerPair.first == key)
-			return headerPair.second;
-	}
-	return "";
 }
 
 
@@ -241,4 +240,15 @@ void	HttpRequest::addHeader(const std::string& key, const std::string& value) {
 
 void	HttpRequest::addEnvironVar(const std::string& key, const std::string& value) {
 	_environVars[key] = value;
+}
+
+//todo get from config
+void	HttpRequest::fillStandardHeaders() {
+	// addHeader("Transfer-Encoding", "chunked");
+	// addHeader("Cache-Control",  "public, max-age=86400");
+	addHeader("Keep-Alive", "timeout=5, max=3"); // get timout and max requests from server in connection struct
+	addHeader("Date", getTimeStamp());
+	addHeader("Server", HOST); // get server name from server in connection struct
+	addHeader("Last-Modified", getTimeStamp());
+	addHeader("Content-Length", std::to_string(_body.length()));
 }
