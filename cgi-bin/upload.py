@@ -1,36 +1,71 @@
 #!/usr/bin/env python3
 
 import datetime, os, cgi, cgitb, sys
-
-cgitb.enable(display=1, logdir="./logs", format="text")
-# print(sys.stdin.read() , file=sys.stderr)
+cgitb.enable(display=1)
 form = cgi.FieldStorage()
 
-# # print(os.environ.get('REQUEST_METHOD'), file=sys.stderr)
-# print(os.environ.get('CONTENT_TYPE'), file=sys.stderr)
+def genFilename(filePath) -> str:
 
-# # cgi.print_form(form)
-# for key in form.keys():
-# 	print(key, file=sys.stderr)
+	#split the file name and extension
+	fileName, fileExtension = os.path.splitext(filePath)
 
-if form.getvalue('filename'):
-	print("We have a filename", file=sys.stderr)
-	fileitem = form['filename']
-	fn = os.path.basename(fileitem.filename.replace("\\", "/"))
+	#add a number to the filename
+	index = 1
+	filePath = fileName + str(index) + fileExtension
+
+	# Generate a new filename if the file already exists
+	while os.path.exists(filePath) ==  True:
+		index += 1
+		filePath = fileName + str(index) + fileExtension
+
+	return filePath
+
+
+def uploadFile(form) -> int :
+
+	# Create uploads folder if it doesn't exist
 	uploadDir = os.getcwd() + '/uploads'
-	with open(os.path.join(uploadDir, fn), 'wb') as f:
-		f.write(fileitem.file.read())
-	message = fn + ' uploaded successfully'
+	if os.path.exists(uploadDir) == False:
+		os.mkdir(uploadDir)
+	
+	# Checks if the file is uploaded
+	if form.getvalue('filename'):
+		fileitem = form['filename']
+
+		# Test if the file was previous
+		fn = os.path.basename(fileitem.filename.replace("\\", "/"))
+		filePath = os.path.join(uploadDir, fn)
+
+		if os.path.exists(filePath) == True:
+			filePath = genFilename(filePath)
+
+		# Write the file to the uploads folder
+		try:
+			with open(os.path.join(filePath), 'wb') as f:
+				f.write(fileitem.file.read())
+			return 0
+		except:
+			return 1
+	else:
+		return 1
+
+if uploadFile(form) == 0:
+	message = 'File uploaded successfully!!!'
 	status = 200
 else:
-	print("Sad no filename", file=sys.stderr)
-	message = 'Upload failed!!!!'
-	status=500
-		# <link rel="icon" href="data:,">/
+	message = 'Upload failed!!!'
+	status = 500
+
+# Get the current date and time in readable format
 x = datetime.datetime.now()
 date = x.strftime("%a, %d %b %Y %H:%M:%S GMT")
 
-body = f"""<html>
+body = f"""<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="icon" href="data:,">
+		<title>File Upload</title>
+	</head>
 	<body>
 		<h1>{message}</h1>
 	</body>
@@ -41,11 +76,9 @@ Content-Length: {len(body)}\r
 Content-type: text/html; charset=utf-8\r
 Date: {date}\r
 Last-Modified: {date}\r
-Server: CODAM_WEBSERV\r\n\r"""
+Connection: close\r
+Server: {os.environ.get("HOST")}\r\n\r"""
 
 print(header)
 print(body)
 print("\0")
-
-# cgi.print_environ()
-# cgi.print_form(form)

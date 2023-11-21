@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/21 09:25:14 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/21 14:59:41 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,8 +219,15 @@ void writeData(connection *conn)
 void	closeConnection(int epollFd, connection *conn)
 {
 	epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->fd, nullptr);
-    std::cout << CYAN << "Connection on fd " << conn->fd << " closed" << RESET << std::endl;
-    close(conn->fd);
-	delete conn;
+	if (conn->cgiFd) {
+		std::cout << CYAN << "Connection on CGIfd " << conn->cgiFd << " closed" << RESET << std::endl;
+		close (conn->cgiFd);
+		conn->cgiFd = 0;
+	}
+	else {
+		std::cout << CYAN << "Connection on fd " << conn->fd << " closed" << RESET << std::endl;
+		close(conn->fd);
+		delete conn;
+	}
 }
 

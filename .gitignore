@@ -5,3 +5,5 @@
 .vscode
 .vscode/*
 webserv
+uploads/*
+uploads

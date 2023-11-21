@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 11:16:40 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/21 11:08:23 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   main.cpp                                           :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
+/*   Updated: 2023/11/21 14:37:09 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
 				readCGI(epollFd, conn);
 			if (events[i].events & EPOLLOUT && conn->state == WRITING)
 				writeData(conn);
-			if (events[i].events & EPOLLERR || conn->state == CLOSING)
+			if (events[i].events & EPOLLERR || events[i].events & EPOLLHUP || conn->state == CLOSING)
 				closeConnection(epollFd, conn);
 		}
 	}
