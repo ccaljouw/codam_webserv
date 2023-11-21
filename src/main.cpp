@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 11:16:40 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/21 11:08:23 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/21 14:32:24 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
 				readCGI(epollFd, conn);
 			if (events[i].events & EPOLLOUT && conn->state == WRITING)
 				writeData(conn);
-			if (events[i].events & EPOLLERR || conn->state == CLOSING)
+			if (events[i].events & EPOLLERR || events[i].events & EPOLLHUP || conn->state == CLOSING)
 				closeConnection(epollFd, conn);
 		}
 	}
@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
 	int numEvents = epoll_wait(epollFd, events, MAX_EVENTS, 0);
 	for (int i = 0; i < numEvents; i++) {
 		connection *conn = static_cast<connection *>(events[i].data.ptr);
-		if (conn->state != LISTENING)
+		if (events[i].events && conn->state != LISTENING)
 			closeConnection(epollFd, conn);
 	}
 	close (epollFd);

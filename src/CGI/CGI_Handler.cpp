@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:51:38 by bfranco           #+#    #+#             */
-/*   Updated: 2023/11/21 12:14:40 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/21 14:36:01 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void	execChild(const HttpRequest& req, CGI &cgi, int oldFd)
 
 	dup2(cgi.getFdOut(), STDOUT_FILENO);
 	dup2(oldFd, STDIN_FILENO);
-	// close(cgi.getFdIn());
+	close(cgi.getFdIn());
 	// cgi.closeFds();
 	execve(argv[0], argv, env);
 }

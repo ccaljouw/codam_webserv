@@ -39,6 +39,7 @@ body = f"""<html>
 header = f"""HTTP/1.1 {status}\r
 Content-Length: {len(body)}\r
 Content-type: text/html; charset=utf-8\r
+Connection: close\r
 Date: {date}\r
 Last-Modified: {date}\r
 Server: CODAM_WEBSERV\r\n\r"""
