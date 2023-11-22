@@ -1,7 +1,27 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   utils.cpp                                          :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: carlo <carlo@student.codam.nl>               +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
+/*   Updated: 2023/11/22 21:57:58 by carlo         ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "webServ.hpp"
+
 #include<string>
 #include<sstream>
 #include<ctime>
-#include "webServ.hpp"
+#include<cmath>
+
+float generateRandomFloat(float fmin, float fmax) {
+	float	a = fmin + static_cast<float>(std::rand());
+	float	b = static_cast<float>(RAND_MAX / (fmax - fmin));
+	return a / b;
+}
 
 std::string getTimeStamp() {
 	//get current time
@@ -99,16 +119,16 @@ std::string		checkAndSetCookie(connection* conn, HttpRequest& request) {
 
 	//check known id and if found set int +1 and handle trigger
 	if (!conn->server->checkClientId(cookieId)) {
-		//set cookie for empty and unknow client using current time-hash
+		//set cookie for empty and unknow client using current time-hash * random number
 		std::hash<std::time_t>		timeHash;
 		std::time_t now			=	std::time(nullptr);
 		size_t hashValue		=	timeHash(now);
 
-		cookieId = std::to_string(hashValue);
+		float id = hashValue * generateRandomFloat(0.0, 500.0);
+		cookieId = std::to_string(static_cast<long int>(id));
 		conn->server->addClientId(cookieId);
 	}
 	std::string newCookieValue = "name=" + std::string(HOST) + ", id=" + cookieId + ", trigger=" + cookieTrigger;
-	// std::cout << "new cookie value  = '" << newCookieValue << std::endl; //todo: remove lines
 	return newCookieValue;
 }
 
