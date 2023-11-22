@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/21 10:30:03 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/21 12:45:16 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,17 +30,20 @@ std::map<std::string, std::string> acceptedExtensions = {
 	{	".ico", "image/x-icon"	},
 };
 
+std::vector<std::string> binaryExtensions = {
+	".png", ".ico" , ".bmp", ".jpg", ".jpeg", ".gif", 	",bmp"
+};
+
 
 Uri::Uri() : _scheme(), _authority(), _path(), _extension(), _isBinary(false), _query(), _queryMap(), _fragment(), _userinfo(), _host(), _port() {}
 
 
 // regex teken directly from RFC 2396 : ^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))? added R for ignoring escape characterss
 Uri::Uri(const std::string& uri) {
-
+	
 	std::regex uriRegex(R"(^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?)");
-	
 	std::smatch matches;
-	
+
 	if(std::regex_match(uri, matches, uriRegex)) {
 		_scheme 	= matches[2].str();
 		_authority 	= matches[4].str();
@@ -48,13 +51,14 @@ Uri::Uri(const std::string& uri) {
 		_query 		= matches[7].str();
 		_fragment 	= matches[9].str();
 
+		if (_authority.empty() && !_path.empty())
+			_authority = _path;
 	} 
-	
 	else 
 		throw HttpRequest::parsingException(400, "bad request");
-	
-	
+
 	splitAuthority();
+	
 	//scheme and host are case insensitive and as such are normalized here
 	std::transform(_scheme.begin(), _scheme.end(), _scheme.begin(), ::tolower);
 	std::transform(_host.begin(), _host.end(), _host.begin(), ::tolower);
@@ -108,9 +112,23 @@ void	Uri::splitAuthority() {
 	//check for optional port
 	size_t columPos	= _host.find(":");
 	if (columPos != std::string::npos) {
-		_port = stoi(_host.substr(columPos + 1));
+		std::string portString  = _host.substr(columPos + 1);
 		_host = _host.substr(0, columPos);
+
+		try {
+			_port = std::stoi(portString);
+		}
+		//handle invalid port
+		catch (const std::invalid_argument& e) {
+			std::cerr << RED << "Invalid Port Number" << e.what() << std::endl;
+		}
+		//handle out of range port
+    	catch (const std::out_of_range& e) {
+            std::cerr << RED << "Port number out of range: " << e.what() << std::endl;
+        }
+		//todo set default port
 	}
+	else _port = 0;
 }
 
 std::string	Uri::serializeUri() {
@@ -216,8 +234,11 @@ void	Uri::setExtension()
 		_extension = _path.substr(periodPos);
 	else
 		_extension = "";
-	if (_extension == ".png" || _extension == ".ico") // to make config
-		_isBinary =  true;	
+	
+	for (const auto& ext : binaryExtensions) {
+		if (ext == _extension)
+			_isBinary =  true;	
+	}
 }
 
 

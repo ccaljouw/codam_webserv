@@ -6,7 +6,7 @@
 #    By: bfranco <bfranco@student.codam.nl>           +#+                      #
 #                                                    +#+                       #
 #    Created: 2023/06/21 08:27:49 by wingessorac   #+#    #+#                  #
-#    Updated: 2023/11/10 19:41:25 by cariencaljo   ########   odam.nl          #
+#    Updated: 2023/11/22 11:42:39 by cwesseli      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,6 +44,7 @@ $(OBJ_FILES): $(OBJ_DIR)/%.o : $(SRC_DIR)/%.cpp
 #=======Cleaning================================================================#
 clean:
 	@echo -e "$(BLUE)Remoning OBJ files$(RESET)"
+	@rm -rf uploads
 	@rm -rf $(OBJ_DIR)
 
 fclean: clean

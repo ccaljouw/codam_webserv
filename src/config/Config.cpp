@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/21 09:11:32 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/21 12:30:23 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ void	Config::_readConfigFile()
 		server._index = "index.html";
 		server._timeout = 3;
 		server._maxNrOfRequests = 10;
+		server._maxBodySize =  2 * 1024 * 1024; // 2 MB in bytes
 		
 		html._locationId = "/";
 		html._allowedMethods.insert("POST");
