@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/22 22:58:11 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/22 22:59:42 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ void handleRequest(int epollFd, connection *conn) {
 		//handle POST		
 		else if (request.getMethod() == "POST") {
 			if (request.uri.getExecutable() != "cgi-bin") {
-				throw HttpRequest::parsingException(405, "POST METHOD not supported outside of CGI"); //todo remove
+				throw HttpRequest::parsingException(403, "POST METHOD not supported outside of CGI"); //todo remove
 				// HttpResponse response(request);
 				// response.setStatusCode(403);
 				// response.setBody("data/text/html/upload.html", false);
@@ -126,7 +126,7 @@ void handleRequest(int epollFd, connection *conn) {
 		// handle DELETE
 		else if (request.getMethod() == "DELETE") {
 			if (request.uri.getExecutable() != "cgi-bin") {
-				throw HttpRequest::parsingException(405, "DELETE METHOD not supported outside of CGI"); //todo remove
+				throw HttpRequest::parsingException(403, "DELETE METHOD not supported outside of CGI"); //todo remove
 				// HttpResponse response(request);
 				// response.setStatusCode(403);
 				// response.setBody("data/text/html/upload.html", false);
