@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/21 09:34:43 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/21 11:51:50 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ class HttpRequest {
 		class parsingException : public std::exception {
 			public:
 				parsingException(int errorCode, const std::string& message) : _errorCode(errorCode), _message(message) {}
-				const char*	what() const noexcept override		{	return _message.c_str();	} //waarom c_str()?
+				const char*	what() const noexcept override		{	return _message.c_str();	}
 				int			getErrorCode() const 				{	return _errorCode;			}
 
 			private:

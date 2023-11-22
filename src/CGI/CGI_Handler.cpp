@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/21 15:18:48 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/22 19:00:37 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,12 +74,15 @@ void	execChild(const HttpRequest& req, CGI &cgi, int oldFd)
 	char	**env = req.getEnvArray();
 	getProgramPath(req.uri, program);
 
+
+	std::cout << "cgi fd = " << cgi.getFdIn() << std::endl;
 	if (dup2(cgi.getFdOut(), STDOUT_FILENO) == -1 || dup2(oldFd, STDIN_FILENO) == -1)
 	{
 		cgi.closeFds();
 		// kill(getpid(), SIGKILL);
 	}
 	close(cgi.getFdIn());
+	// close(oldFd);
 	execve(argv[0], argv, env);
 	// kill(getpid(), SIGKILL);
 
@@ -89,6 +92,8 @@ int	writeBody(const HttpRequest& req, int *fd)
 {
 	
 	std::string	body = req.getBody() + "\0";
+	std::cout << "body size = " << body.length() << std::endl;
+	std::cout << "body size = " << body.size() << std::endl;
 	while (1)
 	{
 		if (write(fd[1], body.c_str(), BUFFER_SIZE) == -1)
@@ -103,6 +108,8 @@ int	writeBody(const HttpRequest& req, int *fd)
 		else
 			break;
 	}
+	std::cout << BLUE << "Body sent" << "fd = "<<fd[0] << RESET << std::endl;
+	std::cout << BLUE << "Body sent" << "fd = "<<fd[1] << RESET << std::endl;
 	close(fd[1]);
 	return (fd[0]);
 }
@@ -133,7 +140,12 @@ int cgiHandler(const HttpRequest& req, connection *conn, int epollFd)
 	{
 		close(cgi.getFdOut());
 		if (writeBody(req, fd) == -1)
+		{
+			close(fd[0]);
 			return (1);
+		}
+		std::cout << BLUE << "closing input pipe" << RESET << std::endl;
+		close(fd[0]);
 		// int status;
 		// waitpid(pid, &status, WNOHANG);
 		// if (WIFSIGNALED(status))

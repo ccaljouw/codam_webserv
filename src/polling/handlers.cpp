@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/21 15:29:26 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/22 19:01:16 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,7 +157,7 @@ void handleRequest(int epollFd, connection *conn)
 	} 
 	catch (const HttpRequest::parsingException& exception)
 	{
-		std::cout << "Error: " << exception.what() << std::endl;
+		std::cout << RED << "Error: " << exception.what() << RESET << std::endl;
 		setErrorResponse(conn, exception.getErrorCode());
 	}
 }
@@ -167,8 +167,9 @@ void readCGI(int epollFd, connection *conn)
 	char buffer[BUFFER_SIZE];
     ssize_t bytesRead;
 	
-	std::cout << "read data CGI" << std::endl;
-    if ((bytesRead = read(conn->cgiFd, buffer, sizeof(buffer))) > 0) {
+	std::cout << "read data CGI" << "\tfd = " << conn->cgiFd << std::endl;
+    if ((bytesRead = read(conn->cgiFd, buffer, BUFFER_SIZE)) > 0) {
+		std::cout << BLUE << "Appending" << RESET << std::endl;
 		conn->response.append(buffer, static_cast<long unsigned int>(bytesRead));
     }
 	if (bytesRead < BUFFER_SIZE)
@@ -179,9 +180,10 @@ void readCGI(int epollFd, connection *conn)
 	}
 	if (conn->response.empty() || bytesRead == -1)
 	{
-		setErrorResponse(conn, 500);
 		std::cerr << "\033[31;1mError\nproblem reading CGI\033[0m" << std::endl;
+		setErrorResponse(conn, 500);
 	}
+	std::cout << BLUE << "OUT OF READ cgi" << RESET << std::endl;
 }
 
 void writeData(connection *conn) 
