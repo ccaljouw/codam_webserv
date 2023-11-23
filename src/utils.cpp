@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/23 11:07:21 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/23 11:16:08 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,8 +118,8 @@ void	setErrorResponse(connection *conn, int error)
 	if (f.good())
 		response.setBody(errorHtmlPath, false);
 	//todo : remove tmp file or not
-	if (std::remove(errorHtmlPath.c_str()) != 0)
-		std::cerr << RED << "Error remoiving tmp error page" << RESET <<  std:: endl;
+	// if (std::remove(errorHtmlPath.c_str()) != 0)
+	// 	std::cerr << RED << "Error remoiving tmp error page" << RESET <<  std:: endl; //todo uncomment
 	setResponse(conn, response);
 }
 
