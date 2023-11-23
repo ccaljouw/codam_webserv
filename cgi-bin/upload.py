@@ -84,11 +84,7 @@ Connection: close\r
 Server: Codam_Webserver\r\n\r"""
 # Server: {os.environ.get("HOST")}\r\n\r"""
 
-print("dead", file=sys.stderr)
 print(header)
-print("dead2", file=sys.stderr)
 print(body)
-print("dead3", file=sys.stderr)
 print("\0")
-print("dead4", file=sys.stderr)
 
