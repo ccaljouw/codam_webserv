@@ -1,17 +1,11 @@
 carlo:
 	add header class
-	add checks per location / extension in handle request and or request parsing
 	
-	handlers:
-		move cgi call to methods
 	
 	request:
 		check server settings in request class
-		check - to _ conversion in env array
 		add all required checks in request build
-		fix cookie format for getEnvArray
-		make request constructor shorter (add helper functions)
-		test protocol check (not workign as expected)
+		test protocol check (not working as expected)
 
 	response:
 		checks before sending (status code set, stc)
