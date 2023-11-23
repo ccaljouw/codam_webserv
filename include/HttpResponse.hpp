@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/21 09:02:44 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/23 18:35:42 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ class HttpResponse {
 	 	HttpResponse(const HttpResponse& origin);
 	 	const HttpResponse& operator=(const HttpResponse& rhs);
 	 	~HttpResponse(void);
-
 		
 		// ============= Getters ================
 		int		getStatusCode() const;

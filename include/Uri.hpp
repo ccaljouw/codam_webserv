@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Uri.hpp                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 12:12:15 by carlo             #+#    #+#             */
-/*   Updated: 2023/11/16 14:01:14 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Uri.hpp                                            :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 12:12:15 by carlo         #+#    #+#                 */
+/*   Updated: 2023/11/23 18:36:09 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 #include <string>
 #include <vector>
 #include <map>
-
 
 class Uri {
 
@@ -47,8 +46,6 @@ class Uri {
 		std::string							getExecutable(void) const;
 		std::string							getPathInfo(void) const;
 		
-
-
 		// ========== Setters ===========
 		void								mapQueries(void);
 		void								setExtension(void);
@@ -71,9 +68,6 @@ class Uri {
 		std::string							_userinfo;
 		std::string							_host;
 		int									_port;
-		
 };
-
-
 
 #endif

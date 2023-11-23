@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/21 12:45:16 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/23 18:46:46 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,20 +19,22 @@
 #include <cstring>
 
 
+//todo: move to ?
+//define accepted extensions
 std::map<std::string, std::string> acceptedExtensions = {
 	{	".txt", "text/plain"	},
 	{	".html", "text/html"	},
+	{	".css", "text/css"		},
 	{	".jpeg", "image/jpeg"	},
 	{	".jpg", "image/jpg"		},
 	{	".png", "image/png"		},
 	{	".gif", "image/gif"		},
 	{	".bmp", "image/bmp"		},
-	{	".ico", "image/x-icon"	},
+	{	".ico", "image/x-icon"	}
 };
 
-std::vector<std::string> binaryExtensions = {
-	".png", ".ico" , ".bmp", ".jpg", ".jpeg", ".gif", 	",bmp"
-};
+//define binary extensions for write
+std::vector<std::string> binaryExtensions = { 	".png", ".ico" , ".bmp", ".jpg", ".jpeg", ".gif", ",bmp" };
 
 
 Uri::Uri() : _scheme(), _authority(), _path(), _extension(), _isBinary(false), _query(), _queryMap(), _fragment(), _userinfo(), _host(), _port() {}
@@ -92,7 +94,6 @@ const Uri& Uri::operator=(const Uri& rhs) {
 Uri::~Uri() {
 	_queryMap.clear();
 }
-
 
 
 //==============================
@@ -158,16 +159,16 @@ std::string	Uri::serializeUri() {
 
 //=========== getters =================
 
+bool Uri::getIsBinary(void) const								{	return _isBinary;	}
+int			Uri::getPort() const								{	return _port;		}
 std::string	Uri::getScheme() const								{	return _scheme;		}
 std::string	Uri::getAuthority() const							{	return _authority;	}
 std::string	Uri::getPath() const								{	return _path; 		}
 std::string	Uri::getExtension() const							{	return _extension;	}
-bool Uri::getIsBinary(void) const								{	return _isBinary;	}
 std::string	Uri::getQuery() const								{	return _query;		}
 std::string	Uri::getFragment() const							{	return _fragment;	}
 std::string	Uri::getUserInfo() const							{	return _userinfo;	}
 std::string	Uri::getHost() const								{	return _host;		}
-int			Uri::getPort() const								{	return _port;		}
 std::map<std::string, std::string> Uri::getQueryMap(void) const	{	return _queryMap;	}
 
 
@@ -215,11 +216,13 @@ void Uri::mapQueries() {
 	}
 }
 
-std::string	Uri::getMime(std::string key) const
+std::string	Uri::getMime(std::string extension) const
 {
+	for (char& c : extension)
+		c = std::tolower(c);
 	for (const auto& pair : acceptedExtensions )
 	{
-		if ( key == pair.first)
+		if (extension == pair.first)
 			return pair.second;
 	}
 	return "";

@@ -86,7 +86,7 @@ int	Server::checkClientId(std::string id) {
 		if (pair.first == id)
 		{
 			pair.second += 1;
-			std::cout << "user_id :"<< id << " has visited us " << pair.second << " times!" << std::endl; //for testing
+			// std::cout << "user_id :"<< id << " has visited us " << pair.second << " times!" << std::endl; //for testing
 			return  1;
 		}
 	}

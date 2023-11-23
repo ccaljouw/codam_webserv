@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/21 11:51:50 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/23 18:35:50 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ class HttpRequest {
 
 		Uri											uri;
 
-		
 	// ============= Getters ================
 		std::string									getMethod(void) const;
 		std::string									getProtocol(void) const;
@@ -45,9 +44,6 @@ class HttpRequest {
 		std::string									getQueryString(void) const;
 		char**										getEnvArray(void) const;
 
-	
-			
-
 	// ============= Setters ================
 		void										setMethod(const std::string& method);
 		void										setProtocol(const std::string& protocol);
@@ -58,8 +54,6 @@ class HttpRequest {
 		void										setRequestStatus(int value);
 		void										setConfigValues(std::string host);
 		void										fillStandardHeaders(void); //todo: get from config
-
-
 
 	// ============= exception ================
 		class parsingException : public std::exception {
@@ -73,8 +67,6 @@ class HttpRequest {
 				std::string						_message;
 		};
 	
-
-
 	private:
 		std::string								_method;
 		std::string								_protocol;

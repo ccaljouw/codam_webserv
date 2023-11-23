@@ -1,0 +1,41 @@
+/* 90s-inspired styles */
+body {
+    background-color: #000;
+    color: #fff;
+    font-family: 'Courier New', monospace;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+h1 {
+    font-size: 36px;
+    text-align: center;
+    color: #ffcc00;
+}
+
+p {
+    font-size: 18px;
+}
+
+ul {
+    list-style: square;
+}
+
+li {
+    margin-bottom: 5px;
+}
+
+a {
+    color: #ffcc00;
+    text-decoration: underline;
+}
+
+a:hover {
+    color: #ff0000;
+}

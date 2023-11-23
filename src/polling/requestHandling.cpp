@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/23 10:56:04 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/23 18:37:39 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #include <fstream>
 
 // TODO:	check allowed methods for contentType
-
 void	handleRequest(int epollFd, connection *conn) {
 	try {
 		// Process the request data
@@ -45,7 +44,7 @@ void	handleRequest(int epollFd, connection *conn) {
 		
 		//handle GET
 		if (request.getMethod() == "GET") {
-			if (!contentType.empty() && (!(request.uri.getExecutable() == "cgi-bin"))) {
+			if (!contentType.empty()) {
 				std::string fullPath = "data/" + contentType + request.uri.getPath();
 				std::ifstream f(fullPath);
 

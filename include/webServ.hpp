@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/23 09:44:58 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/23 18:36:15 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,6 @@ void 			handleSignal(int signal);
 
 // requestHandling
 void			handleRequest(int epollFd, connection *conn);
-
-
-
-
 
 
 #endif
