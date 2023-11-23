@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/23 11:16:08 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/23 11:28:31 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,24 +54,25 @@ std::string getTimeStamp() {
     std::strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S GMT", timeInfoGmt);
     return buffer;
 }
-
-void	setResponse(connection *conn, HttpResponse resp)
-{
-	conn->response = resp.serializeResponse();
-	conn->request.clear();
-	conn->state = WRITING;
-}
-
 //checks is a directory exists
 bool	directoryExists(const std::string& path) {
 	struct stat info;
 	return stat(path.c_str(), &info) == 0 && (info.st_mode & S_IFDIR) != 0;
 }
 
+//todo: code for config erro pages below 
+// std::string	generateErrorPage(connection *conn, int e) {
+// 	std::string error = std::to_string(e);
+// 	std::string title = "Undefined Error";
+// 	std::map<int, std::string> errorPages = conn->server->get_errorPages();
+// 	for (const auto& pair : errorPages)
+// 		if (pair.first == e)
+// 			title = pair.second;
+
+
 std::string	generateErrorPage(int e) {
 	std::string error = std::to_string(e);
-	std::string title = "undefined error";
-	// for (const auto& pair : conn->server->get_errorPages) { //todo set to config
+	std::string title = "Undefined Error";
 	for (const auto& pair : errorPages)
 		if (pair.first == e)
 			title = pair.second;
@@ -95,7 +96,7 @@ std::string	generateErrorPage(int e) {
 			std::cerr << RED << "Error making dir" << RESET << std::endl;
 	}
 
-	//write to htmppage
+	//write to html page
 	std::string path = pathToTmp + "/" + error + ".html";
 	std::ofstream errorPageStream(path);
 	if (errorPageStream.is_open()) {
@@ -107,22 +108,28 @@ std::string	generateErrorPage(int e) {
 	return path;
 }
 
-
 void	setErrorResponse(connection *conn, int error)
 {
 	HttpResponse response;
 	response.setStatusCode(error);
 	std::string errorHtmlPath = generateErrorPage(error);
+	// std::string errorHtmlPath = generateErrorPage(conn, error); //for confid error page
 
 	std::ifstream f(errorHtmlPath);
 	if (f.good())
 		response.setBody(errorHtmlPath, false);
 	//todo : remove tmp file or not
-	// if (std::remove(errorHtmlPath.c_str()) != 0)
-	// 	std::cerr << RED << "Error remoiving tmp error page" << RESET <<  std:: endl; //todo uncomment
+	// if (std::remove(errorHtmlPath.c_str()) != 0) //todo uncomment
+	// 	std::cerr << RED << "Error remoiving tmp error page" << RESET <<  std:: endl; 
 	setResponse(conn, response);
 }
 
+void	setResponse(connection *conn, HttpResponse resp)
+{
+	conn->response = resp.serializeResponse();
+	conn->request.clear();
+	conn->state = WRITING;
+}
 
 // Some browsers (eg Firefox), check form timeout based on header keep-alive with timeout.
 // others (eg safari) do not close the connection themselves
