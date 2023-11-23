@@ -3,12 +3,7 @@ carlo:
 	add checks per location / extension in handle request and or request parsing
 	
 	handlers:
-		write delete and post handling
-		make handle requerst shorter (swith of outcomes)
 		move cgi call to methods
-	
-	utils:
-		add complexity to cookie hash
 	
 	request:
 		check server settings in request class
