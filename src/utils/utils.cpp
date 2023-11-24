@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/24 08:31:49 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/24 13:53:19 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void	checkTimeout(connection *conn)
 	if (conn->request.empty()) 
 	{
 		// std::cout << "checkout timeout: " << difftime(std::time(nullptr), conn->time_last_request) << std::endl;
-		if (difftime(std::time(nullptr), conn->time_last_request) > conn->server->get_timeout("servername")) {
+		if (difftime(std::time(nullptr), conn->time_last_request) > conn->server->get_timeout()) {
 
 			std::cout << CYAN << "Timeout" << RESET << std::endl;
 			conn->state = CLOSING; 

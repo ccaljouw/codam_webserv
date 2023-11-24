@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/24 08:20:32 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/24 08:30:35 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/24 14:05:58 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ float	generateRandomFloat(float fmin, float fmax) {
 }
 
 
-//todo: handle trigger?
+//todo: handle cookie trigger?
 std::string		checkAndSetCookie(connection* conn, HttpRequest& request) {
 
 	std::string	cookieName;

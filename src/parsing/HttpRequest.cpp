@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/24 13:51:21 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/24 14:10:27 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,9 @@ try {
 		throw parsingException(405, "Method not Allowed");
 
 	// check max body size
+	
+	std::cout << getHeaderValue("body-size") <<std::endl;
+
 	if (_body.length() > _server->get_maxBodySize(getHeaderValue("host")))
 		throw parsingException(405, "Body size to big");
 
@@ -250,7 +253,5 @@ void	HttpRequest::fillStandardHeaders() {
 
 	// addHeader("Transfer-Encoding", "chunked");
 	// addHeader("Cache-Control",  "public, max-age=86400");
-
 	// Host: This indicates the domain name of the server.
-
 }

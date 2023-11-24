@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/24 08:20:32 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/24 08:23:55 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/24 14:06:37 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 
 
 // Success 2xx /  Error 4xx, 5xx / Redirection 3xx
-//todo: move to config server settings 
 std::map<int, std::string> errorPages = {
  	{ 400, "Bad request"},					// The request had bad syntax or was inherently impossible to be satisfied. 
  	// { 401, "Unauthorized"},					// The parameter to this message gives a specification of authorization schemes which are acceptable. The client should retry the request with a suitable Authorization header. 
@@ -35,21 +34,11 @@ std::map<int, std::string> errorPages = {
 };
 
 
-
 //checks is a directory exists
 bool	directoryExists(const std::string& path) {
 	struct stat info;
 	return stat(path.c_str(), &info) == 0 && (info.st_mode & S_IFDIR) != 0;
 }
-
-//todo: code for config erro pages below 
-// std::string	generateErrorPage(connection *conn, int e) {
-// 	std::string error = std::to_string(e);
-// 	std::string title = "Undefined Error";
-// 	std::map<int, std::string> errorPages = conn->server->get_errorPages();
-// 	for (const auto& pair : errorPages)
-// 		if (pair.first == e)
-// 			title = pair.second;
 
 
 std::string	generateErrorPage(int e) {
@@ -71,6 +60,7 @@ std::string	generateErrorPage(int e) {
 </body>
 </html>
 )";
+
 	//create tmp dir
 	std::string pathToTmp = "tmp";
 	if (!directoryExists(pathToTmp)) {
