@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/21 15:18:26 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/24 12:45:08 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
 			throw std::runtime_error("invallid arguments");
 		if ((epollFd = epoll_create(1)) == -1)
 			throw std::runtime_error("epoll_create: " + std::string(strerror(errno)));
-		if ((servers = initServers(conf.getServers(), epollFd)).size() == 0)
+		if ((servers = initServers(conf, epollFd)).size() == 0)
 			throw std::runtime_error("no succesfull server configuration, terminating programm");
 	}
 	catch(const std::runtime_error& e)

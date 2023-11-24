@@ -31,7 +31,7 @@ class Server
 		// ============= methods ================
 		int		assign_name();
 		int		set_to_listen(int backlog);
-		int		initServer(struct ServerSettings const & settings, int epollFd);
+		int		initServer(struct ServerSettings const & settings, int epollFd, double timeout, int maxNrOfRequests);
 		int		checkClientId(std::string id);
 		void	addClientId(std::string newCookieValue);
 		void	addSubDomain(struct ServerSettings const & settings);
@@ -44,8 +44,8 @@ class Server
 		std::string	get_index(std::string host) const;
 		const struct LocationSettings*	get_locationSettings(std::string host, std::string location) const;
 		std::map<std::string, int>	get_knownClientIds() const;
-		double	get_timeout(std::string host) const;
-		int		get_maxNrOfRequests(std::string host) const;
+		double	get_timeout() const;
+		int		get_maxNrOfRequests() const;
 		size_t	get_maxBodySize(std::string host) const;
 		// std::list<ErrorPages>	get_errorPages(std::string host) const;
 		struct connection *get_connection();
@@ -67,13 +67,16 @@ class Server
 	
 	private:
 
+
 		int 								_fd;
 		struct sockaddr_in					_serverAddr;
 		std::map<std::string, int>			_knownClientIds;
+		double								_timeout;
+		int									_maxNrOfRequests;
 		std::list<struct ServerSettings>	_settings;
 		struct connection					*_conn;
 } ;
 
-std::list<Server> initServers(std::list<struct ServerSettings> settings, int epollFd);
+std::list<Server> initServers(const Config& config, int epollFd);
 
 #endif /* **************************************************** Server_H */

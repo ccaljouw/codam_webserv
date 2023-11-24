@@ -19,24 +19,40 @@
 
 // ============= con-/destructors ================
 
-Server::Server() : _fd(0), _conn(nullptr) {}
+Server::Server() : _fd(0), _conn(nullptr) {
+	// std::cout << CYAN << "server default constructor called" << RESET << std::endl;
+}
 
-Server::Server( Server const & src ) : _fd(0), _conn(nullptr)  { (void)src; }
+Server::Server( Server const & src ) : _conn(nullptr) { 
+	_fd = src.get_FD();
+	_timeout = src.get_timeout();
+	_maxNrOfRequests = src.get_maxNrOfRequests();
+	// add other stuff...
+	// std::cout << CYAN << "server copy constructor called" << RESET << std::endl;
+}
 
 Server::~Server() {	
-	if (_fd) 
+	if (_fd) {
+		std::cout << CYAN << "server destructor called for fd: " << _fd << RESET << std::endl;
 		close(_fd); 
-	if (_conn)
+	}
+	if (_conn) {
+		std::cout << CYAN << "connection struct deleted" << RESET << std::endl;
 		delete _conn;
+	}
 }
 
 // ============= Methods ================
 
 int	Server::assign_name()
 {
+	int enable = 1;
+	if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable)))
+		return 1;
 	if (bind(_fd, reinterpret_cast<struct sockaddr*>(&_serverAddr), sizeof(_serverAddr)) == -1) {
 		return 1;
 	}
+		// throw ServerException(settings._serverName + " setsocket: ");
 	return 0;
 }
 
@@ -48,9 +64,11 @@ int	Server::set_to_listen(int backlog)
 	return 0;
 }
 
-int Server::initServer(struct ServerSettings const & settings, int epollFd)
+int Server::initServer(struct ServerSettings const & settings, int epollFd, double timeout, int maxNrOfRequests)
 {
 	try {
+		_timeout = timeout,
+		_maxNrOfRequests = maxNrOfRequests;
 		_settings.push_back(settings);
 		_serverAddr.sin_family = AF_INET;
 		_serverAddr.sin_addr.s_addr = INADDR_ANY;
@@ -58,8 +76,6 @@ int Server::initServer(struct ServerSettings const & settings, int epollFd)
 	
 		if ((_fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK , 0)) == -1) 
 			throw ServerException(settings._serverName + " socket: ");
-		if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &_serverAddr.sin_addr, sizeof(_serverAddr.sin_addr)))
-			throw ServerException(settings._serverName + " setsocket: ");
 		if (assign_name())
 			throw ServerException(settings._serverName + " bind: ");
 		if (set_to_listen(5))
@@ -96,9 +112,11 @@ int	Server::checkClientId(std::string id) {
 void	Server::addSubDomain(struct ServerSettings const & settings) {	_settings.push_back(settings);	}
 
 // ============= Getters ================
-uint16_t	Server::get_port(void) const {	return	_settings.front()._port;	}
-
-int	Server::get_FD() const { return _fd; }
+uint16_t					Server::get_port(void) const {	return	_settings.front()._port;	}
+int							Server::get_FD() const { return _fd; }
+std::map<std::string, int>	Server::get_knownClientIds() const {	return _knownClientIds;	}	
+double						Server::get_timeout() const { return _timeout; }
+int							Server::get_maxNrOfRequests() const { return _maxNrOfRequests; }
 
 std::string	Server::get_serverName(std::string host) const { 
 	const ServerSettings *hostSettings = &_settings.front();
@@ -150,26 +168,6 @@ const struct LocationSettings*	Server::get_locationSettings(std::string host, st
 	return (nullptr);
 }
 
-std::map<std::string, int>	Server::get_knownClientIds() const {	return _knownClientIds;	}
-	
-double	Server::get_timeout(std::string host) const { 
-	const ServerSettings *hostSettings = &_settings.front();
-	for (auto& setting : _settings) {
-		if (setting._serverName == host)
-			hostSettings = &setting;
-	}
-	return hostSettings->_timeout; 
-}
-
-int		Server::get_maxNrOfRequests(std::string host) const { 
-	const ServerSettings *hostSettings = &_settings.front();
-	for (auto& setting : _settings) {
-		if (setting._serverName == host)
-			hostSettings = &setting;
-	}
-	return hostSettings->_maxNrOfRequests; 
-}
-
 size_t	Server::get_maxBodySize(std::string host) const {
 	const ServerSettings *hostSettings = &_settings.front();
 	for (auto& setting : _settings) {
@@ -189,11 +187,12 @@ void	Server::set_connection(struct connection *conn) {
 
 /* ************************************************************************** */
 
-std::list<Server> initServers(std::list<struct ServerSettings> settings, int epollFd)
+std::list<Server> initServers(const Config& config, int epollFd)
 {
-	std::list<Server> 				servers;
-	std::map<uint16_t, std::string> serverMap;
-	std::set<uint16_t>				ports;
+	std::list<Server> 					servers;
+	std::map<uint16_t, std::string> 	serverMap;
+	std::set<uint16_t>					ports;
+	std::list<struct ServerSettings>	settings = config.getServers();
 
 	try {
 		for (auto& setting : settings)
@@ -203,8 +202,9 @@ std::list<Server> initServers(std::list<struct ServerSettings> settings, int epo
 				ports.insert(setting._port);
 				serverMap.insert(std::make_pair(setting._port, setting._serverName));
 				servers.push_back(Server());
-				if (servers.back().initServer(setting, epollFd) == 1)
+				if (servers.back().initServer(setting, epollFd, config.getTimeout(), config.getMaxNrOfRequests()) == 1)
 					servers.pop_back();
+				(void)epollFd;
 			}
 			else {
 				for (auto& server : servers) {

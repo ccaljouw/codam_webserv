@@ -30,7 +30,7 @@ void	checkTimeout(connection *conn)
 	if (conn->request.empty()) 
 	{
 		// std::cout << "checkout timeout: " << difftime(std::time(nullptr), conn->time_last_request) << std::endl;
-		if (difftime(std::time(nullptr), conn->time_last_request) > conn->server->get_timeout("servername")) {
+		if (difftime(std::time(nullptr), conn->time_last_request) > conn->server->get_timeout()) {
 
 			std::cout << CYAN << "Timeout" << RESET << std::endl;
 			conn->state = CLOSING; 

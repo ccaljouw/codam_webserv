@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/22 12:45:23 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/24 11:41:25 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,7 +251,7 @@ void	HttpRequest::addEnvironVar(const std::string& key, const std::string& value
 //todo get from config
 void	HttpRequest::fillStandardHeaders() {
 
-	std::string timeout = std::to_string(_server->get_timeout(getHeaderValue("host")));
+	std::string timeout = std::to_string(_server->get_timeout());
 	addHeader("Keep-Alive", "timeout=" + timeout + ", max=3");
 	addHeader("Date", getTimeStamp());
 	addHeader("Server", HOST); // get server name from server in connection struct

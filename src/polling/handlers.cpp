@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/22 19:01:16 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/24 12:00:45 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,9 +209,9 @@ void writeData(connection *conn)
 	{
 		std::cout << "Response sent, nr of requsts: " << conn->nr_of_requests << std::endl; //for testing
 		conn->response.clear();
-		if (conn->nr_of_requests == conn->server->get_maxNrOfRequests("servername"))
+		if (conn->nr_of_requests == conn->server->get_maxNrOfRequests())
 		{
-			std::cout << CYAN << "\033[31;1mMax requests on open socket\033[0m" << RESET << std::endl;
+			std::cout << CYAN << "Max requests on open socket" << RESET << std::endl;
 			conn->state = CLOSING;
 		}
 		else
