@@ -25,3 +25,4 @@ Server: CODAM_WEBSERV\r\n\r"""
 
 print(header)
 print(body)
+print("\0")

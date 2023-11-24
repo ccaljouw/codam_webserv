@@ -76,3 +76,4 @@ Server: CODAM_WEBSERV\r\n\r"
 
 echo "$header"
 echo "$body"
+echo "\0"
