@@ -6,7 +6,7 @@
 #    By: bfranco <bfranco@student.codam.nl>           +#+                      #
 #                                                    +#+                       #
 #    Created: 2023/06/21 08:27:49 by wingessorac   #+#    #+#                  #
-#    Updated: 2023/11/23 10:57:55 by carlo         ########   odam.nl          #
+#    Updated: 2023/11/24 08:28:09 by carlo         ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,9 +17,10 @@ include common.mk
 .DEFAULT_GOAL	:= all
 
 TARGET	 	=	webserv
-OBJ_FILES	=	$(addprefix obj/, main.o utils.o \
+OBJ_FILES	=	$(addprefix obj/, main.o  \
 				$(addprefix parsing/, Uri.o HttpRequest.o HttpResponse.o) \
 				$(addprefix polling/, connectionHandling.o requestHandling.o registerEvents.o) \
+				$(addprefix utils/, utils.o errorPageGen.o cookieGen.o) \
 				$(addprefix config/, Server.o Config.o) \
 				$(addprefix CGI/, CGI_Handler.o))
 

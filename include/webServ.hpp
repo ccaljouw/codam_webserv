@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/23 18:36:15 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/24 08:30:58 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,12 @@ void			setErrorResponse(connection *conn, int error);
 std::string		checkAndSetCookie(connection* conn, HttpRequest& request);
 std::string		removeWhitespaces(std::string str);
 void 			handleSignal(int signal);
+
+//errorPageGen
+std::string		generateErrorPage(int e);
+
+//cookieGen
+std::string		checkAndSetCookie(connection* conn, HttpRequest& request);
 
 // requestHandling
 void			handleRequest(int epollFd, connection *conn);
