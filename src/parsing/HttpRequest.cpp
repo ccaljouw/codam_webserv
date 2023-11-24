@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/23 10:12:48 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/24 08:47:26 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,9 @@
 
 std::string getTimeStamp();
 
-
 HttpRequest::HttpRequest(const Server *server) : uri(), _method(), _protocol(), _headers(), _environVars(), _body(), _requestStatus(200), _server(server), _settings()  {};
 
 HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri(), _requestStatus(200), _server(server)  {
-
-//todo: switch into helper functions mapHeaders
 
 //  === parse request line === 
 try {
@@ -44,8 +41,6 @@ try {
 	if (_protocol != HTTP_PROTOCOL)
 		throw parsingException(505, "Version not supported");
 
-
-	//todo:add all checks etc
 	
 //  === parse headers ===
 	//define block of all headers
@@ -81,16 +76,16 @@ try {
 // === set uri object === 
 	uri = Uri(tempUriString);
 
-// ==== fetch location specific config settings === 
+// === fetch location specific config settings === 
 
 	_settings = _server->get_locationSettings(getHeaderValue("host"), uri.getPath());
 	fillStandardHeaders();
 
-	// check method
+	// check allowed method
 	if (_settings->_allowedMethods.find(_method) == _settings->_allowedMethods.end())
 		throw parsingException(405, "Method not Allowed");
 
-	//check body size
+	// check max body size
 	if (_body.length() > _server->get_maxBodySize(getHeaderValue("host")))
 		throw parsingException(405, "Body size to big");
 
@@ -108,7 +103,6 @@ try {
 		std::cerr << exception.what() << std::endl; 
 	}
 }
-
 
 
 HttpRequest::HttpRequest(const HttpRequest& origin) {
@@ -165,11 +159,11 @@ std::vector<char*>		HttpRequest::getHeaderVector(void) const {
 		
 		for (char& c : key) {	
 			c = toupper(static_cast<unsigned char>(c)); 
-			if (c == '-')//todo: check if this is required and doesnt break stuff
+			if (c == '-')
 				c = '_';
 		}
 		for (char& c : value) {	
-			if (c == ',')//todo: check if this is required and doesnt break stuff
+			if (c == ',')
 				c = ';';
 		}
 		std::string line = key + "=" + value;
@@ -194,8 +188,7 @@ std::string	HttpRequest::getQueryString(void) const {
 }
 
 
-
-//todo check requirements
+//makes and char** array as input for execve
 char** HttpRequest::getEnvArray(void) const {
 
 	std::vector<char*> envArray;
@@ -208,7 +201,7 @@ char** HttpRequest::getEnvArray(void) const {
 		envArray.push_back(envString);
 	}
 
-	//add headers
+	//add headers to array
 	std::vector<char*> headers = getHeaderVector();
 	for (const auto& pair : headers)
 		envArray.push_back(pair);
@@ -220,10 +213,6 @@ char** HttpRequest::getEnvArray(void) const {
 		result[index++] = string;
 
 	result[index] = nullptr;
-
-	// ************ testing
-	// for (int i = 0 ; result[i] != nullptr; i++)
-	// 	std::cout << RED << result[i] << RESET << std::endl;
 
 	return result;
 }
@@ -253,6 +242,7 @@ void	HttpRequest::fillStandardHeaders() {
 
 	std::string timeout = std::to_string(_server->get_timeout(getHeaderValue("host")));
 	addHeader("Keep-Alive", "timeout=" + timeout + ", max=3");
+
 	addHeader("Date", getTimeStamp());
 	addHeader("Server", HOST); // get server name from server in connection struct
 	addHeader("Last-Modified", getTimeStamp());
@@ -260,4 +250,7 @@ void	HttpRequest::fillStandardHeaders() {
 
 	// addHeader("Transfer-Encoding", "chunked");
 	// addHeader("Cache-Control",  "public, max-age=86400");
+
+	// Host: This indicates the domain name of the server.
+
 }

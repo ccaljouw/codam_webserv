@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/23 18:46:46 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/24 09:17:00 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,24 +17,6 @@
 #include <exception>
 #include <sstream>
 #include <cstring>
-
-
-//todo: move to ?
-//define accepted extensions
-std::map<std::string, std::string> acceptedExtensions = {
-	{	".txt", "text/plain"	},
-	{	".html", "text/html"	},
-	{	".css", "text/css"		},
-	{	".jpeg", "image/jpeg"	},
-	{	".jpg", "image/jpg"		},
-	{	".png", "image/png"		},
-	{	".gif", "image/gif"		},
-	{	".bmp", "image/bmp"		},
-	{	".ico", "image/x-icon"	}
-};
-
-//define binary extensions for write
-std::vector<std::string> binaryExtensions = { 	".png", ".ico" , ".bmp", ".jpg", ".jpeg", ".gif", ",bmp" };
 
 
 Uri::Uri() : _scheme(), _authority(), _path(), _extension(), _isBinary(false), _query(), _queryMap(), _fragment(), _userinfo(), _host(), _port() {}
@@ -229,7 +211,6 @@ std::string	Uri::getMime(std::string extension) const
 }
 
 
-
 void	Uri::setExtension()
 {
 	size_t periodPos = _path.rfind('.');
@@ -257,3 +238,20 @@ bool	Uri::isValidExtension() {
 			return true;
 	return false;
 }
+
+
+//define accepted extensions
+std::map<std::string, std::string> acceptedExtensions = {
+	{	".txt", "text/plain"	},
+	{	".html", "text/html"	},
+	{	".css", "text/css"		},
+	{	".jpeg", "image/jpeg"	},
+	{	".jpg", "image/jpg"		},
+	{	".png", "image/png"		},
+	{	".gif", "image/gif"		},
+	{	".bmp", "image/bmp"		},
+	{	".ico", "image/x-icon"	}
+};
+
+//define binary extensions for write
+std::vector<std::string> binaryExtensions = { 	".png", ".ico" , ".bmp", ".jpg", ".jpeg", ".gif", ",bmp" };
