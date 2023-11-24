@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/24 14:12:35 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/24 14:29:58 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ class HttpRequest {
 		std::vector<char*>							getHeaderVector(void) const;
 		std::string									getQueryString(void) const;
 		char**										getEnvArray(void) const;
+		bool										isHeader(std::string key);
 
 	// ============= Setters ================
 		void										setMethod(const std::string& method);
@@ -50,6 +51,7 @@ class HttpRequest {
 		void										setBody(const std::string& body);
 		void										setUri(const std::string& str);
 		void										addHeader(const std::string& key, const std::string& value);
+		void										setHeader(const std::string& key, const std::string& value);
 		void										addEnvironVar(const std::string& key, const std::string& value);
 		void										setRequestStatus(int value);
 		void										setConfigValues(std::string host);

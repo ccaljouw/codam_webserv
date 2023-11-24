@@ -76,8 +76,7 @@ void HttpResponse::setStatusCode(int status) {
 
 
 void HttpResponse::addHeader(const std::string& key, const std::string& value) {
-	_headerMap.insert(std::make_pair(key, value));
-
+	_headerMap[key] = value;
 	setHeader("Last-Modified", getTimeStamp());
 }
 
@@ -89,7 +88,7 @@ void HttpResponse::setHeader(const std::string& key, const std::string& value) {
 			return;
 		}
 	}
-	_headerMap.insert(std::make_pair(key, value));
+	_headerMap[key] = value;
 }
 
 

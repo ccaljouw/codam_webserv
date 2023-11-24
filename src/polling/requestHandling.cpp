@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/23 18:37:39 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/24 15:03:22 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,13 @@ void	handleRequest(int epollFd, connection *conn) {
 		
 		// handle CGI
 		if (request.uri.getExecutable() == "cgi-bin") {
+			
+			size_t	maxContentLength		= conn->server->get_maxBodySize(request.getHeaderValue("host"));
+			size_t	headerContentLength		= std::stoi(request.getHeaderValue("content-length"));
+			size_t	actualContentLength		= request.getBody().size();
+			if (headerContentLength > maxContentLength || headerContentLength != actualContentLength) 
+				throw HttpRequest::parsingException(400, "content-length to big or wrong");
+
 			//case error in cgi handler
 			if (cgiHandler(request, conn, epollFd) == 1 ) 
 				setErrorResponse(conn, 500);	
@@ -63,11 +70,15 @@ void	handleRequest(int epollFd, connection *conn) {
 				throw HttpRequest::parsingException(501, "Extension not supported");
 		}
 
-		//handle POST		
+		//handle POST
+		//todo decide on handling
 		else if (request.getMethod() == "POST") {
 			if (request.uri.getExecutable() != "cgi-bin") {
-				throw HttpRequest::parsingException(403, "POST METHOD forbidden outside of CGI"); //todo remove
+				HttpResponse response(request);
+				response.setBody("data/text/html/upload.html", false); //todo:make config
+				setResponse(conn, response);
 			}
+			// throw HttpRequest::parsingException(403, "POST METHOD forbidden outside of CGI"); //todo remove
 		}
 
 		// handle DELETE

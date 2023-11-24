@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/24 14:10:27 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/24 14:37:29 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,10 @@ try {
 		}
 	}
 
+	// test print of headers
+	// for (auto& p : _headers)
+	// 	std::cout << "key: " << p.first << "value: " << p.second << std::endl;
+
 // === parse body ===
 	_body = request.substr(headersEnd + 4);
 
@@ -85,12 +89,9 @@ try {
 	if (_settings->_allowedMethods.find(_method) == _settings->_allowedMethods.end())
 		throw parsingException(405, "Method not Allowed");
 
-	// check max body size
-	
-	std::cout << getHeaderValue("body-size") <<std::endl;
-
-	if (_body.length() > _server->get_maxBodySize(getHeaderValue("host")))
-		throw parsingException(405, "Body size to big");
+	// // check max body size
+	// if (_body.length() > _server->get_maxBodySize(getHeaderValue("host")))
+	// 	throw parsingException(405, "Body size to big");
 
 
 // === set environ vars ===
@@ -98,8 +99,9 @@ try {
 	addEnvironVar("QUERY_STRING", getQueryString());
 	addEnvironVar("REMOTE_HOST", getHeaderValue("host"));
 	addEnvironVar("BODY", getBody());
-}
 
+
+}
 //catch block	
 	catch (const parsingException& exception) {
 		_requestStatus = exception.getErrorCode();
@@ -151,7 +153,7 @@ std::string HttpRequest::getHeaderValue(std::string key) const {
 }
 
 
-std::vector<char*>		HttpRequest::getHeaderVector(void) const {
+std::vector<char*>	HttpRequest::getHeaderVector(void) const {
 		
 	// make c_string array from headers. first a vector of c_strings, then make pairs and capitalize
 	std::vector<char*> c_strings;
@@ -192,7 +194,7 @@ std::string	HttpRequest::getQueryString(void) const {
 
 
 //makes and char** array as input for execve
-char** HttpRequest::getEnvArray(void) const {
+char**	HttpRequest::getEnvArray(void) const {
 
 	std::vector<char*> envArray;
 	
@@ -220,6 +222,12 @@ char** HttpRequest::getEnvArray(void) const {
 	return result;
 }
 
+bool	HttpRequest::isHeader(std::string key) {
+	auto it = _headers.find(key);
+	if (it != _headers.end())
+		return true;
+	return false;
+}
 
 
 //========= Setters ===============================
@@ -234,6 +242,17 @@ void	HttpRequest::addHeader(const std::string& key, const std::string& value) {
 	if(!value.empty())
 		_headers[key] = value;
 }
+
+void HttpRequest::setHeader(const std::string& key, const std::string& value) {
+	for (auto& headerPair : _headers) {
+		if (key == headerPair.first) {
+			headerPair.second = value;
+			return;
+		}
+	}
+	_headers[key] = value;
+}
+
 
 void	HttpRequest::addEnvironVar(const std::string& key, const std::string& value) {
 	if(!value.empty())
