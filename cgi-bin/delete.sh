@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-status="200"
-message="File deleted successfully"
-filenmame=""
+status=""
+message=""
+filename=""
 
 # checks if the query string is empty and if no argument was given
 if [[ -z "$QUERY_STRING"  && -z "$1" ]]
@@ -11,7 +11,7 @@ then
 	status="400"
 else
 	# checks if an argument was given
-	if [ -z $1 ]
+	if [ -z "$1" ]
 	then
 		# gets the filename from the query string
 		filename=`echo "$QUERY_STRING" | awk -F'=' '{print $2}' | cut -d'&' -f1 | sed 's/%20/ /g'`
@@ -27,18 +27,19 @@ else
 fi
 
 # checks if status was previously set
-if [ ! -z $status ]
+if [ -z "$status" ]
 then
 	# checks if the file exists
 	if [ -f "./uploads/$filename" ]
 	then
-		rm "./uploads/$filename" 2> /dev/null > /dev/null 
-
-		status=`echo $?`
+		rm -rf "./uploads/$filename" 2> /dev/null > /dev/null 
 
 		# checks if the file was deleted successfully
-		if [ ! $status -eq 0 ]
+		if [ $? -eq 0 ]
 		then
+			message="File deleted successfully"
+			status="200"
+		else
 			message="File could not be deleted"
 			status="500"
 		fi
@@ -53,8 +54,8 @@ date=`date -u +"%a, %d %b %Y %H:%M:%S GMT"`
 
 body="<html>
 	<head>
-		<link rel="icon" href="data:,">
-		<title>File Upload</title>
+		<link rel=\"icon\" href=\"data:,\">
+		<title>Delete File</title>
 	</head>
 	<body>
 		<h1>$message</h1>
