@@ -53,4 +53,3 @@ Server: Codam_Webserver\r\n\r"""
 
 print(header)
 print(body)
-print("\0")

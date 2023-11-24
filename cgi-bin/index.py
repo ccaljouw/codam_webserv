@@ -16,7 +16,8 @@ listFiles(pathlib.Path("./cgi-bin"))
 x = datetime.datetime.now()
 date = x.strftime("%a, %d %b %Y %H:%M:%S GMT")
 
-body_start = """<html>
+body_start = """<!DOCTYPE html>
+<html>
 	<body>\n"""
 body_end = """	</body>
 </html>"""
@@ -36,4 +37,3 @@ Server: CODAM_WEBSERV\r\n\r"""
 
 print(header)
 print(body)
-print("\0")

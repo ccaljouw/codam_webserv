@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 date=`date -u +"%a, %d %b %Y %H:%M:%S GMT"`
 
@@ -12,7 +12,7 @@ body="<html>
 	</body>
 </html>\r\n\r"
 
-content_length=`echo -e "$body" | wc -c | tr -d ' '`
+content_length=`echo "$body" | wc -c`
 
 header="HTTP/1.1 200\r
 Content-Length: $content_length\r
@@ -22,6 +22,6 @@ Last-Modified: $date\r
 Connection: close\r
 Server: CODAM_WEBSERV\r\n\r"
 
-echo -e "$header"
-echo -e "$body"
-echo -e "\0"
+echo "$header"
+echo "$body"
+

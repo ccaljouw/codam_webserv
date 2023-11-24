@@ -4,7 +4,8 @@ import datetime
 
 x = datetime.datetime.now()
 date = x.strftime("%a, %d %b %Y %H:%M:%S GMT")
-body = """<html>
+body = """<!DOCTYPE html>
+<html>
 	<head>
 		<link rel="icon" href="data:,">
 		<title>Python Test</title>
@@ -24,4 +25,3 @@ Server: CODAM_WEBSERV\r\n\r"""
 
 print(header)
 print(body)
-print("\0")

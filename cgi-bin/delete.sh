@@ -63,7 +63,7 @@ body="<html>
 </html>\r\n"
 
 # gets the length of the body
-content_length=${#body}
+content_length=`echo "$body" | wc -c`
 
 header="HTTP/1.1 $status\r
 Content-Length: $content_length\r
@@ -74,6 +74,5 @@ Connection: close\r
 Server: CODAM_WEBSERV\r\n\r"
 # Server: $HOST\r\n\r"
 
-echo -e "$header"
-echo -e "$body"
-echo -e "\0"
+echo "$header"
+echo "$body"
