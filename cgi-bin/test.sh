@@ -10,9 +10,9 @@ body="<html>
 	<body>
 		<h1>This script was written in bash</h1>
 	</body>
-</html>\r\n"
+</html>\r\n\r"
 
-content_length=${#body}
+content_length=`echo -e "$body" | wc -c | tr -d ' '`
 
 header="HTTP/1.1 200\r
 Content-Length: $content_length\r

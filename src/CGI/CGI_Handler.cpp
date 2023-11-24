@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/24 12:46:00 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/24 14:42:58 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,9 @@ void	execChild(const HttpRequest& req, CGI &cgi, int oldFd)
 		cgi.closeFds();
 		std::exit(1);
 	}
-	close(cgi.getFdIn());
+	// close(cgi.getFdIn());
+	cgi.closeFds();
+	close(oldFd);
 	execve(argv[0], argv, env);
 	std::exit(1);
 }
