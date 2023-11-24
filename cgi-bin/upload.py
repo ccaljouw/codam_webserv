@@ -1,12 +1,8 @@
 #!/usr/bin/env python3
 import datetime, os, cgi, cgitb, sys
 
-print("start cgi", file=sys.stderr)
-print(os.environ, file=sys.stderr)
 cgitb.enable(display=1)
 form = cgi.FieldStorage()
-
-print("hello ?", file=sys.stderr)
 
 def genFilename(filePath) -> str:
 
@@ -25,7 +21,7 @@ def genFilename(filePath) -> str:
 	return filePath
 
 
-def uploadFile(form) -> int :
+def uploadFile(form) -> (int, str) :
 
 	# Create uploads folder if it doesn't exist
 	uploadDir = os.getcwd() + '/uploads'
@@ -47,18 +43,14 @@ def uploadFile(form) -> int :
 		try:
 			with open(os.path.join(filePath), 'wb') as f:
 				f.write(fileitem.file.read())
-			return 0
+			return (200, f"\"{fn}\" uploaded successfully!!!")
 		except:
-			return 1
+			return (500, "Upload failed!!!")
 	else:
-		return 1
+		return (500, "No file was uploaded!!!")
 
-if uploadFile(form) == 0:
-	message = 'File uploaded successfully!!!'
-	status = 200
-else:
-	message = 'Upload failed!!!'
-	status = 500
+# Get the return values from the function
+status, message =  uploadFile(form)
 
 # Get the current date and time in readable format
 x = datetime.datetime.now()
@@ -82,13 +74,8 @@ Date: {date}\r
 Last-Modified: {date}\r
 Connection: close\r
 Server: Codam_Webserver\r\n\r"""
-# Server: {os.environ.get("HOST")}\r\n\r"""
+# Server: {os.environ.get("SERVER_NAME")}\r\n\r"""
 
-print("dead", file=sys.stderr)
 print(header)
-print("dead2", file=sys.stderr)
 print(body)
-print("dead3", file=sys.stderr)
 print("\0")
-print("dead4", file=sys.stderr)
-

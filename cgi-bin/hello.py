@@ -1,27 +1,56 @@
 #!/usr/bin/python3
 
-# Import modules for CGI handling
-import cgi, cgitb
+import cgi, cgitb, os, datetime, sys
 
-# Create instance of FieldStorage
+cgitb.enable(display=1)
 form = cgi.FieldStorage()
 
-# Get data from fields
-first_name = form.getvalue('first_name')
-last_name = form.getvalue('last_name')
+def hello(form) -> (int, str) :
+	
+	# Checks if the file is uploaded
+	firstname = form.getvalue('firstname')
+	lastname = form.getvalue('lastname')
+	if firstname == None or lastname == None:
+		return (500, "Please enter a firstname and lastname")
+	elif os.environ.get("COOKIE") == None:
+		return (500, "Please enable cookies")
+	else:
+		cookie_string = os.environ.get("COOKIE")
 
-if first_name is None:
-    first_name = "None"
-if last_name is None:
-    last_name = "None"
+		# Convert the cookie string to a list of items
+		cookie_pairs = [item.split("=") for item in cookie_string.split("; ")]
 
-print("Content-type:text/html")
-print()
-print("<html>")
-print('<head>')
-print("<title>Hello - Second CGI Program</title>")
-print('</head>')
-print('<body>')
-print(f"<h2>Hello {first_name} {last_name}</h2>")
-print('</body>')
-print('</html>')
+		# Convert the list into a dictionary
+		cookie = {key: value for key, value in cookie_pairs}
+		return (200, f"Hello {firstname} {lastname}, you have visited our website {cookie['id']} times")
+
+# Get the return values from the function
+status, message = hello(form)
+
+# Get the current date and time in readable format
+x = datetime.datetime.now()
+date = x.strftime("%a, %d %b %Y %H:%M:%S GMT")
+
+body = f"""<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="icon" href="data:,">
+		<title>Hello!</title>
+	</head>
+	<body>
+		<h1>{message}</h1>
+	</body>
+</html>"""
+
+header = f"""HTTP/1.1 {status}\r
+Content-Length: {len(body)}\r
+Content-type: text/html; charset=utf-8\r
+Date: {date}\r
+Last-Modified: {date}\r
+Connection: close\r
+Server: Codam_Webserver\r\n\r"""
+# Server: {os.environ.get("SERVER_NAME")}\r\n\r"""
+
+print(header)
+print(body)
+print("\0")
