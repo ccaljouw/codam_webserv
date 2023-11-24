@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   main.cpp                                           :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/21 14:37:09 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/24 12:45:08 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
 			throw std::runtime_error("invallid arguments");
 		if ((epollFd = epoll_create(1)) == -1)
 			throw std::runtime_error("epoll_create: " + std::string(strerror(errno)));
-		if ((servers = initServers(conf.getServers(), epollFd)).size() == 0)
+		if ((servers = initServers(conf, epollFd)).size() == 0)
 			throw std::runtime_error("no succesfull server configuration, terminating programm");
 	}
 	catch(const std::runtime_error& e)
@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
 	int numEvents = epoll_wait(epollFd, events, MAX_EVENTS, 0);
 	for (int i = 0; i < numEvents; i++) {
 		connection *conn = static_cast<connection *>(events[i].data.ptr);
-		if (conn->state != LISTENING)
+		if (events[i].events && conn->state != LISTENING)
 			closeConnection(epollFd, conn);
 	}
 	close (epollFd);

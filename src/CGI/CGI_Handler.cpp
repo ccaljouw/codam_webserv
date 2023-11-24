@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   CGI_Handler.cpp                                    :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/22 12:39:48 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/22 19:00:37 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 

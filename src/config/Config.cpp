@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/21 12:30:23 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/24 11:30:16 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ Config::~Config() {}
 
 std::list<struct ServerSettings>	Config::getServers() const	{	return (_servers);	}
 bool								Config::getError() const	{	return (_error);	}
+double								Config::getTimeout() const	{	return (_timeout);	}
+int									Config::getMaxNrOfRequests() const	{	return (_maxNrOfRequests);	}
 
 void	Config::_readConfigFile()
 {
@@ -50,12 +52,13 @@ void	Config::_readConfigFile()
 		struct LocationSettings	html;
 		struct LocationSettings	html2;
 
+		_timeout = 3;
+		_maxNrOfRequests = 10;
+		
 		server._serverName = "Codam_Webserv";
 		server._port = 8080;
 		server._rootFolder = "./data/html";
 		server._index = "index.html";
-		server._timeout = 3;
-		server._maxNrOfRequests = 10;
 		server._maxBodySize =  2 * 1024 * 1024; // 2 MB in bytes
 		
 		html._locationId = "/";

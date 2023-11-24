@@ -1,12 +1,8 @@
 #!/usr/bin/env python3
 import datetime, os, cgi, cgitb, sys
 
-print("start cgi", file=sys.stderr)
-print(os.environ, file=sys.stderr)
 cgitb.enable(display=1)
 form = cgi.FieldStorage()
-
-print("hello ?", file=sys.stderr)
 
 def genFilename(filePath) -> str:
 
@@ -55,7 +51,7 @@ def uploadFile(form) -> int :
 
 if uploadFile(form) == 0:
 	message = 'File uploaded successfully!!!'
-	status = 200
+	status = 201
 else:
 	message = 'Upload failed!!!'
 	status = 500
@@ -64,10 +60,10 @@ else:
 x = datetime.datetime.now()
 date = x.strftime("%a, %d %b %Y %H:%M:%S GMT")
 
+		# <link rel="icon" href="data:,">
 body = f"""<!DOCTYPE html>
 <html>
 	<head>
-		<link rel="icon" href="data:,">
 		<title>File Upload</title>
 	</head>
 	<body>
@@ -78,17 +74,14 @@ body = f"""<!DOCTYPE html>
 header = f"""HTTP/1.1 {status}\r
 Content-Length: {len(body)}\r
 Content-type: text/html; charset=utf-8\r
+Connection: close\r
 Date: {date}\r
 Last-Modified: {date}\r
 Connection: close\r
 Server: Codam_Webserver\r\n\r"""
 # Server: {os.environ.get("HOST")}\r\n\r"""
 
-print("dead", file=sys.stderr)
 print(header)
-print("dead2", file=sys.stderr)
 print(body)
-print("dead3", file=sys.stderr)
 print("\0")
-print("dead4", file=sys.stderr)
 

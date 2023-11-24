@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/17 11:48:57 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/24 11:28:38 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,6 @@ struct ServerSettings
 	std::string							_index; //default
 	std::list<struct LocationSettings>	_locations;
 	std::map<std::string, std::string>	_errorPages;
-	double								_timeout;
-	int									_maxNrOfRequests;
 	size_t								_maxBodySize;
 };
 
@@ -68,10 +66,14 @@ class Config
 		Config &		operator=( Config const & rhs );
 		
 		std::list<struct ServerSettings>	getServers() const;
+		double								getTimeout() const;
+		int									getMaxNrOfRequests() const;
 		bool								getError() const;
 	
 	private:
 		std::string							_filename;
+		double								_timeout;
+		int									_maxNrOfRequests;
 		std::list<struct ServerSettings>	_servers;
 		bool								_error;
 

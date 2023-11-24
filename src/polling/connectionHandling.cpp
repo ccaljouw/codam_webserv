@@ -6,13 +6,14 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/23 08:47:21 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/24 13:51:02 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webServ.hpp"
 #include <arpa/inet.h>
 #include <fstream>
+
 
 
 void	newConnection(int epollFd, int serverFd, Server *server) 
@@ -61,6 +62,104 @@ void readData(connection *conn)
 	}
 }
 
+// TODO: switch tree with utils helpers, add cookieId to other methods
+void handleRequest(int epollFd, connection *conn) 
+{
+	try {
+		// Process the request data
+		HttpRequest request(conn->request, conn->server);
+		
+		//check and set cookie
+		std::string cookieValue = checkAndSetCookie(conn, request);
+	
+		// Handle parsing error
+		if (request.getRequestStatus() != 200) {
+			setErrorResponse(conn, request.getRequestStatus());
+		} 
+	
+		// handle CGI
+		else if (request.uri.getExecutable() == "cgi-bin") { //todo:make configurable
+			//case error in cgi handler
+			if (cgiHandler(request, conn, epollFd) == 1 ) 
+				setErrorResponse(conn, 500);	
+			else
+			{
+				// conn->state = CLOSING;
+				conn->request.clear();
+				conn->state = IN_CGI;
+				
+			}
+		
+		} else {
+			std::string extension = request.uri.getExtension();
+			std::string contentType = request.uri.getMime(extension);
+			
+			// todo:check allowed methods for contentType
+
+			
+			//handle GET
+			if (request.getMethod() == "GET")
+			{
+				if (!contentType.empty())
+				{
+					std::string fullPath = "data/" + contentType + request.uri.getPath();
+					std::ifstream f(fullPath);
+					if (f.good())
+						request.uri.setPath(fullPath);
+					
+					else
+						throw HttpRequest::parsingException(404, "Path not found");
+		
+					HttpResponse response(request);
+					response.setBody(request.uri.getPath(), request.uri.getIsBinary());
+					response.addHeader("Content-type", contentType);
+
+					response.setHeader("Set-Cookie", cookieValue);
+					setResponse(conn, response);
+				} 
+				else
+					throw HttpRequest::parsingException(501, "Extension not supported");
+			}
+		
+		
+			//handle POST		
+			else if (request.getMethod() == "POST")
+			{
+				if (!contentType.empty())
+				{
+					std::cout << "add code for cgi POST" << std::endl;
+					throw HttpRequest::parsingException(405, "POST METHOD not supported yet"); // todo: remove line
+				}
+				else
+					throw HttpRequest::parsingException(501, "Extension not supported"); 
+			}
+
+
+			// handle DELETE
+			else if (request.getMethod() == "DELETE")
+			{
+				if (!contentType.empty())
+				{
+					std::cout << "add code for cgi DELETE" << std::endl;
+					throw HttpRequest::parsingException(405, "DELETE METHOD not supported yet"); // todo: remove line
+				}
+				else
+					throw HttpRequest::parsingException(501, "Extension not supported");
+			}
+			
+
+			// handle unsupported methods
+			else
+				throw HttpRequest::parsingException(405, "METHOD not supported");
+		}
+	} 
+	catch (const HttpRequest::parsingException& exception)
+	{
+		std::cout << RED << "Error: " << exception.what() << RESET << std::endl;
+		setErrorResponse(conn, exception.getErrorCode());
+	}
+}
+
 void readCGI(int epollFd, connection *conn)
 {
 	char buffer[BUFFER_SIZE];
@@ -85,7 +184,6 @@ void readCGI(int epollFd, connection *conn)
 	}
 	std::cout << BLUE << "OUT OF READ cgi" << RESET << std::endl;
 }
-
 
 void writeData(connection *conn) 
 {
@@ -120,7 +218,6 @@ void writeData(connection *conn)
 	}
 }
 
-
 void	closeConnection(int epollFd, connection *conn)
 {
 	epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->fd, nullptr);
@@ -135,3 +232,4 @@ void	closeConnection(int epollFd, connection *conn)
 		delete conn;
 	}
 }
+
