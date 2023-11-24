@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/24 15:03:22 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/24 15:59:25 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,12 @@ void	handleRequest(int epollFd, connection *conn) {
 		if (request.uri.getExecutable() == "cgi-bin") {
 			
 			size_t	maxContentLength		= conn->server->get_maxBodySize(request.getHeaderValue("host"));
-			size_t	headerContentLength		= std::stoi(request.getHeaderValue("content-length"));
 			size_t	actualContentLength		= request.getBody().size();
+			size_t	headerContentLength		= 0;
+			if (request.isHeader("content-length"))
+				headerContentLength = std::stoi(request.getHeaderValue("content-length"));
 			if (headerContentLength > maxContentLength || headerContentLength != actualContentLength) 
-				throw HttpRequest::parsingException(400, "content-length to big or wrong");
+			 	throw HttpRequest::parsingException(400, "content-length to big or wrong");
 
 			//case error in cgi handler
 			if (cgiHandler(request, conn, epollFd) == 1 ) 
@@ -50,7 +52,7 @@ void	handleRequest(int epollFd, connection *conn) {
 		}
 		
 		//handle GET
-		if (request.getMethod() == "GET") {
+		else if (request.getMethod() == "GET") {
 			if (!contentType.empty()) {
 				std::string fullPath = "data/" + contentType + request.uri.getPath();
 				std::ifstream f(fullPath);
