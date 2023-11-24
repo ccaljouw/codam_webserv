@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/22 12:45:43 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/24 12:16:43 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,9 +165,7 @@ void readCGI(int epollFd, connection *conn)
 	char buffer[BUFFER_SIZE];
     ssize_t bytesRead;
 	
-	std::cout << "read data CGI" << "\tfd = " << conn->cgiFd << std::endl;
     if ((bytesRead = read(conn->cgiFd, buffer, BUFFER_SIZE)) > 0) {
-		std::cout << BLUE << "Appending" << RESET << std::endl;
 		conn->response.append(buffer, static_cast<long unsigned int>(bytesRead));
     }
 	if (bytesRead < BUFFER_SIZE)
@@ -182,7 +180,6 @@ void readCGI(int epollFd, connection *conn)
 		std::cerr << "\033[31;1mError\nproblem reading CGI\033[0m" << std::endl;
 		setErrorResponse(conn, 500);
 	}
-	std::cout << BLUE << "OUT OF READ cgi" << RESET << std::endl;
 }
 
 void writeData(connection *conn) 

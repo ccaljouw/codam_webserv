@@ -10,7 +10,7 @@ body="<html>
 	<body>
 		<h1>This script was written in bash</h1>
 	</body>
-</html>\r\n\0"
+</html>\r\n"
 
 content_length=${#body}
 
