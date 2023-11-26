@@ -136,10 +136,10 @@ const struct LocationSettings*	Server::get_locationSettings(std::string host, st
 	// check for non existing hostnames? of just go with an available host on the same port?
 	while (!location.empty())
 	{
-		for (auto& loc : hostSettings->_locations) {
-			if (loc._locationId == location) 
-				return (&loc);
-		}
+		// for (auto& loc : hostSettings->_locations) {
+		// 	if (loc._locationId == location) 
+		// 		return (&loc);
+		// }
 		size_t pos = location.rfind('/');
 		if (pos == 0 || pos > location.length())
 			location = "/";

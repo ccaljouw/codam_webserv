@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/21 14:37:09 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/26 20:12:02 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,11 @@ int main(int argc, char **argv) {
 		Config conf(argc, argv);
 		if (conf.getError() == true)
 			throw std::runtime_error("invallid arguments");
+		std::exit(0);
 		if ((epollFd = epoll_create(1)) == -1)
 			throw std::runtime_error("epoll_create: " + std::string(strerror(errno)));
-		if ((servers = initServers(conf.getServers(), epollFd)).size() == 0)
-			throw std::runtime_error("no succesfull server configuration, terminating programm");
+		// if ((servers = initServers(conf.getServers(), epollFd)).size() == 0)
+		// 	throw std::runtime_error("no succesfull server configuration, terminating programm");
 	}
 	catch(const std::runtime_error& e)
 	{
