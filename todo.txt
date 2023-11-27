@@ -10,3 +10,15 @@ TODO:
 - cookie script -Bruno
 - cleanup includes
 
+
+carlo:
+	delete redirect
+	per loc hceck index if is directory
+	
+	
+	add header class (multimap)
+	
+	uri:
+		add errors
+		fix host / authority part 
+
