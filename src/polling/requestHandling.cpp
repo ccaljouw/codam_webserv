@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/27 22:47:33 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/27 22:52:47 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	handleRequest(int epollFd, connection *conn) {
 		std::string extension = request.uri.getExtension();
 		std::string contentType = request.uri.getMime(extension);
 
-		//handle directories
+		//handle default for directories
 		if (request.uri.isDir()) {
 			// std::cout << BLUE << "Is Directory" << RESET << std::endl;
 			std::string index = request.getDefault();
@@ -45,11 +45,8 @@ void	handleRequest(int epollFd, connection *conn) {
 			else
 				throw HttpRequest::parsingException(404, "Path not found");
 		}
-	
-		
-		
-		
-		// handle CGI
+					
+			// handle CGI
 		else if (request.uri.getExecutable() == "cgi-bin") {
 			
 			size_t	maxContentLength		= conn->server->get_maxBodySize(request.getHeaderValue("host"));
@@ -70,7 +67,6 @@ void	handleRequest(int epollFd, connection *conn) {
 				conn->state = IN_CGI;
 			}
 		}
-
 		
 		//handle GET
 		else if (request.getMethod() == "GET") {
