@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/24 13:53:19 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/27 18:38:44 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,25 @@ std::string getTimeStamp() {
 
 void	setErrorResponse(connection *conn, int error)
 {
-	HttpResponse response;
+	std::string		errorHtmlPath = "";
+	HttpRequest		request(conn->request, conn->server);
+	HttpResponse	response;
+	
 	response.setStatusCode(error);
-	std::string errorHtmlPath = generateErrorPage(error);
-	// std::string errorHtmlPath = generateErrorPage(conn, error); //for confid error page
-
+	std::map<int, std::string> *providedErrorPages = conn->server->get_errorPages(request.getHeaderValue("host"));
+	
+	if (providedErrorPages->size() != 0) {
+		for (const auto& pair : *providedErrorPages) {
+			if (pair.first == error) {
+				//**test
+				std::cout << BLUE << "directed to configured error page" << RESET << std::endl;
+				errorHtmlPath = "data/text/html" + pair.second; //todo from root
+			}
+		}
+	}
+	if (errorHtmlPath.empty()) 
+		errorHtmlPath =  generateErrorPage(error);
+		
 	std::ifstream f(errorHtmlPath);
 	if (f.good())
 		response.setBody(errorHtmlPath, false);
