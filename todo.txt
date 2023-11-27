@@ -9,6 +9,7 @@ TODO:
 - change scripts with root -Bruno
 - cookie script -Bruno
 - cleanup includes
+- check if all errors go through seterrorresponse
 
 carlo:
 	set servername and replace all HOST
