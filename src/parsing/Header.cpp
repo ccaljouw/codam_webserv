@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/13 09:46:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/13 10:44:44 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/27 11:54:34 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,4 +125,11 @@ void								setValue(std::string key, std::string name, std::string value) {
 }
 void								mapValues(void) {
 	
+}
+
+// ========== Other ===========
+
+void	printHeaders(void)	{
+	for (const auto& pair : _valueMap)
+	 	std::cout << "key: " << pair.first << " |  value: " << pair.second << std::endl;
 }

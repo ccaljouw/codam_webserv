@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/24 14:37:29 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/27 12:42:27 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ try {
 
 	// test print of headers
 	// for (auto& p : _headers)
-	// 	std::cout << "key: " << p.first << "value: " << p.second << std::endl;
+	// 	std::cout << "key: " << p.first << " | value: " << p.second << std::endl;
 
 // === parse body ===
 	_body = request.substr(headersEnd + 4);
@@ -88,10 +88,6 @@ try {
 	// check allowed method
 	if (_settings->_allowedMethods.find(_method) == _settings->_allowedMethods.end())
 		throw parsingException(405, "Method not Allowed");
-
-	// // check max body size
-	// if (_body.length() > _server->get_maxBodySize(getHeaderValue("host")))
-	// 	throw parsingException(405, "Body size to big");
 
 
 // === set environ vars ===
