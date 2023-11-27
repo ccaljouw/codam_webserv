@@ -1,12 +1,12 @@
 # **************************************************************************** #
 #                                                                              #
-#                                                         ::::::::             #
-#    Makefile                                           :+:    :+:             #
-#                                                      +:+                     #
-#    By: bfranco <bfranco@student.codam.nl>           +#+                      #
-#                                                    +#+                       #
-#    Created: 2023/06/21 08:27:49 by wingessorac   #+#    #+#                  #
-#    Updated: 2023/11/24 08:28:09 by carlo         ########   odam.nl          #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2023/06/21 08:27:49 by wingessorac       #+#    #+#              #
+#    Updated: 2023/11/27 12:28:07 by ccaljouw         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ OBJ_FILES	=	$(addprefix obj/, main.o  \
 				$(addprefix parsing/, Uri.o HttpRequest.o HttpResponse.o) \
 				$(addprefix polling/, connectionHandling.o requestHandling.o registerEvents.o) \
 				$(addprefix utils/, utils.o errorPageGen.o cookieGen.o) \
-				$(addprefix config/, Server.o Config.o) \
+				$(addprefix config/, Server.o Config.o ConfigParserUtils.o) \
 				$(addprefix CGI/, CGI_Handler.o))
 
 

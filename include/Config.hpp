@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   Config.hpp                                         :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/24 11:28:38 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   Config.hpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/09 14:02:40 by bfranco           #+#    #+#             */
+/*   Updated: 2023/11/27 12:29:58 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,25 +22,35 @@
 #include <set>
 #include <cstdint>
 
+enum configBlock
+{
+	NONE,
+	SERVER,
+	LOCATION,
+	ERROR_PAGE
+};
+
 struct LocationSettings
 {
-	std::string					_locationId;
-	std::set<std::string>		_allowedMethods;
-	std::string					_redirect;
-	std::string					_index; //default
-	bool						_autoindex;
-	std::string					_uploadDir;
+	std::string								_locationId;
+	std::set<std::string>					_allowedMethods;
+	std::map<int, std::string>				_redirect;
+	std::string								_index; //default
+	bool									_autoindex;
 };
 
 struct ServerSettings
 {
-	std::string							_serverName;
-	std::string							_rootFolder;
-	uint16_t							_port;
-	std::string							_index; //default
-	std::list<struct LocationSettings>	_locations;
-	std::map<std::string, std::string>	_errorPages;
-	size_t								_maxBodySize;
+	std::string								_serverName;
+	std::string								_rootFolder;
+	uint16_t								_port;
+	std::string								_index; //default
+	std::list<struct LocationSettings *>	_locations;
+	std::map<int, std::string>*				_errorPages;
+	double									_timeout;
+	int										_maxNrOfRequests;
+	size_t									_maxBodySize;
+	std::string								_uploadDir;
 };
 
 class Config
@@ -63,25 +73,26 @@ class Config
 		Config(int argc, char **argv);
 		~Config();
 		Config( const Config& src );
-		Config &		operator=( Config const & rhs );
+		Config&	operator=( Config const & rhs );
 		
-		std::list<struct ServerSettings>	getServers() const;
-		double								getTimeout() const;
-		int									getMaxNrOfRequests() const;
+		std::list<struct ServerSettings*>	getServers() const;
 		bool								getError() const;
 	
 	private:
 		std::string							_filename;
-		double								_timeout;
-		int									_maxNrOfRequests;
-		std::list<struct ServerSettings>	_servers;
+		std::list<struct ServerSettings*>	_servers;
 		bool								_error;
+		unsigned int						_lineNr;
 
-		void						_readConfigFile();
-		void						_parseConfigFile(const std::string& line);
-		// void						_parseServer(std::string line);    // add later if needed
-		// void						_parseLocation(std::string line);  // add later if needed
-		// void						_parseErrorPage(std::string line); // add later if needed
+		void								_readConfigFile();
+		int									_handleBlockEnd(configBlock *currentBlock, void *currentBlockPtr);
+		int									_handleBlockContent(std::string line, configBlock currentBlock, void *currentBlockPtr);
 };
+
+int		parseServer(std::string line, struct ServerSettings *server);
+int		parseLocation(std::string line, struct LocationSettings *location);
+int		parseErrorPage(std::string line, std::map<int, std::string> *errorPages);
+void	*initServerBlock();
+void	*initLocationBlock(std::string line);
 
 #endif

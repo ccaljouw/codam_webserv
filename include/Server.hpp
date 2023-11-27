@@ -31,10 +31,10 @@ class Server
 		// ============= methods ================
 		int		assign_name();
 		int		set_to_listen(int backlog);
-		int		initServer(struct ServerSettings const & settings, int epollFd, double timeout, int maxNrOfRequests);
+		int		initServer(struct ServerSettings *settings, int epollFd, double timeout, int maxNrOfRequests);
 		int		checkClientId(std::string id);
 		void	addClientId(std::string newCookieValue);
-		void	addSubDomain(struct ServerSettings const & settings);
+		void	addSubDomain(struct ServerSettings *settings);
 
 		// ============= getters ================
 		uint16_t	get_port(void) const;
@@ -73,7 +73,7 @@ class Server
 		std::map<std::string, int>			_knownClientIds;
 		double								_timeout;
 		int									_maxNrOfRequests;
-		std::list<struct ServerSettings>	_settings;
+		std::list<struct ServerSettings *>	_settings;
 		struct connection					*_conn;
 } ;
 

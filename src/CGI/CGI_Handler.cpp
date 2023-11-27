@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   CGI_Handler.cpp                                    :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/22 19:00:37 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   CGI_Handler.cpp                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/06 12:51:38 by bfranco           #+#    #+#             */
+/*   Updated: 2023/11/27 12:30:18 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,21 +79,19 @@ void	execChild(const HttpRequest& req, CGI &cgi, int oldFd)
 	if (dup2(cgi.getFdOut(), STDOUT_FILENO) == -1 || dup2(oldFd, STDIN_FILENO) == -1)
 	{
 		cgi.closeFds();
-		// kill(getpid(), SIGKILL);
+		std::exit(1);
 	}
-	close(cgi.getFdIn());
-	// close(oldFd);
+	// close(cgi.getFdIn());
+	cgi.closeFds();
+	close(oldFd);
 	execve(argv[0], argv, env);
-	// kill(getpid(), SIGKILL);
-
+	std::exit(1);
 }
 
 int	writeBody(const HttpRequest& req, int *fd)
 {
 	
 	std::string	body = req.getBody() + "\0";
-	std::cout << "body size = " << body.length() << std::endl;
-	std::cout << "body size = " << body.size() << std::endl;
 	while (1)
 	{
 		if (write(fd[1], body.c_str(), BUFFER_SIZE) == -1)
@@ -108,8 +106,6 @@ int	writeBody(const HttpRequest& req, int *fd)
 		else
 			break;
 	}
-	std::cout << BLUE << "Body sent" << "fd = "<<fd[0] << RESET << std::endl;
-	std::cout << BLUE << "Body sent" << "fd = "<<fd[1] << RESET << std::endl;
 	close(fd[1]);
 	return (fd[0]);
 }
@@ -144,12 +140,7 @@ int cgiHandler(const HttpRequest& req, connection *conn, int epollFd)
 			close(fd[0]);
 			return (1);
 		}
-		std::cout << BLUE << "closing input pipe" << RESET << std::endl;
 		close(fd[0]);
-		// int status;
-		// waitpid(pid, &status, WNOHANG);
-		// if (WIFSIGNALED(status))
-		// 	return (1);
 	}
 	return (0);
 }
