@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/09 14:02:40 by bfranco           #+#    #+#             */
-/*   Updated: 2023/11/27 14:54:32 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/27 17:11:33 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,21 +40,22 @@ struct LocationSettings
 	std::set<std::string>					_allowedMethods;
 	std::map<int, std::string>				_redirect;
 	std::string								_index; //default
-	bool									_autoindex;
+	bool									_autoindex; //change to _dirListing; // changed name from autoindex
+	// std::string								_locationRoot; // added
 };
 
 struct ServerSettings
 {
 	std::string								_serverName;
 	std::string								_rootFolder;
+	std::string								_uploadDir;
 	std::string								_index; //default
 	uint16_t								_port;
 	size_t									_maxBodySize;
 	std::list<struct LocationSettings *>	_locations;
 	std::map<int, std::string>*				_errorPages;
-	double									_timeout;
-	int										_maxNrOfRequests;
-	std::string								_uploadDir;
+	// double									_timeout;
+	// int										_maxNrOfRequests;
 };
 
 class Config

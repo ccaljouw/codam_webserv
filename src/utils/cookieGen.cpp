@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   cookieGen.cpp                                      :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: carlo <carlo@student.codam.nl>               +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/24 08:20:32 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/24 14:05:58 by carlo         ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   cookieGen.cpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/24 08:20:32 by carlo             #+#    #+#             */
+/*   Updated: 2023/11/27 17:07:19 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ std::string		checkAndSetCookie(connection* conn, HttpRequest& request) {
 
 	std::string cookieValue	= request.getHeaderValue("cookie"); //returns the value part of the cookie
 
-	size_t ourCookieStart = cookieValue.find("name=" + std::string(HOST));
+	size_t ourCookieStart = cookieValue.find("name=" + std::string(HOST)); //todo: host from config
 	if (ourCookieStart != 0 && ourCookieStart != std::string::npos)
 		cookieValue = cookieValue.substr(ourCookieStart);
 
@@ -58,7 +58,7 @@ std::string		checkAndSetCookie(connection* conn, HttpRequest& request) {
 	}
 
 	//check known id and if found set int +1 and handle trigger
-	if (!conn->server->checkClientId(cookieId)) {
+	if (!conn->server->checkClientId(cookieId, conn)) {
 		//set cookie for empty and unknow client using current time-hash * random number
 		std::hash<std::time_t>		timeHash;
 		std::time_t now			=	std::time(nullptr);
@@ -68,7 +68,7 @@ std::string		checkAndSetCookie(connection* conn, HttpRequest& request) {
 		cookieId = std::to_string(static_cast<long int>(id));
 		conn->server->addClientId(cookieId);
 	}
-	std::string newCookieValue = "name=" + std::string(HOST) + ", id=" + cookieId + ", trigger=" + cookieTrigger;
+	std::string newCookieValue = "name=" + std::string(HOST) + ", id=" + cookieId + ", trigger=" + cookieTrigger; //todo: host from config
 
 	return newCookieValue;
 }

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   eventloop.hpp                                      :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/03 18:13:17 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/12 11:30:40 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   eventloop.hpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/03 18:13:17 by cariencaljo       #+#    #+#             */
+/*   Updated: 2023/11/27 17:02:37 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,17 +37,17 @@ enum	states {
 	CLOSING
 };
 
-//todo map > unordered map for faster lookup
 struct connection
 {
 	int							fd;
 	int							cgiFd;
+	int							cgiPID; 
 	states						state;
 	std::string					request;
 	std::string					response;
 	Server						*server;
 	std::time_t					time_last_request;
-	int							nr_of_requests; 
+	int							nr_of_requests;
 };
 
 // handlers.cpp

@@ -96,14 +96,15 @@ void	Server::addClientId(std::string newCookieValue) {
 	_knownClientIds.insert(std::make_pair(newCookieValue, 1));
 }
 
-int	Server::checkClientId(std::string id) {
+int	Server::checkClientId(std::string id, struct connection* conn) {
 
 	for (auto& pair : _knownClientIds)
 	{
 		if (pair.first == id)
 		{
-			pair.second += 1;
-			// std::cout << "user_id :"<< id << " has visited us " << pair.second << " times!" << std::endl; //for testing
+			if (conn->nr_of_requests == 1)
+				pair.second += 1;
+			std::cout << "user_id :"<< id << " has visited us " << pair.second << " times!" << std::endl; //for testing
 			return  1;
 		}
 	}
