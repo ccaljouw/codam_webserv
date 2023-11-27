@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/27 13:11:24 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/27 22:23:39 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ class HttpRequest {
 		Uri											uri;
 
 	// ============= Getters ================
+		bool										isDirListing(void) const;
+		std::string									getDefault(void) const;
 		std::string									getMethod(void) const;
 		std::string									getProtocol(void) const;
 		std::string									getBody(void) const;
@@ -44,7 +46,7 @@ class HttpRequest {
 		std::string									getQueryString(void) const;
 		char**										getEnvArray(void) const;
 		bool										isHeader(std::string key);
-
+		
 	// ============= Setters ================
 		void										setMethod(const std::string& method);
 		void										setProtocol(const std::string& protocol);

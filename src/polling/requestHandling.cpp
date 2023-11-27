@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/24 15:59:25 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/27 22:47:33 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,13 +29,33 @@ void	handleRequest(int epollFd, connection *conn) {
 		//get extension and type
 		std::string extension = request.uri.getExtension();
 		std::string contentType = request.uri.getMime(extension);
+
+		//handle directories
+		if (request.uri.isDir()) {
+			// std::cout << BLUE << "Is Directory" << RESET << std::endl;
+			std::string index = request.getDefault();
+			if (!index.empty()) {
+				std::string bodyPath = "data/text/html" + request.uri.getPath() + index;		//todo add root
+				HttpResponse response(request);
+				response.setBody(bodyPath, false);
+				response.addHeader("Content-type", contentType);
+				response.setHeader("Set-Cookie", cookieValue);
+				setResponse(conn, response);
+			}
+			else
+				throw HttpRequest::parsingException(404, "Path not found");
+		}
+	
+		
+		
 		
 		// handle CGI
-		if (request.uri.getExecutable() == "cgi-bin") {
+		else if (request.uri.getExecutable() == "cgi-bin") {
 			
 			size_t	maxContentLength		= conn->server->get_maxBodySize(request.getHeaderValue("host"));
 			size_t	actualContentLength		= request.getBody().size();
 			size_t	headerContentLength		= 0;
+
 			if (request.isHeader("content-length"))
 				headerContentLength = std::stoi(request.getHeaderValue("content-length"));
 			if (headerContentLength > maxContentLength || headerContentLength != actualContentLength) 
@@ -50,6 +70,7 @@ void	handleRequest(int epollFd, connection *conn) {
 				conn->state = IN_CGI;
 			}
 		}
+
 		
 		//handle GET
 		else if (request.getMethod() == "GET") {
@@ -79,14 +100,18 @@ void	handleRequest(int epollFd, connection *conn) {
 				HttpResponse response(request);
 				response.setBody("data/text/html/upload.html", false); //todo:make config
 				setResponse(conn, response);
-			}
 			// throw HttpRequest::parsingException(403, "POST METHOD forbidden outside of CGI"); //todo remove
+			}
 		}
 
 		// handle DELETE
 		else if (request.getMethod() == "DELETE") {
 			if (request.uri.getExecutable() != "cgi-bin") {
-				throw HttpRequest::parsingException(403, "DELETE METHOD forbidden outside of CGI"); //todo remove
+				HttpResponse response(request);
+				response.setBody("data/text/html/418.html", false); //todo:make config
+				setResponse(conn, response);
+				
+		//		throw HttpRequest::parsingException(403, "DELETE METHOD forbidden outside of CGI"); //todo remove
 			}
 		}
 

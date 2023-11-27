@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/27 13:42:12 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/27 22:24:01 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,12 +136,14 @@ HttpRequest::~HttpRequest() {
 
 //========= Getters ===============================
 
-std::string	HttpRequest::getMethod(void) const									{	return _method;				}
-std::string	HttpRequest::getProtocol(void) const								{	return _protocol;			}
-std::string	HttpRequest::getBody(void) const									{	return _body;				}
-std::string	HttpRequest::getUri(void)											{	return uri.serializeUri();	}
-int	HttpRequest::getRequestStatus(void) const									{	return _requestStatus;		}
-std::map<std::string, std::string>	HttpRequest::getHeaders(void) const			{	return _headers; 			}
+bool		HttpRequest::isDirListing() const								{	return (this->_settings->_dirListing);	}
+std::string	HttpRequest::getDefault(void) const								{	return (this->_settings->_index);		}
+std::string	HttpRequest::getMethod(void) const								{	return _method;							}
+std::string	HttpRequest::getProtocol(void) const							{	return _protocol;						}
+std::string	HttpRequest::getBody(void) const								{	return _body;							}
+std::string	HttpRequest::getUri(void)										{	return uri.serializeUri();				}
+int	HttpRequest::getRequestStatus(void) const								{	return _requestStatus;					}
+std::map<std::string, std::string>	HttpRequest::getHeaders(void) const		{	return _headers; 						}
 
 std::string HttpRequest::getHeaderValue(std::string key) const {
 	for (const auto& headerPair : _headers) {
@@ -227,6 +229,8 @@ bool	HttpRequest::isHeader(std::string key) {
 		return true;
 	return false;
 }
+
+
 
 
 //========= Setters ===============================

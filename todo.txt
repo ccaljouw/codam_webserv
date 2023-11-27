@@ -14,13 +14,10 @@ TODO:
 carlo:
 	set servername and replace all HOST
 	delete redirect
-	per loc hceck index if is directory
-	error page from root
-	
-	
 	add header class (multimap)
 	
 	uri:
+		check uri?
 		add errors
 		fix host / authority part 
 
