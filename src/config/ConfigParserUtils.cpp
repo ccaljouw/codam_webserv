@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/26 18:20:33 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/27 17:39:56 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/27 22:15:21 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,15 @@ int	parseServer(std::string line, struct ServerSettings *server)
 	}
 	else if (key == "root")
 	{
-		if (access(value.c_str(), W_OK) == -1)
+		if (access(value.c_str(), F_OK | R_OK) == -1)
 			return 1;
 		server->_rootFolder = value;
+	}
+	else if (key == "upload_dir")
+	{
+		if (access(value.c_str(), F_OK | W_OK | R_OK) == -1)
+			return 1;
+		server->_uploadDir = value;
 	}
 	else if (key == "listen")
 	{
@@ -66,7 +72,7 @@ int	parseLocation(std::string line, struct LocationSettings *location)
 {
 	std::string key = line.substr(0, line.find_first_of(WHITESPACE));
 	std::string value = line.substr(line.find_first_of(WHITESPACE) + 1);
-	
+
 	// std::cout << "key: " << key << std::endl;
 	// std::cout << "value: " << value << std::endl;
 	if (key.empty() || value.empty())
@@ -87,9 +93,9 @@ int	parseLocation(std::string line, struct LocationSettings *location)
 	else if (key == "autoindex")
 	{
 		if (value == "on")
-			location->_autoindex = true;
+			location->_dirListing = true;
 		else if (value == "off")
-			location->_autoindex = false;
+			location->_dirListing = false;
 		else
 			return 1;
 	}
@@ -98,7 +104,7 @@ int	parseLocation(std::string line, struct LocationSettings *location)
 		std::string code = value.substr(0, value.find_first_of(WHITESPACE));
 		std::string uri = value.substr(value.find_first_of(WHITESPACE) + 1);
 		
-		if (code.empty() || uri.empty() || uri[0] != '/')
+		if (code.empty() || uri.empty())
 			return 1;
 		if (code.length() != 3 || code.find_first_not_of(NUMBERS) != std::string::npos)
 			return 1;
@@ -139,24 +145,34 @@ int	parseErrorPage(std::string line, std::map<int, std::string> *errorPages)
 
 void	*initServerBlock()
 {
-	void	*server = new struct ServerSettings();
+	struct ServerSettings *server = new struct ServerSettings();
 
-	static_cast<struct ServerSettings *>(server)->_locations = std::list<struct LocationSettings*>();
-	static_cast<struct ServerSettings *>(server)->_errorPages = nullptr;
+	server->_serverName = "";
+	server->_rootFolder = "";
+	server->_uploadDir = "";
+	server->_index = "";
+	server->_port = 0;
+	server->_maxBodySize = 0;
+	server->_errorPages = nullptr;
+	server->_locations = std::list<struct LocationSettings*>();
 
-	return server;
+	return static_cast<void *>(server);
 }
 
 void	*initLocationBlock(std::string line)
 {
-	void	*location = new struct LocationSettings();
+	struct LocationSettings	*location = new struct LocationSettings();
 
 	line = line.substr(9);
 	size_t	start = 0;
 	size_t	end = line.find_first_of(" \t\n\v\f\r{");
-	static_cast<struct LocationSettings *>(location)->_locationId = line.substr(start, end);
 
-	return location;
+	location->_locationId = line.substr(start, end);
+	location->_allowedMethods = std::set<std::string>();
+	location->_redirect = std::map<int, std::string>();
+	location->_index = "";
+	location->_dirListing = false;
+
+	return static_cast<void *>(location);
 }
 
-// void checkMandatoryParameters

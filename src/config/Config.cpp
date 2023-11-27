@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/27 17:39:03 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/27 22:18:49 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,36 +35,13 @@ Config::Config(int argc, char** argv) : _error(false), _lineNr(1)
 		_servers = std::list<struct ServerSettings*>();
 		_readConfigFile();
 		for (const auto server : _servers)
-			checkMandatoryParameters(server);
+			_checkMandatoryParameters(server);
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
+		std::cerr << RED << e.what() << RESET << std::endl;
+		_error = true;
 	}
-
-	std::cout << "\nnb servers = " << _servers.size()<< std::endl;
-
-	for (const auto server : _servers) {
-		std::cout << "Server: " << server->_serverName << std::endl;
-		std::cout << server->_index <<  std::endl;
-		std::cout << server->_maxBodySize <<  std::endl;
-		std::cout << server->_port << std::endl;
-		std::cout << server->_rootFolder <<  std::endl;
-
-		std::cout << "location size: " << server->_locations.size()<< std::endl;
-		for (const auto location : server->_locations) {
-			std::cout << "Location ID: " << location->_locationId << std::endl;
-			std::cout << location->_autoindex << std::endl;
-			std::cout << location->_index << std::endl;
-			// std::cout << location->_redirect[0] << std::endl;
-			for (const auto& method : location->_allowedMethods)
-				std::cout << method << std::endl;
-		}
-
-		// std::cout << server->_errorPages << std::endl;
-			
-	}
-
 }
 
 Config::~Config()
@@ -126,12 +103,12 @@ void	Config::_readConfigFile()
 		else if (line.find("}") != std::string::npos)
 		{
 			if (_handleBlockEnd(&currentBlock, currentBlockPtr) == 1)
-				throw InvalidParameterException();
+				throw InvalidParameterException(_lineNr);
 		}
 		else
 		{
 			if (_handleBlockContent(line, currentBlock, currentBlockPtr) == 1)
-				throw InvalidParameterException();
+				throw InvalidParameterException(_lineNr);
 		}
 		_lineNr++;
 	}
@@ -170,4 +147,57 @@ int	Config::_handleBlockContent(std::string line, configBlock currentBlock, void
 			return 1;
 	}
 	return 0;
+}
+
+void	Config::_checkMandatoryParameters(const struct ServerSettings *server)
+{
+	bool	hasRootLocation = false;
+
+	if (server->_serverName.empty() || server->_rootFolder.empty() || server->_uploadDir.empty())
+		throw MissingParameterException();
+	if  (server->_index.empty() || server->_port == 0 || server->_maxBodySize == 0)
+		throw MissingParameterException();
+
+	for (const auto location : server->_locations)
+	{
+		if (location->_locationId.empty() || location->_index.empty() || location->_allowedMethods.empty())
+			throw MissingParameterException();
+		if (location->_locationId == "/")
+			hasRootLocation = true;
+	}
+
+	if (!hasRootLocation)
+		throw MissingParameterException();
+}
+
+void	Config::printServers() const
+{
+	std::cout << "\nnb servers = " << _servers.size() << "\n" << std::endl;
+
+	for (const auto server : _servers) {
+		std::cout << "Server: " << server->_serverName << std::endl;
+		std::cout << "index: " << server->_index <<  std::endl;
+		std::cout << "max body size: " << server->_maxBodySize <<  std::endl;
+		std::cout << "port: " << server->_port << std::endl;
+		std::cout << "root folder: " << server->_rootFolder <<  std::endl;
+		std::cout << "upload dir: " << server->_uploadDir <<  std::endl;
+
+		std::cout << "\nlocation size: " << server->_locations.size() << "\n" << std::endl;
+
+		for (const auto location : server->_locations) {
+			std::cout << "Location ID: " << location->_locationId << std::endl;
+			std::cout << "dirListing: " << (location->_dirListing ? "true":"false") << std::endl;
+			std::cout << "index: " << location->_index << std::endl;
+			if (!location->_redirect.empty())
+				std::cout << "redirect: " << location->_redirect[0] << std::endl;
+			for (const auto& method : location->_allowedMethods)
+				std::cout << "allow " << method << std::endl;
+			std::cout << std::endl;
+		}
+
+		for (const auto& errorPage : *server->_errorPages)
+			std::cout << "error page: " << errorPage.first << " " << errorPage.second << std::endl;
+		
+		std::cout << std::endl;
+	}
 }
