@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/28 11:28:46 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/29 10:07:18 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,26 @@ class Config
 
 	class InvalidParameterException : public std::exception
 	{
+		std::string	_msg;
+		public:
+			InvalidParameterException(int lineNr)
+			{
+				_msg = std::string("Line ") + std::to_string(lineNr) + std::string("Invalid parameter");
+			}
+			virtual const char *	what() const throw() {
+				return (_msg.c_str());
+			}
+	};
+
+	class MissingParameterException : public std::exception
+	{
+		std::string	_msg;
+		MissingParameterException(std::string msg)
+		{
+			std::string _msg = std::string("Misssing mandatory parameter: ") + msg;
+		}
 		virtual const char *	what() const throw() {
-			return ("Invalid parameter");
+			return (_msg.c_str());
 		}
 	};
 	
@@ -81,6 +99,7 @@ class Config
 		Config&	operator=( Config const & rhs );
 		
 		std::list<struct ServerSettings*>	getServers() const;
+		std::map<int, std::string>*			getErrorPages() const;
 		bool								getError() const;
 	
 	private:

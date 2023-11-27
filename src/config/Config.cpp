@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Config.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/09 15:17:36 by bfranco           #+#    #+#             */
-/*   Updated: 2023/11/27 17:25:33 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Config.cpp                                         :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
+/*   Updated: 2023/11/29 10:07:24 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,12 @@ Config::Config(int argc, char** argv) : _error(false), _lineNr(1)
 	{
 		_servers = std::list<struct ServerSettings*>();
 		_readConfigFile();
+		for (const auto server : _servers)
+			checkMandatoryParameters(server);
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << "Line " << _lineNr << ":" << e.what() << std::endl;
+		std::cerr << e.what() << std::endl;
 	}
 
 	std::cout << "\nnb servers = " << _servers.size()<< std::endl;
@@ -46,7 +48,7 @@ Config::Config(int argc, char** argv) : _error(false), _lineNr(1)
 		std::cout << "Server: " << server->_serverName << std::endl;
 		std::cout << server->_index <<  std::endl;
 		std::cout << server->_maxBodySize <<  std::endl;
-		std::cout << server->_port  << std::endl;
+		std::cout << server->_port << std::endl;
 		std::cout << server->_rootFolder <<  std::endl;
 
 		std::cout << "location size: " << server->_locations.size()<< std::endl;
@@ -62,6 +64,7 @@ Config::Config(int argc, char** argv) : _error(false), _lineNr(1)
 		// std::cout << server->_errorPages << std::endl;
 			
 	}
+
 }
 
 Config::~Config()

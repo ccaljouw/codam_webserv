@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ConfigParserUtils.cpp                              :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/26 18:20:33 by bfranco           #+#    #+#             */
-/*   Updated: 2023/11/27 17:25:33 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   ConfigParserUtils.cpp                              :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/26 18:20:33 by bfranco       #+#    #+#                 */
+/*   Updated: 2023/11/29 10:07:30 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,3 +158,5 @@ void	*initLocationBlock(std::string line)
 
 	return location;
 }
+
+// void checkMandatoryParameters
