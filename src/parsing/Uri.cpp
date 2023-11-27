@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/24 09:17:00 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/27 14:20:08 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ void	Uri::splitAuthority() {
 	else
 		_host = _authority;
 
-	//check for optional port
+	// todo: check for optional port and validity
 	size_t columPos	= _host.find(":");
 	if (columPos != std::string::npos) {
 		std::string portString  = _host.substr(columPos + 1);
@@ -109,9 +109,7 @@ void	Uri::splitAuthority() {
     	catch (const std::out_of_range& e) {
             std::cerr << RED << "Port number out of range: " << e.what() << std::endl;
         }
-		//todo set default port
 	}
-	else _port = 0;
 }
 
 std::string	Uri::serializeUri() {

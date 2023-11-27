@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/24 14:29:58 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/27 13:11:24 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ class HttpRequest {
 		void										setHeader(const std::string& key, const std::string& value);
 		void										addEnvironVar(const std::string& key, const std::string& value);
 		void										setRequestStatus(int value);
-		void										setConfigValues(std::string host);
+		// void										setConfigValues(std::string host);
 		void										fillStandardHeaders(void); //todo: get from config
 
 	// ============= exception ================

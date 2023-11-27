@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/27 12:42:27 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/27 13:42:12 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,9 @@ try {
 // === fetch location specific config settings === 
 
 	_settings = _server->get_locationSettings(getHeaderValue("host"), uri.getPath());
+	if (_settings == nullptr)
+		throw parsingException(500, "Bad server settings");
+
 	fillStandardHeaders();
 
 	// check allowed method
@@ -260,12 +263,11 @@ void	HttpRequest::fillStandardHeaders() {
 
 	std::string timeout = std::to_string(_server->get_timeout());
 	addHeader("Keep-Alive", "timeout=" + timeout + ", max=3");
-
 	addHeader("Date", getTimeStamp());
-	addHeader("Server", HOST); // get server name from server in connection struct
+	addHeader("Server", HOST); // todo: get server name from server in connection struct
 	addHeader("Last-Modified", getTimeStamp());
 	addHeader("Content-Length", std::to_string(_body.length()));
-
+	
 	// addHeader("Transfer-Encoding", "chunked");
 	// addHeader("Cache-Control",  "public, max-age=86400");
 	// Host: This indicates the domain name of the server.
