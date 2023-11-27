@@ -138,13 +138,66 @@ std::string	Server::get_rootFolder(std::string host) const {
 	return hostSettings->_rootFolder;
 }
 
-std::string	Server::get_index(std::string host) const {
+std::string Server::get_uploadDir(std::string host) const {
 	const ServerSettings *hostSettings = _settings.front();
 	for (auto& setting : _settings) {
 		if (setting->_serverName == host)
 			hostSettings = setting;
 	}
-	return hostSettings->_index;
+	return hostSettings->_uploadDir;
+}
+
+std::map<int, std::string>*	Server::get_errorPages(std::string host) const {
+	const ServerSettings *hostSettings = _settings.front();
+	for (auto& setting : _settings) {
+		if (setting->_serverName == host)
+			hostSettings = setting;
+	}
+	return hostSettings->_errorPages;
+}
+
+std::string	Server::get_index(std::string host, std::string location) const {
+	const ServerSettings *hostSettings = _settings.front();
+	for (auto& setting : _settings) {
+		if (setting->_serverName == host)
+			hostSettings = setting;
+	}
+	while (!location.empty())
+	{
+		for (auto& loc : hostSettings->_locations) {
+			if (loc->_locationId == location) 
+				return (loc->_index);
+		}
+		size_t pos = location.rfind('/');
+		if (pos == 0 || pos > location.length())
+			location = "/";
+		else
+			location.resize(pos);
+	}
+	std::cerr << RED << "Error\nincorrect configuration " << hostSettings->_serverName << RESET << std::endl;
+	return (nullptr);
+}
+
+bool		Server::get_dirListing(std::string host, std::string location) const {
+	const ServerSettings *hostSettings = _settings.front();
+	for (auto& setting : _settings) {
+		if (setting->_serverName == host)
+			hostSettings = setting;
+	}
+	while (!location.empty())
+	{
+		for (auto& loc : hostSettings->_locations) {
+			if (loc->_locationId == location) 
+				return (loc->_dirListing);
+		}
+		size_t pos = location.rfind('/');
+		if (pos == 0 || pos > location.length())
+			location = "/";
+		else
+			location.resize(pos);
+	}
+	std::cerr << RED << "Error\nincorrect configuration " << hostSettings->_serverName << RESET << std::endl;
+	return (0);
 }
 
 const struct LocationSettings*	Server::get_locationSettings(std::string host, std::string location) const {
@@ -154,12 +207,9 @@ const struct LocationSettings*	Server::get_locationSettings(std::string host, st
 		if (setting->_serverName == host)
 			hostSettings = setting;
 	}
-	// check for non existing hostnames? of just go with an available host on the same port?
 	while (!location.empty())
 	{
-		// std::cout << "looking for " << location << " in " << std::endl;
 		for (auto& loc : hostSettings->_locations) {
-			// std::cout << "now " << loc->_locationId << std::endl;
 			if (loc->_locationId == location) 
 				return (loc);
 		}

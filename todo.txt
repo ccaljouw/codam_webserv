@@ -1,15 +1,15 @@
 TODO:
 - Root shit
 - Redirects
+- Delete
 - Research how to test
-- Error pages - server.getErrorPages(Carien), config.getErrorPages(Bruno) add check on defined error pages for server
+- Error pages - add check on defined error pages for server
 - dir listing (if 404 and dir listing == 1, call script with dir=.... in query string) -Carlo
 - timeouts, add PID to connection (Bruno) finish check on timeouts (Carien)
 - finish config parser (check for at least all mandatory settings in location / and server) -Bruno
 - change scripts with root -Bruno
 - cookie script -Bruno
 - cleanup includes
-
 
 carlo:
 	delete redirect

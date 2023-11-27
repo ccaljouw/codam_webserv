@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/26 18:20:33 by bfranco           #+#    #+#             */
-/*   Updated: 2023/11/27 15:24:09 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/27 17:25:33 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,9 +87,9 @@ int	parseLocation(std::string line, struct LocationSettings *location)
 	else if (key == "autoindex")
 	{
 		if (value == "on")
-			location->_autoindex = true;
+			location->_dirListing = true;
 		else if (value == "off")
-			location->_autoindex = false;
+			location->_dirListing = false;
 		else
 			return 1;
 	}
