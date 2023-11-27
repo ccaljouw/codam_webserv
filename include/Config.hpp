@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/09 14:02:40 by bfranco           #+#    #+#             */
-/*   Updated: 2023/11/27 12:29:58 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/27 14:54:32 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,10 @@
 #include <unistd.h>
 #include <set>
 #include <cstdint>
+
+#define LETTERS "abcdefghijklmnopqrstuvwxyz"
+#define NUMBERS "0123456789"
+#define WHITESPACE " \t\n\v\f\r"
 
 enum configBlock
 {
@@ -43,13 +47,13 @@ struct ServerSettings
 {
 	std::string								_serverName;
 	std::string								_rootFolder;
-	uint16_t								_port;
 	std::string								_index; //default
+	uint16_t								_port;
+	size_t									_maxBodySize;
 	std::list<struct LocationSettings *>	_locations;
 	std::map<int, std::string>*				_errorPages;
 	double									_timeout;
 	int										_maxNrOfRequests;
-	size_t									_maxBodySize;
 	std::string								_uploadDir;
 };
 
@@ -83,6 +87,8 @@ class Config
 		std::list<struct ServerSettings*>	_servers;
 		bool								_error;
 		unsigned int						_lineNr;
+		// double									_timeout; // to add in the future
+		// int										_maxNrOfRequests; // to add in the future
 
 		void								_readConfigFile();
 		int									_handleBlockEnd(configBlock *currentBlock, void *currentBlockPtr);
