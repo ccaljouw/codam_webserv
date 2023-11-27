@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/29 10:07:18 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/29 10:08:30 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,39 +60,34 @@ struct ServerSettings
 
 class Config
 {
-	class NoSuchFileException : public std::exception
-	{
-		virtual const char *	what() const throw() {
-			return ("Invalid config file or wrong permissions");
-		}
-	};
-
-	class InvalidParameterException : public std::exception
-	{
-		std::string	_msg;
-		public:
-			InvalidParameterException(int lineNr)
-			{
-				_msg = std::string("Line ") + std::to_string(lineNr) + std::string("Invalid parameter");
-			}
-			virtual const char *	what() const throw() {
-				return (_msg.c_str());
-			}
-	};
-
-	class MissingParameterException : public std::exception
-	{
-		std::string	_msg;
-		MissingParameterException(std::string msg)
-		{
-			std::string _msg = std::string("Misssing mandatory parameter: ") + msg;
-		}
-		virtual const char *	what() const throw() {
-			return (_msg.c_str());
-		}
-	};
-	
 	public:
+		class NoSuchFileException : public std::exception
+		{
+			virtual const char *	what() const throw() {
+				return ("Invalid config file or wrong permissions");
+			}
+		};
+
+		class InvalidParameterException : public std::exception
+		{
+			std::string	_msg;
+			public:
+				InvalidParameterException(int lineNr)
+				{
+					_msg = std::string("Line ") + std::to_string(lineNr) + std::string(": Invalid parameter");
+				}
+				virtual const char *	what() const throw() {
+					return (_msg.c_str());
+				}
+		};
+
+		class MissingParameterException : public std::exception
+		{
+			virtual const char *	what() const throw() {
+				return ("Missing mandatory parameter");
+			}
+		};
+	
 		Config(int argc, char **argv);
 		~Config();
 		Config( const Config& src );
@@ -101,6 +96,7 @@ class Config
 		std::list<struct ServerSettings*>	getServers() const;
 		std::map<int, std::string>*			getErrorPages() const;
 		bool								getError() const;
+		void								printServers() const;
 	
 	private:
 		std::string							_filename;
@@ -113,6 +109,7 @@ class Config
 		void								_readConfigFile();
 		int									_handleBlockEnd(configBlock *currentBlock, void *currentBlockPtr);
 		int									_handleBlockContent(std::string line, configBlock currentBlock, void *currentBlockPtr);
+		void								_checkMandatoryParameters(const struct ServerSettings *server);
 };
 
 int		parseServer(std::string line, struct ServerSettings *server);

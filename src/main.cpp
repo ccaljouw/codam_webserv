@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 11:16:40 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/27 15:10:36 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   main.cpp                                           :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
+/*   Updated: 2023/11/27 22:13:21 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,12 @@ int main(int argc, char **argv) {
 	std::list<Server>	servers;
 
 	signal(SIGINT, handleSignal);
+
 	Config conf(argc, argv);
+	if (conf.getError() == true)
+		return 1;
+	conf.printServers();
 	try {
-		if (conf.getError() == true)
-			throw std::runtime_error("invallid arguments");
 		if ((epollFd = epoll_create(1)) == -1)
 			throw std::runtime_error("epoll_create: " + std::string(strerror(errno)));
 		if ((servers = initServers(conf, epollFd)).size() == 0)
