@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   webServ.hpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 16:57:19 by carlo             #+#    #+#             */
-/*   Updated: 2023/11/27 12:58:37 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   webServ.hpp                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
+/*   Updated: 2023/11/27 23:31:35 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 #define LINE_END "\r\n"
 #define WHITE_SPACE " \t\n\v\f\r"
 #define HTTP_PROTOCOL "HTTP/1.1"
-#define HOST "webserv42"
 
 #define TIMEOUT	5
 #define	MAX_NR_REQUESTS 10

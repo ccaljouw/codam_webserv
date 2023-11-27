@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/24 14:32:21 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/27 23:23:53 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ class HttpRequest;
 class HttpResponse {
 
 	public:
-	 	HttpResponse(void);
 		HttpResponse(const HttpRequest& request);
 	 	HttpResponse(const HttpResponse& origin);
 	 	const HttpResponse& operator=(const HttpResponse& rhs);
@@ -47,6 +46,9 @@ class HttpResponse {
 		std::string	serializeHeaders(void);
 		
 	private:
+	 	
+		HttpResponse(void);
+
 	 	std::string								_protocol;
 	 	int 									_statusCode;
 	 	std::map<std::string, std::string>		_headerMap;

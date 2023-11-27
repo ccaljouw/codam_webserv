@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/27 22:27:28 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/27 23:07:23 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,6 @@ void	Uri::splitAuthority() {
 		_userinfo	= _authority.substr(0, atPos);
 		_host		= _authority.substr(atPos + 1);
 	}
-	
 	else
 		_host = _authority;
 

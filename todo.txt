@@ -18,6 +18,5 @@ carlo:
 	
 	uri:
 		check uri?
-		add errors
 		fix host / authority part 
 

@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/27 22:52:47 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/27 23:26:34 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	handleRequest(int epollFd, connection *conn) {
 				throw HttpRequest::parsingException(404, "Path not found");
 		}
 					
-			// handle CGI
+		// handle CGI
 		else if (request.uri.getExecutable() == "cgi-bin") {
 			
 			size_t	maxContentLength		= conn->server->get_maxBodySize(request.getHeaderValue("host"));

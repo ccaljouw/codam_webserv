@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/27 18:38:44 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/27 23:22:04 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	setErrorResponse(connection *conn, int error)
 {
 	std::string		errorHtmlPath = "";
 	HttpRequest		request(conn->request, conn->server);
-	HttpResponse	response;
+	HttpResponse	response(request);
 	
 	response.setStatusCode(error);
 	std::map<int, std::string> *providedErrorPages = conn->server->get_errorPages(request.getHeaderValue("host"));
@@ -48,17 +48,21 @@ void	setErrorResponse(connection *conn, int error)
 			}
 		}
 	}
-	if (errorHtmlPath.empty()) 
-		errorHtmlPath =  generateErrorPage(error);
+	if (errorHtmlPath.empty()) {
+		if (error == 404 && request.isDirListing() == true)
+			std::cout << RED << "Need to add code here" << RESET << std::endl; //todo: add script
+		else	
+			errorHtmlPath = generateErrorPage(error);
+	}
 		
 	std::ifstream f(errorHtmlPath);
 	if (f.good())
 		response.setBody(errorHtmlPath, false);
-	//todo : remove tmp file or not
-	// if (std::remove(errorHtmlPath.c_str()) != 0) //todo uncomment
+	// if (std::remove(errorHtmlPath.c_str()) != 0) //todo uncomment to remove error pages
 	// 	std::cerr << RED << "Error remoiving tmp error page" << RESET <<  std:: endl; 
 	setResponse(conn, response);
 }
+
 
 void	setResponse(connection *conn, HttpResponse resp)
 {
@@ -66,6 +70,7 @@ void	setResponse(connection *conn, HttpResponse resp)
 	conn->request.clear();
 	conn->state = WRITING;
 }
+
 
 // Some browsers (eg Firefox), check form timeout based on header keep-alive with timeout.
 // others (eg safari) do not close the connection themselves

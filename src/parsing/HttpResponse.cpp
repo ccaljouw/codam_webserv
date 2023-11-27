@@ -19,15 +19,14 @@
 
 std::string getTimeStamp();
 
-HttpResponse::HttpResponse() : _protocol(HTTP_PROTOCOL), _statusCode(200), _headerMap(), _body() {
-	fillStandardHeaders();
-}
+HttpResponse::HttpResponse() {}
 
 
 HttpResponse::HttpResponse(const HttpRequest& request) {
-	_protocol 			= HTTP_PROTOCOL;
+	_protocol 			= HTTP_PROTOCOL; //todo from config
 	_statusCode			= request.getRequestStatus();
 	_body				= request.getBody();
+	_headerMap			= request.getHeaders();
 
 	fillStandardHeaders();
 }
@@ -124,13 +123,9 @@ void HttpResponse::setBody(const std::string& filePath, bool isBinary)	{
 
 
 void HttpResponse::fillStandardHeaders() {
-	// addHeader("Transfer-Encoding", "chunked");
-	// addHeader("Cache-Control",  "public, max-age=86400");
-	addHeader("Keep-Alive", "timeout=5, max=3"); // get timout and max requests from server in connection struct
-	addHeader("Date", getTimeStamp());
-	addHeader("Server", HOST); // get server name from server in connection struct
-	addHeader("Last-Modified", getTimeStamp());
-	addHeader("Content-Length", std::to_string(_body.length()));
+	setHeader("Date", getTimeStamp());
+	setHeader("Last-Modified", getTimeStamp());
+	setHeader("Content-Length", std::to_string(_body.length()));
 }
 
 

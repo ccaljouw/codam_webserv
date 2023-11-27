@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/27 22:24:01 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/27 23:28:37 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,6 @@ try {
 			_headers[key] = value;
 		}
 	}
-
 	// test print of headers
 	// for (auto& p : _headers)
 	// 	std::cout << "key: " << p.first << " | value: " << p.second << std::endl;
@@ -268,11 +267,7 @@ void	HttpRequest::fillStandardHeaders() {
 	std::string timeout = std::to_string(_server->get_timeout());
 	addHeader("Keep-Alive", "timeout=" + timeout + ", max=3");
 	addHeader("Date", getTimeStamp());
-	addHeader("Server", HOST); // todo: get server name from server in connection struct
+	addHeader("Server", _server->get_serverName(uri.getHost()));
 	addHeader("Last-Modified", getTimeStamp());
 	addHeader("Content-Length", std::to_string(_body.length()));
-	
-	// addHeader("Transfer-Encoding", "chunked");
-	// addHeader("Cache-Control",  "public, max-age=86400");
-	// Host: This indicates the domain name of the server.
 }
