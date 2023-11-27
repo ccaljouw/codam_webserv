@@ -1,11 +1,8 @@
 carlo:
+	delete redirect
+	
 	add header class
-
-	badrequest body size check
-	root dingen defaults.
-	post redirect
-
-
+	
 	request:
 		request host
 		test protocol check (not working as expected)

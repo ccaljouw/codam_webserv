@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/13 09:46:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/13 19:23:53 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/27 11:51:38 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ public:
 	const Header& operator=(const Header& rhs);
 	~Header(void);
 
-	// ========== Getters ===========
+// ========== Getters ===========
 	std::string							getName(void) const;
 	std::string							getValue(void) const;
 	std::map<std::string, std::string>	getValueVector(void);
@@ -45,6 +45,9 @@ public:
 	void	setValue(std::string key, std::string name, std::string value);
 	void	mapValues(void);
 
+
+//========== Other ===============
+	void	printHeaders(void);
 	
 private:
 

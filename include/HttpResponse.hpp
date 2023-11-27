@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/24 09:16:20 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/24 14:32:21 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ class HttpResponse {
 	private:
 	 	std::string								_protocol;
 	 	int 									_statusCode;
-	 	std::multimap<std::string, std::string>	_headerMap;
+	 	std::map<std::string, std::string>		_headerMap;
 	 	std::string								_body;
 };
 

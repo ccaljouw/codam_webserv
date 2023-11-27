@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 
 date=`date -u +"%a, %d %b %Y %H:%M:%S GMT"`
+date=`date -u +"%a, %d %b %Y %H:%M:%S GMT"`
 
 body="<html>
 	<head>

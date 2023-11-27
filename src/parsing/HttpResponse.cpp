@@ -76,8 +76,7 @@ void HttpResponse::setStatusCode(int status) {
 
 
 void HttpResponse::addHeader(const std::string& key, const std::string& value) {
-	_headerMap.insert(std::make_pair(key, value));
-
+	_headerMap[key] = value;
 	setHeader("Last-Modified", getTimeStamp());
 }
 
@@ -89,7 +88,7 @@ void HttpResponse::setHeader(const std::string& key, const std::string& value) {
 			return;
 		}
 	}
-	_headerMap.insert(std::make_pair(key, value));
+	_headerMap[key] = value;
 }
 
 
@@ -132,9 +131,6 @@ void HttpResponse::fillStandardHeaders() {
 	addHeader("Server", HOST); // get server name from server in connection struct
 	addHeader("Last-Modified", getTimeStamp());
 	addHeader("Content-Length", std::to_string(_body.length()));
-
-	// Content-Type: Describes the type of content being returned in the response (e.g., text/html, application/json, etc.).
-
 }
 
 
@@ -163,18 +159,18 @@ std::string HttpResponse::serializeResponse() {
 }
 
 std::map<int, std::string> HttpResponseCodes = {
-	{ 200, "OK"}, 					// The request was fulfilled. 
-	{ 201, "Created"},				// Following a POST command, this indicates success, but the textual part of the response line indicates the URI by which the newly created document should be known. 
-	{ 202, "Accepted"},				// The request has been accepted for processing, but the processing has not been completed.
-	{ 204, "No response"},			// Server has received the request but there is no information to send back, and the client should stay in the same document view. 
- 	{ 400, "Bad request"},			// The request had bad syntax or was inherently impossible to be satisfied. 
- 	{ 401, "Unauthorized"},			// The parameter to this message gives a specification of authorization schemes which are acceptable. The client should retry the request with a suitable Authorization header. 
- 	{ 403, "Forbidden"},			// The request is for something forbidden. Authorization will not help. 
-	{ 404, "Not found"},			//  The server has not found anything matching the URI given 
+	{ 200, "OK"}, 							// The request was fulfilled. 
+	{ 201, "Created"},						// Following a POST command, this indicates success, but the textual part of the response line indicates the URI by which the newly created document should be known. 
+	{ 202, "Accepted"},						// The request has been accepted for processing, but the processing has not been completed.
+	{ 204, "No response"},					// Server has received the request but there is no information to send back, and the client should stay in the same document view. 
+ 	{ 400, "Bad request"},					// The request had bad syntax or was inherently impossible to be satisfied. 
+ 	{ 401, "Unauthorized"},					// The parameter to this message gives a specification of authorization schemes which are acceptable. The client should retry the request with a suitable Authorization header. 
+ 	{ 403, "Forbidden"},					// The request is for something forbidden. Authorization will not help. 
+	{ 404, "Not found"},					//  The server has not found anything matching the URI given 
 	{ 405, "Method Not Allowed"},
-	{ 422, "Unprocessable Entity"}, // Indicates that the server understands the content type of the request entity, and the syntax of the request entity is correct, but it was unable to process the contained instructions. 
-	{ 500, "Internal Error"},		// The server encountered an unexpected condition which prevented it from fulfilling the request. 
-	{ 501, "Not implemented"},		// The server does not support the facility required. 
+	{ 422, "Unprocessable Entity"}, 		// Indicates that the server understands the content type of the request entity, and the syntax of the request entity is correct, but it was unable to process the contained instructions. 
+	{ 500, "Internal Error"},				// The server encountered an unexpected condition which prevented it from fulfilling the request. 
+	{ 501, "Not implemented"},				// The server does not support the facility required. 
 	{ 502, "Service temporary overloaded"},
 	{ 503, "Gateway timeout"},
 	{ 505, "version not supported"}
