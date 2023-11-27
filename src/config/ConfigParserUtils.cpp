@@ -6,16 +6,17 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/26 18:20:33 by bfranco           #+#    #+#             */
-/*   Updated: 2023/11/27 12:49:58 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/27 15:24:09 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
+#include <unistd.h>
 
 int	parseServer(std::string line, struct ServerSettings *server)
 {
-	std::string key = line.substr(0, line.find_first_of(" "));
-	std::string value = line.substr(line.find_first_of(" ") + 1);
+	std::string key = line.substr(0, line.find_first_of(WHITESPACE));
+	std::string value = line.substr(line.find_first_of(WHITESPACE) + 1);
 
 	// std::cout << "key: " << key << std::endl;
 	// std::cout << "value: " << value << std::endl;
@@ -23,37 +24,39 @@ int	parseServer(std::string line, struct ServerSettings *server)
 		return 1;
 	
 	if (key == "server_name")
+	{
+		if (value.find_first_not_of(std::string(LETTERS) + std::string(NUMBERS) + std::string("_")) != std::string::npos)
+			return 1;
 		server->_serverName = value;
+	}
 	else if (key == "root")
+	{
+		if (access(value.c_str(), W_OK) == -1)
+			return 1;
 		server->_rootFolder = value;
+	}
 	else if (key == "listen")
 	{
-		if (value.length() >= 10 || value.find_first_not_of("0123456789") != std::string::npos)
+		if (value.length() >= 10 || value.find_first_not_of(NUMBERS) != std::string::npos)
 			return 1;
-		server->_port = std::stol(value);
+		try { server->_port = std::stol(value); }
+		catch (const std::exception& e)
+		{ return 1; }
 	}
 	else if (key == "index")
+	{
+		if (value.find_first_not_of(std::string(LETTERS) + std::string(NUMBERS) + std::string("_/.")) != std::string::npos)
+			return 1;
 		server->_index = value;
-	else if (key == "timeout")
-	{
-		if (value.length() >= 10 || value.find_first_not_of("0123456789") != std::string::npos)
-			return 1;
-		server->_timeout = std::stol(value);
-	}
-	else if (key == "max_requests")
-	{
-		if (value.length() >= 10 || value.find_first_not_of("0123456789") != std::string::npos)
-			return 1;
-		server->_maxNrOfRequests = std::stol(value);
 	}
 	else if (key == "client_max_body_size")
 	{
-		if (value.length() >= 10 || value.find_first_not_of("0123456789") != std::string::npos)
+		if (value.length() >= 10 || value.find_first_not_of(NUMBERS) != std::string::npos)
 			return 1;
-		server->_maxBodySize = std::stol(value);
+		try { server->_maxBodySize = std::stol(value); }
+		catch (const std::exception& e)
+		{ return 1; }
 	}
-	else if (key == "upload_dir")
-		server->_uploadDir = value;
 	else
 		return 1;
 	return 0;
@@ -61,8 +64,8 @@ int	parseServer(std::string line, struct ServerSettings *server)
 
 int	parseLocation(std::string line, struct LocationSettings *location)
 {
-	std::string key = line.substr(0, line.find_first_of(" "));
-	std::string value = line.substr(line.find_first_of(" ") + 1);
+	std::string key = line.substr(0, line.find_first_of(WHITESPACE));
+	std::string value = line.substr(line.find_first_of(WHITESPACE) + 1);
 	
 	// std::cout << "key: " << key << std::endl;
 	// std::cout << "value: " << value << std::endl;
@@ -76,7 +79,11 @@ int	parseLocation(std::string line, struct LocationSettings *location)
 			return 1;
 	}
 	else if (key == "index")
+	{
+		if (value.find_first_not_of(std::string(LETTERS) + std::string(NUMBERS) + std::string("_/.")) != std::string::npos)
+			return 1;
 		location->_index = value;
+	}
 	else if (key == "autoindex")
 	{
 		if (value == "on")
@@ -88,16 +95,20 @@ int	parseLocation(std::string line, struct LocationSettings *location)
 	}
 	else if (key == "return")
 	{
-		std::string code = value.substr(0, value.find_first_of(" "));
-		std::string uri = value.substr(value.find_first_of(" ") + 1);
+		std::string code = value.substr(0, value.find_first_of(WHITESPACE));
+		std::string uri = value.substr(value.find_first_of(WHITESPACE) + 1);
 		
 		if (code.empty() || uri.empty() || uri[0] != '/')
 			return 1;
-		if (code.length() != 3 || code.find_first_not_of("0123456789") != std::string::npos)
+		if (code.length() != 3 || code.find_first_not_of(NUMBERS) != std::string::npos)
 			return 1;
 
-		int errcode = std::stoi(code);
-		location->_redirect[errcode] = uri;
+		try {
+			int errcode = std::stoi(code);
+			location->_redirect[errcode] = uri;
+		}
+		catch (const std::exception& e)
+		{ return 1; }
 	}
 	else
 		return 1;
@@ -106,18 +117,23 @@ int	parseLocation(std::string line, struct LocationSettings *location)
 
 int	parseErrorPage(std::string line, std::map<int, std::string> *errorPages)
 {
-	std::string key = line.substr(0, line.find_first_of(" "));
-	std::string value = line.substr(line.find_first_of(" ") + 1);
+	std::string key = line.substr(0, line.find_first_of(WHITESPACE));
+	std::string value = line.substr(line.find_first_of(WHITESPACE) + 1);
 	
 	// std::cout << "key: " << key << std::endl;
 	// std::cout << "value: " << value << std::endl;
 	if (key.empty() || value.empty() || key.find_first_of(" \t") != std::string::npos)
 		return 1;
-	if (key.length() != 3 || key.find_first_not_of("0123456789") != std::string::npos || value[0] != '/')
+	if (key.length() != 3 || key.find_first_not_of(NUMBERS) != std::string::npos || value[0] != '/')
 		return 1;
+	
+	try {
+		int code = std::stoi(key);
+		(*errorPages)[code] = value;
+	}
+	catch (const std::exception& e)
+	{ return 1; }
 
-	int code = std::stoi(key);
-	(*errorPages)[code] = value;
 	return 0;
 }
 
@@ -135,8 +151,9 @@ void	*initLocationBlock(std::string line)
 {
 	void	*location = new struct LocationSettings();
 
-	size_t	start = 9;
-	size_t	end = line.find(" {", 9);
+	line = line.substr(9);
+	size_t	start = 0;
+	size_t	end = line.find_first_of(" \t\n\v\f\r{");
 	static_cast<struct LocationSettings *>(location)->_locationId = line.substr(start, end);
 
 	return location;

@@ -32,7 +32,7 @@ class Server
 		int		assign_name();
 		int		set_to_listen(int backlog);
 		int		initServer(struct ServerSettings *settings, int epollFd, double timeout, int maxNrOfRequests);
-		int		checkClientId(std::string id);
+		int		checkClientId(std::string id, struct connection* conn);
 		void	addClientId(std::string newCookieValue);
 		void	addSubDomain(struct ServerSettings *settings);
 
@@ -41,13 +41,16 @@ class Server
 		int			get_FD() const;
 		std::string	get_serverName(std::string host) const;
 		std::string	get_rootFolder(std::string host) const;
-		std::string	get_index(std::string host) const;
+		std::string get_uploadDir(std::string host) const; //make
+		std::string	get_index(std::string host) const; // should include location check auto index
+		std::string get_locationRoot(std::string host, std::string location) const; //make
+		bool		get_dirListing(std::string host, std::string location) const; //make
 		const struct LocationSettings*	get_locationSettings(std::string host, std::string location) const;
 		std::map<std::string, int>	get_knownClientIds() const;
 		double	get_timeout() const;
 		int		get_maxNrOfRequests() const;
 		size_t	get_maxBodySize(std::string host) const;
-		// std::list<ErrorPages>	get_errorPages(std::string host) const;
+		std::map<int, std::string>*	get_errorPages(std::string host) const; //make
 		struct connection *get_connection();
 		
 		// ============= setters ================

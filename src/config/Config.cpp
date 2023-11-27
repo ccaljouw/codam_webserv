@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/09 15:17:36 by bfranco           #+#    #+#             */
-/*   Updated: 2023/11/27 12:49:22 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/27 14:54:57 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,32 @@ Config::Config(int argc, char** argv) : _error(false), _lineNr(1)
 		_servers = std::list<struct ServerSettings*>();
 		_readConfigFile();
 	}
-	catch(const std::exception& e)
+	catch (const std::exception& e)
 	{
 		std::cerr << "Line " << _lineNr << ":" << e.what() << std::endl;
+	}
+
+	std::cout << "\nnb servers = " << _servers.size()<< std::endl;
+
+	for (const auto server : _servers) {
+		std::cout << "Server: " << server->_serverName << std::endl;
+		std::cout << server->_index <<  std::endl;
+		std::cout << server->_maxBodySize <<  std::endl;
+		std::cout << server->_port  << std::endl;
+		std::cout << server->_rootFolder <<  std::endl;
+
+		std::cout << "location size: " << server->_locations.size()<< std::endl;
+		for (const auto location : server->_locations) {
+			std::cout << "Location ID: " << location->_locationId << std::endl;
+			std::cout << location->_autoindex << std::endl;
+			std::cout << location->_index << std::endl;
+			// std::cout << location->_redirect[0] << std::endl;
+			for (const auto& method : location->_allowedMethods)
+				std::cout << method << std::endl;
+		}
+
+		// std::cout << server->_errorPages << std::endl;
+			
 	}
 }
 
@@ -47,9 +70,9 @@ Config::~Config()
 		for (auto& location : server->_locations) {
 			delete location;
 		}
-
-		server->_errorPages->clear();
 		server->_locations.clear();
+		server->_errorPages->clear();
+		delete server->_errorPages;
 		delete server;
 	}
 	_servers.clear();
@@ -60,56 +83,55 @@ bool								Config::getError() const	{	return (_error);	}
 
 void	Config::_readConfigFile()
 {
-		std::ifstream	configFile(_filename.c_str());
-		std::string		line;
-		configBlock		currentBlock = NONE;
-		void			*currentBlockPtr = NULL;
+	std::ifstream	configFile(_filename.c_str());
+	std::string		line;
+	configBlock		currentBlock = NONE;
+	void			*currentBlockPtr = NULL;
 
-		// check if file is valid and open
-		if (!configFile.is_open())
-			throw NoSuchFileException();
+	// check if file is valid and open
+	if (!configFile.is_open())
+		throw NoSuchFileException();
 
-		// read file line by line
-		while (std::getline(configFile, line))
+	// read file line by line
+	while (std::getline(configFile, line))
+	{
+		line.erase(0, line.find_first_not_of(" \t\n\v\f\r"));
+		line.erase(line.find_last_not_of("; \t\n\v\f\r") + 1);
+		// std::cout << "|" << line << "|" << std::endl;
+		if (line.empty() || line[0] == '#')
 		{
-			line.erase(0, line.find_first_not_of(" \t"));
-			line.erase(line.find_last_not_of("; \t") + 1);
-			// std::cout << "|" << line << "|" << std::endl;
-			if (line.empty() || line[0] == '#')
-			{
-				_lineNr++;
-				continue;
-			}
-
-			if (currentBlock == NONE && line.find("server {") != std::string::npos)
-			{
-				currentBlock = SERVER;
-				currentBlockPtr = initServerBlock();
-				_servers.push_back(static_cast<struct ServerSettings *>(currentBlockPtr));
-			}
-			else if (currentBlock == SERVER && line.find("location /") != std::string::npos && line.find(" {") != std::string::npos)
-			{
-				currentBlock = LOCATION;
-				currentBlockPtr = initLocationBlock(line);
-			}
-			else if (currentBlock == SERVER && line.find("errorpages {") != std::string::npos)
-			{
-				currentBlock = ERROR_PAGE;
-				currentBlockPtr = new std::map<int, std::string>;
-			}
-			else if (line.find("}") != std::string::npos)
-			{
-				if (_handleBlockEnd(&currentBlock, currentBlockPtr) == 1)
-					throw InvalidParameterException();
-			}
-			else
-			{
-				if (_handleBlockContent(line, currentBlock, currentBlockPtr) == 1)
-					throw InvalidParameterException();
-			}
 			_lineNr++;
+			continue;
 		}
-	// }
+
+		if (currentBlock == NONE && line.find("server {") != std::string::npos)
+		{
+			currentBlock = SERVER;
+			currentBlockPtr = initServerBlock();
+			_servers.push_back(static_cast<struct ServerSettings *>(currentBlockPtr));
+		}
+		else if (currentBlock == SERVER && line.find("location /") != std::string::npos && line.find(" {") != std::string::npos)
+		{
+			currentBlock = LOCATION;
+			currentBlockPtr = initLocationBlock(line);
+		}
+		else if (currentBlock == SERVER && line.find("errorpages {") != std::string::npos)
+		{
+			currentBlock = ERROR_PAGE;
+			currentBlockPtr = new std::map<int, std::string>;
+		}
+		else if (line.find("}") != std::string::npos)
+		{
+			if (_handleBlockEnd(&currentBlock, currentBlockPtr) == 1)
+				throw InvalidParameterException();
+		}
+		else
+		{
+			if (_handleBlockContent(line, currentBlock, currentBlockPtr) == 1)
+				throw InvalidParameterException();
+		}
+		_lineNr++;
+	}
 }
 
 int	Config::_handleBlockEnd(configBlock *currentBlock, void *currentBlockPtr)
@@ -123,8 +145,6 @@ int	Config::_handleBlockEnd(configBlock *currentBlock, void *currentBlockPtr)
 			*currentBlock = SERVER;
 			break;
 		case ERROR_PAGE:
-			// std::cout << "errorpages end " << std::endl;
-			// std::cout << &_servers.back()->_errorPages << std::endl;
 			_servers.back()->_errorPages = static_cast<std::map<int, std::string>*>(currentBlockPtr);
 			*currentBlock = SERVER;
 			break;

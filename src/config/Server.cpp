@@ -70,6 +70,7 @@ int Server::initServer(struct ServerSettings *settings, int epollFd, double time
 		_timeout = timeout,
 		_maxNrOfRequests = maxNrOfRequests;
 		_settings.push_back(settings);
+		std::cout << CYAN << _settings.front()->_serverName << RESET << std::endl;
 		_serverAddr.sin_family = AF_INET;
 		_serverAddr.sin_addr.s_addr = INADDR_ANY;
 		_serverAddr.sin_port = htons(settings->_port);
@@ -95,14 +96,15 @@ void	Server::addClientId(std::string newCookieValue) {
 	_knownClientIds.insert(std::make_pair(newCookieValue, 1));
 }
 
-int	Server::checkClientId(std::string id) {
+int	Server::checkClientId(std::string id, struct connection* conn) {
 
 	for (auto& pair : _knownClientIds)
 	{
 		if (pair.first == id)
 		{
-			pair.second += 1;
-			// std::cout << "user_id :"<< id << " has visited us " << pair.second << " times!" << std::endl; //for testing
+			if (conn->nr_of_requests == 1)
+				pair.second += 1;
+			std::cout << "user_id :"<< id << " has visited us " << pair.second << " times!" << std::endl; //for testing
 			return  1;
 		}
 	}
@@ -146,7 +148,8 @@ std::string	Server::get_index(std::string host) const {
 }
 
 const struct LocationSettings*	Server::get_locationSettings(std::string host, std::string location) const {
-	const ServerSettings *hostSettings = _settings.front();
+	
+	struct ServerSettings *hostSettings = _settings.front();
 	for (auto& setting : _settings) {
 		if (setting->_serverName == host)
 			hostSettings = setting;
@@ -154,10 +157,12 @@ const struct LocationSettings*	Server::get_locationSettings(std::string host, st
 	// check for non existing hostnames? of just go with an available host on the same port?
 	while (!location.empty())
 	{
-		// for (auto& loc : hostSettings->_locations) {
-		// 	if (loc._locationId == location) 
-		// 		return (&loc);
-		// }
+		// std::cout << "looking for " << location << " in " << std::endl;
+		for (auto& loc : hostSettings->_locations) {
+			// std::cout << "now " << loc->_locationId << std::endl;
+			if (loc->_locationId == location) 
+				return (loc);
+		}
 		size_t pos = location.rfind('/');
 		if (pos == 0 || pos > location.length())
 			location = "/";
@@ -195,7 +200,7 @@ std::list<Server> initServers(const Config& config, int epollFd)
 	std::list<struct ServerSettings *>	settings = config.getServers();
 
 	try {
-		for (auto& setting : settings)
+		for (auto setting : settings)
 		{
 			std::set<uint16_t>::iterator p = ports.find(setting->_port);
 			if (p == ports.end()) {
