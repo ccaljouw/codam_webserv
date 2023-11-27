@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/26 18:20:33 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/26 20:40:20 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/27 12:19:20 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,4 +119,25 @@ int	parseErrorPage(std::string line, std::map<int, std::string> *errorPages)
 	int code = std::stoi(key);
 	(*errorPages)[code] = value;
 	return 0;
+}
+
+void	*initServerBlock()
+{
+	void	*server = new struct ServerSettings();
+
+	static_cast<struct ServerSettings *>(server)->_locations = std::list<struct LocationSettings*>();
+	static_cast<struct ServerSettings *>(server)->_errorPages = nullptr;
+
+	return server;
+}
+
+void	*initLocationBlock(std::string line)
+{
+	void	*location = new struct LocationSettings();
+
+	size_t	start = 9;
+	size_t	end = line.find(" {", 9);
+	static_cast<struct LocationSettings *>(location)->_locationId = line.substr(start, end);
+
+	return location;
 }

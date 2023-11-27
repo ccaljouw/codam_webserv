@@ -6,19 +6,19 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/26 20:53:05 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/27 12:21:38 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
 #include <fstream>
 #include <map>
-#include <vector>
+#include <list>
 
-Config::Config(int argc, char** argv) : _servers(), _error(false), _lineNr(1)
+Config::Config(int argc, char** argv) : _error(false), _lineNr(1)
 {
 	if (argc == 1)
-		_filename = std::string("default.conf");
+		_filename = std::string("./config/default.conf");
 	else if (argc >= 2)
 	{
 		_filename = std::string(argv[1]);
@@ -29,6 +29,7 @@ Config::Config(int argc, char** argv) : _servers(), _error(false), _lineNr(1)
 	}
 	try
 	{
+		_servers = std::list<struct ServerSettings*>();
 		_readConfigFile();
 	}
 	catch(const std::exception& e)
@@ -122,15 +123,13 @@ void	Config::_readConfigFile()
 			if (currentBlock == NONE && line.find("server {") != std::string::npos)
 			{
 				currentBlock = SERVER;
-				currentBlockPtr = new struct ServerSettings();
+				currentBlockPtr = initServerBlock();
+				_servers.push_back(static_cast<struct ServerSettings *>(currentBlockPtr));
 			}
 			else if (currentBlock == SERVER && line.find("location /") != std::string::npos && line.find(" {") != std::string::npos)
 			{
 				currentBlock = LOCATION;
-				currentBlockPtr = new struct LocationSettings();
-				size_t start = 9;
-				size_t end = line.find(" {", 9);
-				static_cast<struct LocationSettings *>(currentBlockPtr)->_locationId = line.substr(start, end);
+				currentBlockPtr = initLocationBlock(line);
 			}
 			else if (currentBlock == SERVER && line.find("errorpages {") != std::string::npos)
 			{
@@ -156,7 +155,6 @@ int	Config::_handleBlockEnd(configBlock *currentBlock, void *currentBlockPtr)
 {
 	switch (*currentBlock) {
 		case SERVER:
-			_servers.push_back(static_cast<struct ServerSettings *>(currentBlockPtr));
 			*currentBlock = NONE;
 			break;
 		case LOCATION:
@@ -164,8 +162,9 @@ int	Config::_handleBlockEnd(configBlock *currentBlock, void *currentBlockPtr)
 			*currentBlock = SERVER;
 			break;
 		case ERROR_PAGE:
-			_servers.back()->_errorPages = static_cast<std::map<int, std::string>*>(currentBlockPtr);
 			std::cout << "errorpages end " << std::endl;
+			std::cout << &_servers.back()->_errorPages << std::endl;
+			_servers.back()->_errorPages = static_cast<std::map<int, std::string>*>(currentBlockPtr);
 			*currentBlock = SERVER;
 			break;
 		default:

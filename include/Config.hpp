@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/26 20:26:06 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/27 11:56:27 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,8 +89,10 @@ class Config
 		int									_handleBlockContent(std::string line, configBlock currentBlock, void *currentBlockPtr);
 };
 
-int	parseServer(std::string line, struct ServerSettings *server);
-int	parseLocation(std::string line, struct LocationSettings *location);
-int	parseErrorPage(std::string line, std::map<int, std::string> *errorPages);
+int		parseServer(std::string line, struct ServerSettings *server);
+int		parseLocation(std::string line, struct LocationSettings *location);
+int		parseErrorPage(std::string line, std::map<int, std::string> *errorPages);
+void	*initServerBlock();
+void	*initLocationBlock(std::string line);
 
 #endif
