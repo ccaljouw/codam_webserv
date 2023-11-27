@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/09 15:17:36 by bfranco           #+#    #+#             */
-/*   Updated: 2023/11/27 14:54:57 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/27 17:25:33 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ Config::Config(int argc, char** argv) : _error(false), _lineNr(1)
 		std::cout << "location size: " << server->_locations.size()<< std::endl;
 		for (const auto location : server->_locations) {
 			std::cout << "Location ID: " << location->_locationId << std::endl;
-			std::cout << location->_autoindex << std::endl;
+			std::cout << location->_dirListing << std::endl;
 			std::cout << location->_index << std::endl;
 			// std::cout << location->_redirect[0] << std::endl;
 			for (const auto& method : location->_allowedMethods)

@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/09 14:02:40 by bfranco           #+#    #+#             */
-/*   Updated: 2023/11/27 17:11:33 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/11/27 17:26:19 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ struct LocationSettings
 	std::set<std::string>					_allowedMethods;
 	std::map<int, std::string>				_redirect;
 	std::string								_index; //default
-	bool									_autoindex; //change to _dirListing; // changed name from autoindex
+	bool									_dirListing; // changed name from autoindex
 	// std::string								_locationRoot; // added
 };
 
