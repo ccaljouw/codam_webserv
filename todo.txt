@@ -12,11 +12,8 @@ TODO:
 - check if all errors go through seterrorresponse
 
 carlo:
-	set servername and replace all HOST
-	delete redirect
 	add header class (multimap)
+	test is dir listing 404
+	add delete redirect
+	final check on uri
 	
-	uri:
-		check uri?
-		fix host / authority part 
-
