@@ -6,15 +6,13 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/27 19:37:16 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/28 15:15:47 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webServ.hpp"
 #include <arpa/inet.h>
 #include <fstream>
-
-
 
 void	newConnection(int epollFd, int serverFd, Server *server) 
 {
@@ -28,17 +26,21 @@ void	newConnection(int epollFd, int serverFd, Server *server)
 			throw std::runtime_error("register client: " + std::string(strerror(errno)));
 	}
 	catch (std::runtime_error& e) {
-		std::cerr << "\033[31;1mError\n" << e.what() << "\n\033[0m";
+		std::cerr << RED << "Error\n" << e.what() << RESET << std::endl;
 	}	
 }
 
 void readData(connection *conn) 
 {
-    char buffer[BUFFER_SIZE];
+    char 	buffer[BUFFER_SIZE];
     ssize_t bytesRead;
 
-	if ((bytesRead = recv(conn->fd, buffer, sizeof(buffer), 0)) > 0) // what recv flag to use??
-	{
+	if (conn->nr_of_requests == conn->server->get_maxNrOfRequests()) {
+		std::cout << CYAN << "Too many requests on open socket, closing connection" << RESET << std::endl;
+		setErrorResponse(conn, 429);
+		return;
+	}
+	if ((bytesRead = recv(conn->fd, buffer, sizeof(buffer), 0)) > 0) {
 		// std::cout << YELLOW << buffer << RESET << std::endl; //for testing
 		std::time(&conn->time_last_request);
 		conn->request.append(buffer, static_cast<long unsigned int>(bytesRead));
@@ -46,9 +48,7 @@ void readData(connection *conn)
 	switch(bytesRead)
 	{
 		case -1:
-			std::cerr << "error reading" << std::endl; // for testing
-			setErrorResponse(conn, 500); // segfault?
-			// conn->state = CLOSING;
+			setErrorResponse(conn, 500);
 			break;
 		case 0:
 			checkTimeout(conn);
@@ -67,24 +67,24 @@ void readCGI(int epollFd, connection *conn)
 	char buffer[BUFFER_SIZE];
     ssize_t bytesRead;
 	
-	std::cout << "read data CGI" << "\tfd = " << conn->cgiFd << std::endl;
+	// std::cout << "read data CGI" << "\tfd = " << conn->cgiFd << std::endl; //for testing
     if ((bytesRead = read(conn->cgiFd, buffer, BUFFER_SIZE)) > 0) {
-		std::cout << BLUE << "Appending" << RESET << std::endl;
+		// std::cout << BLUE << "Appending" << RESET << std::endl; // for testing
 		conn->response.append(buffer, static_cast<long unsigned int>(bytesRead));
     }
 	if (bytesRead < BUFFER_SIZE)
 	{
-		std::cout << BLUE << buffer << RESET << std::endl;
+		// std::cout << BLUE << buffer << RESET << std::endl;
 		close(conn->cgiFd);
 		epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->cgiFd, nullptr);
 		conn->state = WRITING;
 	}
 	if (conn->response.empty() || bytesRead == -1)
 	{
-		std::cerr << "\033[31;1mError\nproblem reading CGI\033[0m" << std::endl;
+		std::cerr << RED << "Error\nproblem reading CGI" << RESET << std::endl;
 		setErrorResponse(conn, 500);
 	}
-	std::cout << BLUE << "OUT OF READ cgi" << RESET << std::endl;
+	// std::cout << BLUE << "OUT OF READ cgi" << RESET << std::endl; //for testing
 }
 
 void writeData(connection *conn) 
@@ -110,11 +110,8 @@ void writeData(connection *conn)
 	{
 		std::cout << "Response sent, nr of requsts: " << conn->nr_of_requests << std::endl; //for testing
 		conn->response.clear();
-		if (conn->nr_of_requests == conn->server->get_maxNrOfRequests())
-		{
-			std::cout << CYAN << "\033[31;1mMax requests on open socket\033[0m" << RESET << std::endl;
+		if (conn->close_after_response)
 			conn->state = CLOSING;
-		}
 		else
 			conn->state = READING;
 	}

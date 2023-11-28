@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   eventloop.hpp                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 18:13:17 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/11/27 17:02:37 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   eventloop.hpp                                      :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 18:13:17 by cariencaljo   #+#    #+#                 */
+/*   Updated: 2023/11/28 13:55:46 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,6 @@
 #include <ctime>
 
 # include "Server.hpp"
-
-# define MAX_EVENTS 10
-# define BUFFER_SIZE 1024
 
 enum	states {
 	LISTENING,
@@ -48,6 +45,7 @@ struct connection
 	Server						*server;
 	std::time_t					time_last_request;
 	int							nr_of_requests;
+	bool						close_after_response;
 };
 
 // handlers.cpp

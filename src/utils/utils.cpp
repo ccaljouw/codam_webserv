@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/24 13:53:19 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/28 15:06:26 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,12 @@ std::string getTimeStamp() {
 void	setErrorResponse(connection *conn, int error)
 {
 	HttpResponse response;
-	response.setStatusCode(error);
 	std::string errorHtmlPath = generateErrorPage(error);
+	response.setStatusCode(error);
+	if (error == 408 || error == 429 || error == 500) {
+		conn->close_after_response = 1;
+		response.setHeader("Connection", "close");		
+	}
 	// std::string errorHtmlPath = generateErrorPage(conn, error); //for confid error page
 
 	std::ifstream f(errorHtmlPath);
@@ -63,7 +67,7 @@ void	checkTimeout(connection *conn)
 		if (difftime(std::time(nullptr), conn->time_last_request) > conn->server->get_timeout()) {
 
 			std::cout << CYAN << "Timeout" << RESET << std::endl;
-			conn->state = CLOSING; 
+			setErrorResponse(conn, 408);
 		}
 		else
 			conn->state = READING;
