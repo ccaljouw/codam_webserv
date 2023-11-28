@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/24 15:59:25 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/27 19:38:15 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	handleRequest(int epollFd, connection *conn) {
 		HttpRequest request(conn->request, conn->server);
 
 		// Handle parsing error
-		if (request.getRequestStatus() != 200)
+		if (request.getRequestStatus() != 200) 
 			setErrorResponse(conn, request.getRequestStatus());
 
 		//check and set cookie
@@ -36,8 +36,11 @@ void	handleRequest(int epollFd, connection *conn) {
 			size_t	maxContentLength		= conn->server->get_maxBodySize(request.getHeaderValue("host"));
 			size_t	actualContentLength		= request.getBody().size();
 			size_t	headerContentLength		= 0;
-			if (request.isHeader("content-length"))
+			if (request.isHeader("content-length")) {
+				std::cout << "header content len: " << request.getHeaderValue("content-length") << "\n";
+				std::cout << "actual content len: " << actualContentLength << "\n";
 				headerContentLength = std::stoi(request.getHeaderValue("content-length"));
+			}
 			if (headerContentLength > maxContentLength || headerContentLength != actualContentLength) 
 			 	throw HttpRequest::parsingException(400, "content-length to big or wrong");
 

@@ -37,21 +37,27 @@ class Server
 		void	addSubDomain(struct ServerSettings *settings);
 
 		// ============= getters ================
-		uint16_t	get_port(void) const;
-		int			get_FD() const;
-		std::string	get_serverName(std::string host) const;
-		std::string	get_rootFolder(std::string host) const;
-		std::string get_uploadDir(std::string host) const;
-		std::string	get_index(std::string host, std::string location) const;
-		// std::string get_locationRoot(std::string host, std::string location) const; //make
-		bool		get_dirListing(std::string host, std::string location) const;
-		const struct LocationSettings*	get_locationSettings(std::string host, std::string location) const;
-		std::map<std::string, int>	get_knownClientIds() const;
-		double	get_timeout() const;
-		int		get_maxNrOfRequests() const;
-		size_t	get_maxBodySize(std::string host) const;
+		uint16_t							get_port(void) const;
+		int									get_FD() const;
+		struct sockaddr_in					get_serverAddr() const;
+		double								get_timeout() const;
+		int									get_maxNrOfRequests() const;
+		std::map<std::string, int>			get_knownClientIds() const;
+		std::list<struct ServerSettings *>	get_settings() const;
+		struct connection*					get_connection() const;
+		
+		struct ServerSettings*		get_hostSettings(std::string host) const;
+		struct LocationSettings*	get_locationSettings(std::string host, std::string location) const;
+		
+		std::string					get_serverName(std::string host) const;
+		std::string					get_rootFolder(std::string host) const;
+		std::string					get_uploadDir(std::string host) const;
 		std::map<int, std::string>*	get_errorPages(std::string host) const;
-		struct connection *get_connection();
+		size_t						get_maxBodySize(std::string host) const;
+
+		std::string					get_index(std::string host, std::string location) const;
+		bool						get_dirListing(std::string host, std::string location) const;
+		std::string 				get_locationRoot(std::string host, std::string location) const;
 		
 		// ============= setters ================
 		void	set_connection(struct connection *conn);
@@ -69,7 +75,6 @@ class Server
 		};
 	
 	private:
-
 
 		int 								_fd;
 		struct sockaddr_in					_serverAddr;

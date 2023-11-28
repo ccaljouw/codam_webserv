@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Config.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/09 14:02:40 by bfranco           #+#    #+#             */
-/*   Updated: 2023/11/27 17:26:19 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Config.hpp                                         :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
+/*   Updated: 2023/11/28 11:28:46 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,9 @@ struct LocationSettings
 	std::string								_locationId;
 	std::set<std::string>					_allowedMethods;
 	std::map<int, std::string>				_redirect;
-	std::string								_index; //default
-	bool									_dirListing; // changed name from autoindex
-	// std::string								_locationRoot; // added
+	std::string								_index;
+	bool									_dirListing;
+	std::string								_locationRoot;
 };
 
 struct ServerSettings
