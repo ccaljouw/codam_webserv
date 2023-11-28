@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/26 18:20:33 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/28 10:26:39 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/28 10:49:39 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	parseServer(std::string line, struct ServerSettings *server)
 	else if (key == "root")
 	{
 		if (access(value.c_str(), F_OK | R_OK) == -1)
-			return 1;
+			return 2;
 		server->_rootFolder = value;
 	}
 	else if (key == "upload_dir")

@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/28 09:58:16 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/28 11:00:37 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ class Config
 		class NoSuchFileException : public std::exception
 		{
 			virtual const char *	what() const throw() {
-				return ("Invalid config file or wrong permissions");
+				return ("Invalid path or wrong permissions");
 			}
 		};
 
