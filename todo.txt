@@ -9,13 +9,11 @@ TODO:
 - cookie script -Bruno
 - cleanup includes
 
-Done
+DONE:
 - finish config parser (check for at least all mandatory settings in location / and server) -Bruno
 - Error pages - add check on defined error pages for server 
 
-
-429 Too Many Requests
-444 Connection Closed Without Response
+ERROR CODES TO CONSIDER:
 408 Request Timeout
 413 Payload Too Large
 	The 413 Payload Too Large status code means the server refuses to process the request because 
@@ -25,3 +23,7 @@ Done
 429 Too Many Requests
 501/418 Not Implemented
 503 Service Unavailable
+
+CHECK/THOUGHTS:
+- close connection CGI
+- only update nr of times visited when GET request with .html extension. That way it would maybe make some more sense to the user. 

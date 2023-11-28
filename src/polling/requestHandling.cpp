@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/27 19:38:15 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/28 20:06:13 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 // TODO:	check allowed methods for contentType
 void	handleRequest(int epollFd, connection *conn) {
+	std::cout << "handleRequest" << "\tfd = " << conn->fd << std::endl; //for testing
 	try {
 		// Process the request data
 		HttpRequest request(conn->request, conn->server);
@@ -48,7 +49,6 @@ void	handleRequest(int epollFd, connection *conn) {
 			if (cgiHandler(request, conn, epollFd) == 1 ) 
 				setErrorResponse(conn, 500);	
 			else {
-				// conn->state = CLOSING;
 				conn->request.clear();
 				conn->state = IN_CGI;
 			}
@@ -102,4 +102,5 @@ void	handleRequest(int epollFd, connection *conn) {
 		std::cout << RED << "Error: " + std::to_string(exception.getErrorCode()) << " " << exception.what() << RESET << std::endl;
 		setErrorResponse(conn, exception.getErrorCode());
 	}
+	std::cout << "end of handleRequest" << std::endl; //testing
 }

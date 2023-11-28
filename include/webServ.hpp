@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/28 13:56:04 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/28 16:12:18 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 #define MAX_EVENTS 10
 #define BUFFER_SIZE 1024
 #define TIMEOUT	5
-#define	MAX_NR_REQUESTS 10
+#define	MAX_NR_REQUESTS 30
 
 
 //colors
@@ -63,7 +63,7 @@ extern	std::map<int, std::string> HttpResponseCodes;
 extern	int g_shutdown_flag;
 
 // utils.cpp
-void			checkTimeout(connection *conn);
+int				checkTimeout(connection *conn);
 void			setResponse(connection *conn, HttpResponse resp);
 void			setErrorResponse(connection *conn, int error);
 std::string		checkAndSetCookie(connection* conn, HttpRequest& request);

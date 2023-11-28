@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/28 11:54:14 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/28 23:19:54 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,17 +46,18 @@ int main(int argc, char **argv) {
 		
 		for (int i = 0; i < numEvents; i++) {
 			connection *conn = static_cast<connection *>(events[i].data.ptr);
+			checkTimeout(conn);
 			if (events[i].events & EPOLLIN && conn->state == LISTENING)
 				newConnection(epollFd, conn->fd, conn->server);
 			if (events[i].events & EPOLLIN && conn->state == READING)
 				readData(conn);
 			if (conn->state == HANDLING)
 				handleRequest(epollFd, conn);
-			if (events[i].events & EPOLLIN && conn->state == IN_CGI)
+			if (events[i].events & EPOLLHUP && conn->state == IN_CGI)
 				readCGI(epollFd, conn);
 			if (events[i].events & EPOLLOUT && conn->state == WRITING)
 				writeData(conn);
-			if (events[i].events & EPOLLERR || events[i].events & EPOLLHUP || conn->state == CLOSING)
+			if (events[i].events & EPOLLERR || conn->state == CLOSING)
 				closeConnection(epollFd, conn);
 		}
 	}

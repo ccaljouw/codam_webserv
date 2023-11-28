@@ -96,7 +96,7 @@ int	Server::checkClientId(std::string id, struct connection* conn) {
 	{
 		if (pair.first == id)
 		{
-			if (conn->nr_of_requests == 1)
+			if (conn->nr_of_requests == 1) 
 				pair.second += 1;
 			std::cout << "user_id :"<< id << " has visited us " << pair.second << " times!" << std::endl; //for testing
 			return  1;

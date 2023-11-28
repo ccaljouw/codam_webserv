@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/28 15:06:26 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/28 23:12:15 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 #include<string>
 #include<fstream>
-
+#include <signal.h>
 
 std::string getTimeStamp() {
 	//get current time
@@ -35,7 +35,7 @@ void	setErrorResponse(connection *conn, int error)
 	HttpResponse response;
 	std::string errorHtmlPath = generateErrorPage(error);
 	response.setStatusCode(error);
-	if (error == 408 || error == 429 || error == 500) {
+	if (error == 408 || error == 429 || error == 500 || error == 504) {
 		conn->close_after_response = 1;
 		response.setHeader("Connection", "close");		
 	}
@@ -59,21 +59,35 @@ void	setResponse(connection *conn, HttpResponse resp)
 
 // Some browsers (eg Firefox), check form timeout based on header keep-alive with timeout.
 // others (eg safari) do not close the connection themselves
-void	checkTimeout(connection *conn)
+int	checkTimeout(connection *conn)
 {
-	if (conn->request.empty()) 
-	{
-		// std::cout << "checkout timeout: " << difftime(std::time(nullptr), conn->time_last_request) << std::endl;
-		if (difftime(std::time(nullptr), conn->time_last_request) > conn->server->get_timeout()) {
+	// if (conn->state == IN_CGI || conn->state == WRITING) // for testing
+	// 	std::cout << GREEN << "in check timeout: " << conn->state << RESET << std::endl; // for testing
+	if (difftime(std::time(nullptr), conn->time_last_request) > conn->server->get_timeout()) {
 
-			std::cout << CYAN << "Timeout" << RESET << std::endl;
-			setErrorResponse(conn, 408);
+		switch(conn->state)
+		{
+			case READING:
+				std::cerr << CYAN << "request timeout" << RESET << std::endl;
+				setErrorResponse(conn, 408);
+				return 1;
+			case IN_CGI:
+				std::cerr << CYAN << "timeout in cgi" << RESET << std::endl;
+				if (conn->cgiPID) {
+					close(conn->cgiPID);
+					kill(conn->cgiPID, SIGTERM);
+				}
+				setErrorResponse(conn, 504);
+				return 1;
+			case HANDLING:
+				std::cerr << CYAN << "timout in process" << RESET << std::endl;
+				setErrorResponse(conn, 500);
+				return 1;
+			default:
+				return 0;
 		}
-		else
-			conn->state = READING;
 	}
-	else
-		conn->state = HANDLING;
+	return 0;
 }
 
 
@@ -89,7 +103,6 @@ std::string	removeWhitespaces(std::string str) {
 }
 
 
-void handleSignal(int signal)
-{
+void handleSignal(int signal) {
 	g_shutdown_flag = signal;
 }

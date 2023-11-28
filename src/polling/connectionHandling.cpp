@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/28 15:15:47 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/28 23:18:58 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ void readData(connection *conn)
     char 	buffer[BUFFER_SIZE];
     ssize_t bytesRead;
 
+	// std::cout << "readData" << "\tfd = " << conn->fd << std::endl; //for testing
 	if (conn->nr_of_requests == conn->server->get_maxNrOfRequests()) {
 		std::cout << CYAN << "Too many requests on open socket, closing connection" << RESET << std::endl;
 		setErrorResponse(conn, 429);
@@ -51,13 +52,11 @@ void readData(connection *conn)
 			setErrorResponse(conn, 500);
 			break;
 		case 0:
-			checkTimeout(conn);
 			break;
 		case BUFFER_SIZE:
-			conn->state = READING;
 			break;
 		default:
-			conn->nr_of_requests += 1;
+			conn->nr_of_requests += 1; // find other way to do this nicer
 			conn->state = HANDLING;
 	}
 }
@@ -67,31 +66,27 @@ void readCGI(int epollFd, connection *conn)
 	char buffer[BUFFER_SIZE];
     ssize_t bytesRead;
 	
-	// std::cout << "read data CGI" << "\tfd = " << conn->cgiFd << std::endl; //for testing
+	std::cout << "readCGI" << "\tcgiFd = " << conn->cgiFd << std::endl; //for testing
     if ((bytesRead = read(conn->cgiFd, buffer, BUFFER_SIZE)) > 0) {
-		// std::cout << BLUE << "Appending" << RESET << std::endl; // for testing
 		conn->response.append(buffer, static_cast<long unsigned int>(bytesRead));
     }
-	if (bytesRead < BUFFER_SIZE)
-	{
-		// std::cout << BLUE << buffer << RESET << std::endl;
+	if (bytesRead < BUFFER_SIZE) {
+		std::cout << BLUE << buffer << RESET << std::endl;
 		close(conn->cgiFd);
 		epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->cgiFd, nullptr);
 		conn->state = WRITING;
 	}
-	if (conn->response.empty() || bytesRead == -1)
-	{
+	if (conn->response.empty() || bytesRead == -1) {
 		std::cerr << RED << "Error\nproblem reading CGI" << RESET << std::endl;
 		setErrorResponse(conn, 500);
 	}
-	// std::cout << BLUE << "OUT OF READ cgi" << RESET << std::endl; //for testing
 }
 
 void writeData(connection *conn) 
 {
 	int			len;
 	
-	conn->state = WRITING;
+	std::cout << "writeData" << "\tfd = " << conn->fd << std::endl; //for testing
 	// std::cout << PURPLE << conn->response << RESET << std::endl; //for testing
 	len = std::min(static_cast<int>(conn->response.length()), BUFFER_SIZE);
     len = send(conn->fd, conn->response.c_str(), conn->response.length(), 0);
@@ -119,6 +114,7 @@ void writeData(connection *conn)
 
 void	closeConnection(int epollFd, connection *conn)
 {
+	std::cout << "closeConnection" << "\tfd = " << conn->fd  << "\tCGIfd = " << conn->cgiFd << std::endl; //for testing
 	epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->fd, nullptr);
 	if (conn->cgiFd) {
 		std::cout << CYAN << "Connection on CGIfd " << conn->cgiFd << " closed" << RESET << std::endl;

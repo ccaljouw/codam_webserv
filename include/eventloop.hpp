@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 18:13:17 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/28 13:55:46 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/28 16:36:04 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ struct connection
 {
 	int							fd;
 	int							cgiFd;
-	int							cgiPID; 
+	pid_t						cgiPID; 
 	states						state;
 	std::string					request;
 	std::string					response;

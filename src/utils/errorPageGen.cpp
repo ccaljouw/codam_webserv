@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/24 08:20:32 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/28 13:40:02 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/28 16:06:45 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ std::map<int, std::string> errorPages = {
 	{ 500, "Internal Error"},				// The server encountered an unexpected condition which prevented it from fulfilling the request. 
 	{ 501, "Not implemented"},				// The server does not support the facility required. 
 	// { 502, "Service temporary overloaded"},
-	// { 503, "Gateway timeout"},
+	{ 504, "Gateway timeout"},
 	{ 505, "version not supported"}
 };
 

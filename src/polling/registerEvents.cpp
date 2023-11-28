@@ -6,12 +6,13 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:48:35 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/28 15:12:49 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/28 23:11:41 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webServ.hpp"
 #include <string.h>
+#include <fcntl.h>
 
 int	register_server(int epollFd, int fd, Server *server)
 {
@@ -22,6 +23,7 @@ int	register_server(int epollFd, int fd, Server *server)
 	conn = new connection;
 	conn->fd = fd;
 	conn->cgiFd = 0;
+	conn->cgiPID = 0;
 	conn->state = LISTENING;
 	conn->request = "";
 	conn->response = "";
@@ -45,6 +47,7 @@ int	register_client(int epollFd, int fd, Server *server)
 	conn = new connection;
 	conn->fd = fd;
 	conn->cgiFd = 0;
+	conn->cgiPID = 0;
 	conn->state = READING;
 	conn->request = "";
 	conn->response = "";
@@ -56,8 +59,11 @@ int	register_client(int epollFd, int fd, Server *server)
 	conn->close_after_response = 0;
 	if (epoll_ctl(epollFd, EPOLL_CTL_ADD, fd, &event) == -1)
 	{
-		// try again and if not successfull after 3 times send error and close
-		close(fd);
+		std::cerr << RED << "Error/nNot able to register new connection to epoll list" << RESET <<std::endl;
+		setErrorResponse(conn, 500);
+		while (conn->state == WRITING)
+			writeData(conn);
+		close(conn->fd);
 		delete conn;
 		return 1;
 	}
@@ -69,12 +75,16 @@ int	register_CGI(int epollFd, int cgiFd, connection *conn)
 	struct epoll_event 	event;
 	
 	conn->cgiFd = cgiFd;
-	event.events = EPOLLIN;   
+	event.events = EPOLLHUP;
     event.data.ptr = conn;
 	if (epoll_ctl(epollFd, EPOLL_CTL_ADD, cgiFd, &event) == -1)
 	{
+		std::cerr << RED << "Error/nNot able to register CGI to epoll list" << RESET <<std::endl;
 		setErrorResponse(conn, 500);
+		close (conn->cgiFd);
+		conn->cgiFd = 0;
 		return 1;
 	}
+	std::cout << GREEN << "cgi registered for " << conn->cgiFd << " state: " << conn->state << RESET <<std::endl;  //testing
 	return 0;
 }
