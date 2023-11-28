@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/27 23:26:34 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/28 08:44:03 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void	handleRequest(int epollFd, connection *conn) {
 		//handle GET
 		else if (request.getMethod() == "GET") {
 			if (!contentType.empty()) {
-				std::string fullPath = "data/" + contentType + request.uri.getPath();
+				std::string fullPath = "data/" + contentType + request.uri.getPath(); // todo: change to root in stead of content type
 				std::ifstream f(fullPath);
 
 				if (f.good())
@@ -86,7 +86,7 @@ void	handleRequest(int epollFd, connection *conn) {
 				setResponse(conn, response);
 			} 
 			else
-				throw HttpRequest::parsingException(501, "Extension not supported");
+				throw HttpRequest::parsingException(404, "Page not found in request handler");
 		}
 
 		//handle POST
