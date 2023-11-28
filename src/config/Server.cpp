@@ -19,27 +19,23 @@
 
 // ============= con-/destructors ================
 
-Server::Server() : _fd(0), _conn(nullptr) {
-	// std::cout << CYAN << "server default constructor called" << RESET << std::endl;
-}
+Server::Server() : _fd(0), _conn(nullptr) {}
 
-Server::Server( Server const & src ) : _conn(nullptr) { 
+Server::Server( Server const & src ) { 
 	_fd = src.get_FD();
+	_serverAddr = src.get_serverAddr();
+	_knownClientIds = src.get_knownClientIds();
 	_timeout = src.get_timeout();
 	_maxNrOfRequests = src.get_maxNrOfRequests();
-	// add other stuff...
-	// std::cout << CYAN << "server copy constructor called" << RESET << std::endl;
+	_settings = src.get_settings();
+	_conn = src.get_connection();
 }
 
 Server::~Server() {	
-	if (_fd) {
-		std::cout << CYAN << "server destructor called for fd: " << _fd << RESET << std::endl;
+	if (_fd)
 		close(_fd); 
-	}
-	if (_conn) {
-		std::cout << CYAN << "connection struct deleted" << RESET << std::endl;
+	if (_conn)
 		delete _conn;
-	}
 }
 
 // ============= Methods ================
@@ -52,7 +48,6 @@ int	Server::assign_name()
 	if (bind(_fd, reinterpret_cast<struct sockaddr*>(&_serverAddr), sizeof(_serverAddr)) == -1) {
 		return 1;
 	}
-		// throw ServerException(settings._serverName + " setsocket: ");
 	return 0;
 }
 
@@ -70,7 +65,6 @@ int Server::initServer(struct ServerSettings *settings, int epollFd, double time
 		_timeout = timeout,
 		_maxNrOfRequests = maxNrOfRequests;
 		_settings.push_back(settings);
-		std::cout << CYAN << _settings.front()->_serverName << RESET << std::endl;
 		_serverAddr.sin_family = AF_INET;
 		_serverAddr.sin_addr.s_addr = INADDR_ANY;
 		_serverAddr.sin_port = htons(settings->_port);
@@ -88,7 +82,7 @@ int Server::initServer(struct ServerSettings *settings, int epollFd, double time
 		std::cerr << RED << e.what() << RESET << std::endl;
 		return 1;
 	}
-	std::cout << "\033[32;1mServer: " << settings->_serverName << ", listening on port "  << settings->_port << "\033[0m" << std::endl;
+	std::cout << GREEN << "Server: " << settings->_serverName << ", listening on port "  << settings->_port << RESET << std::endl;
 	return 0;
 }
 
@@ -114,52 +108,29 @@ int	Server::checkClientId(std::string id, struct connection* conn) {
 void	Server::addSubDomain(struct ServerSettings *settings) {	_settings.push_back(settings);	}
 
 // ============= Getters ================
-uint16_t					Server::get_port(void) const {	return	_settings.front()->_port;	}
-int							Server::get_FD() const { return _fd; }
-std::map<std::string, int>	Server::get_knownClientIds() const {	return _knownClientIds;	}	
-double						Server::get_timeout() const { return _timeout; }
-int							Server::get_maxNrOfRequests() const { return _maxNrOfRequests; }
+uint16_t							Server::get_port(void) const {	return	_settings.front()->_port; }
+int									Server::get_FD() const { return _fd; }
+struct sockaddr_in					Server::get_serverAddr() const { return _serverAddr; }
+std::map<std::string, int>			Server::get_knownClientIds() const { return _knownClientIds; }	
+double								Server::get_timeout() const { return _timeout; }
+int									Server::get_maxNrOfRequests() const { return _maxNrOfRequests; }
+std::list<struct ServerSettings *>	Server::get_settings() const { return _settings; }
+struct connection*					Server::get_connection() const { return _conn; }
 
-std::string	Server::get_serverName(std::string host) const { 
-	const ServerSettings *hostSettings = _settings.front();
-	for (auto& setting : _settings) {
-		if (setting->_serverName == host)
-			hostSettings = setting;
-	}
-	return hostSettings->_serverName;
-}
-
-std::string	Server::get_rootFolder(std::string host) const { 
-	const ServerSettings *hostSettings = _settings.front();
-	for (auto& setting : _settings) {
-		if (setting->_serverName == host)
-			hostSettings = setting;
-	}
-	return hostSettings->_rootFolder;
-}
-
-std::string	Server::get_index(std::string host) const {
-	const ServerSettings *hostSettings = _settings.front();
-	for (auto& setting : _settings) {
-		if (setting->_serverName == host)
-			hostSettings = setting;
-	}
-	return hostSettings->_index;
-}
-
-const struct LocationSettings*	Server::get_locationSettings(std::string host, std::string location) const {
-	
+struct ServerSettings*		Server::get_hostSettings(std::string host) const {
 	struct ServerSettings *hostSettings = _settings.front();
 	for (auto& setting : _settings) {
 		if (setting->_serverName == host)
 			hostSettings = setting;
 	}
-	// check for non existing hostnames? of just go with an available host on the same port?
+	return hostSettings;
+}
+
+struct LocationSettings*	Server::get_locationSettings(std::string host, std::string location) const {
+	struct ServerSettings *hostSettings = get_hostSettings(host);
 	while (!location.empty())
 	{
-		// std::cout << "looking for " << location << " in " << std::endl;
 		for (auto& loc : hostSettings->_locations) {
-			// std::cout << "now " << loc->_locationId << std::endl;
 			if (loc->_locationId == location) 
 				return (loc);
 		}
@@ -173,19 +144,39 @@ const struct LocationSettings*	Server::get_locationSettings(std::string host, st
 	return (nullptr);
 }
 
-size_t	Server::get_maxBodySize(std::string host) const {
-	const ServerSettings *hostSettings = _settings.front();
-	for (auto& setting : _settings) {
-		if (setting->_serverName == host)
-			hostSettings = setting;
-	}
-	return hostSettings->_maxBodySize; 
+std::string	Server::get_serverName(std::string host) const { 
+	return get_hostSettings(host)->_serverName;
 }
 
-struct connection *Server::get_connection() {	return _conn;	}
+std::string	Server::get_rootFolder(std::string host) const { 
+	return get_hostSettings(host)->_rootFolder;
+}
 
-// std::list<ErrorPages>	Server::get_errorPages() const { return _errorPages; }
+std::string Server::get_uploadDir(std::string host) const {
+	return get_hostSettings(host)->_uploadDir;
+}
 
+std::map<int, std::string>*	Server::get_errorPages(std::string host) const {
+	return get_hostSettings(host)->_errorPages;
+}
+
+size_t	Server::get_maxBodySize(std::string host) const {
+	return get_hostSettings(host)->_maxBodySize; 
+}
+
+std::string	Server::get_index(std::string host, std::string location) const {
+	return get_locationSettings(host, location)->_index;
+}
+
+bool		Server::get_dirListing(std::string host, std::string location) const {
+	return get_locationSettings(host, location)->_dirListing;
+}
+
+std::string	Server::get_locationRoot(std::string host, std::string location) const {
+	return get_locationSettings(host, location)->_locationRoot;
+}
+
+// ============= setters ================
 void	Server::set_connection(struct connection *conn) {
 	_conn = conn;
 }

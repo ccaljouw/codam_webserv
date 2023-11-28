@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   Config.cpp                                         :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/28 11:08:12 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/28 11:48:24 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
