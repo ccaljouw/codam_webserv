@@ -24,7 +24,9 @@ def genFilename(filePath) -> str:
 def uploadFile(form) -> (int, str) :
 
 	# Create uploads folder if it doesn't exist
-	uploadDir = os.getcwd() + '/uploads'
+	if os.path.exists(os.environ.get("PATH_INFO")) == False:
+		return (500, "Internal Server Error")
+	uploadDir = os.environ.get("PATH_INFO") + "/" + os.environ.get("UPLOAD_DIR")
 	if os.path.exists(uploadDir) == False:
 		os.mkdir(uploadDir)
 	
