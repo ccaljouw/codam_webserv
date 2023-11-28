@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/26 18:20:33 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/29 10:09:01 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/29 10:09:29 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,6 @@ int	parseServer(std::string line, struct ServerSettings *server)
 	std::string key = line.substr(0, line.find_first_of(WHITESPACE));
 	std::string value = line.substr(line.find_first_of(WHITESPACE) + 1);
 
-	// std::cout << "key: " << key << std::endl;
-	// std::cout << "value: " << value << std::endl;
 	if (key.empty() || value.empty())
 		return 1;
 	
@@ -36,11 +34,7 @@ int	parseServer(std::string line, struct ServerSettings *server)
 		server->_rootFolder = value;
 	}
 	else if (key == "upload_dir")
-	{
-		if (access(value.c_str(), F_OK | W_OK | R_OK) == -1)
-			return 1;
 		server->_uploadDir = value;
-	}
 	else if (key == "listen")
 	{
 		if (value.length() >= 10 || value.find_first_not_of(NUMBERS) != std::string::npos)
@@ -73,8 +67,6 @@ int	parseLocation(std::string line, struct LocationSettings *location)
 	std::string key = line.substr(0, line.find_first_of(WHITESPACE));
 	std::string value = line.substr(line.find_first_of(WHITESPACE) + 1);
 
-	// std::cout << "key: " << key << std::endl;
-	// std::cout << "value: " << value << std::endl;
 	if (key.empty() || value.empty())
 		return 1;
 	if (key == "allow")
@@ -90,7 +82,7 @@ int	parseLocation(std::string line, struct LocationSettings *location)
 			return 1;
 		location->_index = value;
 	}
-	else if (key == "autoindex")
+	else if (key == "dirListing")
 	{
 		if (value == "on")
 			location->_dirListing = true;
@@ -104,7 +96,7 @@ int	parseLocation(std::string line, struct LocationSettings *location)
 		std::string code = value.substr(0, value.find_first_of(WHITESPACE));
 		std::string uri = value.substr(value.find_first_of(WHITESPACE) + 1);
 		
-		if (code.empty() || uri.empty())
+		if (code.empty() || uri.empty() || uri.find_first_of(WHITESPACE) != std::string::npos)
 			return 1;
 		if (code.length() != 3 || code.find_first_not_of(NUMBERS) != std::string::npos)
 			return 1;
@@ -125,10 +117,8 @@ int	parseErrorPage(std::string line, std::map<int, std::string> *errorPages)
 {
 	std::string key = line.substr(0, line.find_first_of(WHITESPACE));
 	std::string value = line.substr(line.find_first_of(WHITESPACE) + 1);
-	
-	// std::cout << "key: " << key << std::endl;
-	// std::cout << "value: " << value << std::endl;
-	if (key.empty() || value.empty() || key.find_first_of(" \t") != std::string::npos)
+
+	if (key.empty() || value.empty() || value.find_first_of(WHITESPACE) != std::string::npos)
 		return 1;
 	if (key.length() != 3 || key.find_first_not_of(NUMBERS) != std::string::npos || value[0] != '/')
 		return 1;
@@ -164,10 +154,7 @@ void	*initLocationBlock(std::string line)
 	struct LocationSettings	*location = new struct LocationSettings();
 
 	line = line.substr(9);
-	size_t	start = 0;
-	size_t	end = line.find_first_of(" \t\n\v\f\r{");
-
-	location->_locationId = line.substr(start, end);
+	location->_locationId = line.substr(0, line.find_first_of(" \t\n\v\f\r{"));
 	location->_allowedMethods = std::set<std::string>();
 	location->_redirect = std::map<int, std::string>();
 	location->_index = "";
@@ -176,3 +163,17 @@ void	*initLocationBlock(std::string line)
 	return static_cast<void *>(location);
 }
 
+void	deleteBlock(const configBlock& currentBlock, void *currentBlockPtr)
+{
+	if (currentBlock == LOCATION)
+	{
+		struct LocationSettings *location = static_cast<struct LocationSettings *>(currentBlockPtr);
+		delete location;
+	}
+	else if (currentBlock == ERROR_PAGE)
+	{
+		std::map<int, std::string> *errorPages = static_cast<std::map<int, std::string> *>(currentBlockPtr);
+		delete errorPages;
+	}
+	currentBlockPtr = nullptr;
+}

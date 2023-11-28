@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/29 10:08:30 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/29 10:09:21 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,9 +83,15 @@ class Config
 
 		class MissingParameterException : public std::exception
 		{
-			virtual const char *	what() const throw() {
-				return ("Missing mandatory parameter");
-			}
+			std::string	_msg = "Missing mandatory parameter";
+			public:
+				MissingParameterException(std::string parameter)
+				{
+					_msg += (std::string(": ") + parameter);
+				}
+				virtual const char *	what() const throw() {
+					return (_msg.c_str());
+				}
 		};
 	
 		Config(int argc, char **argv);
@@ -115,6 +121,7 @@ class Config
 int		parseServer(std::string line, struct ServerSettings *server);
 int		parseLocation(std::string line, struct LocationSettings *location);
 int		parseErrorPage(std::string line, std::map<int, std::string> *errorPages);
+void	deleteBlock(const configBlock& currentBlock, void *currentBlockPtr);
 void	*initServerBlock();
 void	*initLocationBlock(std::string line);
 
