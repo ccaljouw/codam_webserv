@@ -2,16 +2,31 @@
 
 import pathlib, datetime, os, sys
 
+status = 200
 files = []
-def listFiles(path):
+def listFiles(path) -> int:
+	if path.exists() == False:
+		return 404
 	for f in path.iterdir():
 		if f.is_file():
 			files.append("/" + str(f))
 		elif f.is_dir():
 			listFiles(f)
+	return 200
 
-listFiles(pathlib.Path("./data"))
-listFiles(pathlib.Path("./cgi-bin"))
+if os.environ.get("PATH_INFO") != None:
+	if os.environ.get("QUERY_STRING") == None:
+		status = listFiles(pathlib.Path(os.environ.get("PATH_INFO")))
+		if status == 200:
+			status = listFiles(pathlib.Path("./cgi-bin"))
+	else:
+		key, value = os.environ.get("QUERY_STRING").split("=")
+		if value == "cgi-bin":
+			status = listFiles(pathlib.Path("./cgi-bin"))
+		else:
+			status = listFiles(pathlib.Path(os.environ.get("PATH_INFO").join(value)))
+else:
+	status = 500
 
 x = datetime.datetime.now()
 date = x.strftime("%a, %d %b %Y %H:%M:%S GMT")
@@ -33,7 +48,7 @@ Content-Length: {len(body.encode("utf-8"))}\r
 Content-type: text/html; charset=utf-8\r
 Date: {date}\r
 Last-Modified: {date}\r
-Server: CODAM_WEBSERV\r\n\r"""
+Server: {os.environ.get("SERVER")}\r\n\r"""
 
 print(header)
 print(body)

@@ -3,7 +3,8 @@
 date=`date -u +"%a, %d %b %Y %H:%M:%S GMT"`
 date=`date -u +"%a, %d %b %Y %H:%M:%S GMT"`
 
-body="<html>
+body="<!DOCTYPE html>
+<html>
 	<head>
 		<link rel=\"icon\" href=\"data:,\">
 		<title>Bash Test</title>
@@ -21,7 +22,7 @@ Content-type: text/html; charset=utf-8\r
 Date: $date\r
 Last-Modified: $date\r
 Connection: close\r
-Server: CODAM_WEBSERV\r\n\r"
+Server: $SERVER\r\n\r"
 
 echo "$header"
 echo "$body"
