@@ -3,6 +3,7 @@
 status=""
 message=""
 filename=""
+dir=""
 
 # checks if the query string is empty and if no argument was given
 if [[ -z "$QUERY_STRING"  && -z "$1" ]]
@@ -26,13 +27,29 @@ else
 	fi
 fi
 
+# checks if the server sent the root path
+if [-z "$PATH_INFO"]
+then
+	message="Internal Server Error"
+	status="500"
+fi
+
+# checks if the server sent the upload directory
+if [[ -z "$status" && -z "$UPLOAD_DIR" ]]
+then
+	message="Internal Server Error"
+	status="500"
+else
+	dir="$PATHINFO/$UPLOAD_DIR"
+fi
+
 # checks if status was previously set
 if [ -z "$status" ]
 then
 	# checks if the file exists
-	if [ -f "./uploads/$filename" ]
+	if [ -f "$dir/$filename" ]
 	then
-		rm -rf "./uploads/$filename" 2> /dev/null > /dev/null 
+		rm -rf "$dir/$filename" 2> /dev/null > /dev/null 
 
 		# checks if the file was deleted successfully
 		if [ $? -eq 0 ]
