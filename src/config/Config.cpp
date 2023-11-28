@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/27 22:18:49 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/28 10:24:16 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,12 @@ Config::~Config()
 		for (auto& location : server->_locations) {
 			delete location;
 		}
-		server->_locations.clear();
-		server->_errorPages->clear();
-		delete server->_errorPages;
+		if (!server->_locations.empty())
+			server->_locations.clear();
+		if (server->_errorPages != nullptr) {
+			server->_errorPages->clear();
+			delete server->_errorPages;
+		}
 		delete server;
 	}
 	_servers.clear();
@@ -66,7 +69,7 @@ void	Config::_readConfigFile()
 	std::ifstream	configFile(_filename.c_str());
 	std::string		line;
 	configBlock		currentBlock = NONE;
-	void			*currentBlockPtr = NULL;
+	void			*currentBlockPtr = nullptr;
 
 	// check if file is valid and open
 	if (!configFile.is_open())
@@ -77,7 +80,6 @@ void	Config::_readConfigFile()
 	{
 		line.erase(0, line.find_first_not_of(" \t\n\v\f\r"));
 		line.erase(line.find_last_not_of("; \t\n\v\f\r") + 1);
-		// std::cout << "|" << line << "|" << std::endl;
 		if (line.empty() || line[0] == '#')
 		{
 			_lineNr++;
@@ -102,13 +104,19 @@ void	Config::_readConfigFile()
 		}
 		else if (line.find("}") != std::string::npos)
 		{
-			if (_handleBlockEnd(&currentBlock, currentBlockPtr) == 1)
+			if (_handleBlockEnd(&currentBlock, currentBlockPtr) == 1) {
+				if (currentBlockPtr != nullptr)
+					deleteBlock(currentBlock, currentBlockPtr);
 				throw InvalidParameterException(_lineNr);
+			}
 		}
 		else
 		{
-			if (_handleBlockContent(line, currentBlock, currentBlockPtr) == 1)
+			if (_handleBlockContent(line, currentBlock, currentBlockPtr) == 1) {
+				if (currentBlockPtr != nullptr)
+					deleteBlock(currentBlock, currentBlockPtr);
 				throw InvalidParameterException(_lineNr);
+			}
 		}
 		_lineNr++;
 	}
@@ -153,21 +161,31 @@ void	Config::_checkMandatoryParameters(const struct ServerSettings *server)
 {
 	bool	hasRootLocation = false;
 
-	if (server->_serverName.empty() || server->_rootFolder.empty() || server->_uploadDir.empty())
-		throw MissingParameterException();
-	if  (server->_index.empty() || server->_port == 0 || server->_maxBodySize == 0)
-		throw MissingParameterException();
+	if (server->_serverName.empty())
+		throw MissingParameterException("server_name");
+	if (server->_rootFolder.empty())
+		throw MissingParameterException("root folder");
+	if (server->_uploadDir.empty())
+		throw MissingParameterException("upload_dir");
+	if (server->_index.empty())
+		throw MissingParameterException("server index");
+	if (server->_port == 0)
+		throw MissingParameterException("listen port");
+	if (server->_maxBodySize == 0)
+		throw MissingParameterException("client_max_body_size");
 
 	for (const auto location : server->_locations)
 	{
-		if (location->_locationId.empty() || location->_index.empty() || location->_allowedMethods.empty())
-			throw MissingParameterException();
+		if (location->_locationId.empty())
+			throw MissingParameterException("location");
+		if (location->_index.empty())
+			throw MissingParameterException("location index");
 		if (location->_locationId == "/")
 			hasRootLocation = true;
 	}
 
 	if (!hasRootLocation)
-		throw MissingParameterException();
+		throw MissingParameterException("root location");
 }
 
 void	Config::printServers() const
@@ -175,7 +193,7 @@ void	Config::printServers() const
 	std::cout << "\nnb servers = " << _servers.size() << "\n" << std::endl;
 
 	for (const auto server : _servers) {
-		std::cout << "Server: " << server->_serverName << std::endl;
+		std::cout << BLUE << "Server: " << server->_serverName << RESET << std::endl;
 		std::cout << "index: " << server->_index <<  std::endl;
 		std::cout << "max body size: " << server->_maxBodySize <<  std::endl;
 		std::cout << "port: " << server->_port << std::endl;
@@ -185,11 +203,11 @@ void	Config::printServers() const
 		std::cout << "\nlocation size: " << server->_locations.size() << "\n" << std::endl;
 
 		for (const auto location : server->_locations) {
-			std::cout << "Location ID: " << location->_locationId << std::endl;
-			std::cout << "dirListing: " << (location->_dirListing ? "true":"false") << std::endl;
+			std::cout << PURPLE << "Location ID: " << location->_locationId << RESET << std::endl;
+			std::cout << "dirListing: " << (location->_dirListing ? "on":"off") << std::endl;
 			std::cout << "index: " << location->_index << std::endl;
-			if (!location->_redirect.empty())
-				std::cout << "redirect: " << location->_redirect[0] << std::endl;
+			for (const auto& redirect : location->_redirect)
+				std::cout << "redirect: " << redirect.first << " " << redirect.second << std::endl;
 			for (const auto& method : location->_allowedMethods)
 				std::cout << "allow " << method << std::endl;
 			std::cout << std::endl;

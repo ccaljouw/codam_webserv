@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/27 22:13:21 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/28 10:16:26 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
 	Config conf(argc, argv);
 	if (conf.getError() == true)
 		return 1;
-	conf.printServers();
+	conf.printServers(); // to remove later, only used for testing purposes
 	try {
 		if ((epollFd = epoll_create(1)) == -1)
 			throw std::runtime_error("epoll_create: " + std::string(strerror(errno)));
