@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   CGI_Handler.cpp                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/06 12:51:38 by bfranco           #+#    #+#             */
-/*   Updated: 2023/11/27 12:30:18 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   CGI_Handler.cpp                                    :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
+/*   Updated: 2023/11/27 21:25:40 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,6 +134,7 @@ int cgiHandler(const HttpRequest& req, connection *conn, int epollFd)
 		execChild(req, cgi, fd[0]);
 	else
 	{
+		conn->cgiPID = pid;
 		close(cgi.getFdOut());
 		if (writeBody(req, fd) == -1)
 		{

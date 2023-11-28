@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/28 11:28:46 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/28 11:33:28 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,28 +60,49 @@ struct ServerSettings
 
 class Config
 {
-	class NoSuchFileException : public std::exception
-	{
-		virtual const char *	what() const throw() {
-			return ("Invalid config file or wrong permissions");
-		}
-	};
-
-	class InvalidParameterException : public std::exception
-	{
-		virtual const char *	what() const throw() {
-			return ("Invalid parameter");
-		}
-	};
-	
 	public:
+		class NoSuchFileException : public std::exception
+		{
+			virtual const char *	what() const throw() {
+				return ("Invalid config file or wrong permissions");
+			}
+		};
+
+		class InvalidParameterException : public std::exception
+		{
+			std::string	_msg;
+			public:
+				InvalidParameterException(int lineNr)
+				{
+					_msg = std::string("Line ") + std::to_string(lineNr) + std::string(": Invalid parameter");
+				}
+				virtual const char *	what() const throw() {
+					return (_msg.c_str());
+				}
+		};
+
+		class MissingParameterException : public std::exception
+		{
+			std::string	_msg = "Missing mandatory parameter";
+			public:
+				MissingParameterException(std::string parameter)
+				{
+					_msg += (std::string(": ") + parameter);
+				}
+				virtual const char *	what() const throw() {
+					return (_msg.c_str());
+				}
+		};
+	
 		Config(int argc, char **argv);
 		~Config();
 		Config( const Config& src );
 		Config&	operator=( Config const & rhs );
 		
 		std::list<struct ServerSettings*>	getServers() const;
+		std::map<int, std::string>*			getErrorPages() const;
 		bool								getError() const;
+		void								printServers() const;
 	
 	private:
 		std::string							_filename;
@@ -94,11 +115,13 @@ class Config
 		void								_readConfigFile();
 		int									_handleBlockEnd(configBlock *currentBlock, void *currentBlockPtr);
 		int									_handleBlockContent(std::string line, configBlock currentBlock, void *currentBlockPtr);
+		void								_checkMandatoryParameters(const struct ServerSettings *server);
 };
 
 int		parseServer(std::string line, struct ServerSettings *server);
 int		parseLocation(std::string line, struct LocationSettings *location);
 int		parseErrorPage(std::string line, std::map<int, std::string> *errorPages);
+void	deleteBlock(const configBlock& currentBlock, void *currentBlockPtr);
 void	*initServerBlock();
 void	*initLocationBlock(std::string line);
 

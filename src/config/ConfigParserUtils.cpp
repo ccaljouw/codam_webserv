@@ -1,25 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ConfigParserUtils.cpp                              :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/26 18:20:33 by bfranco           #+#    #+#             */
-/*   Updated: 2023/11/27 17:25:33 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   ConfigParserUtils.cpp                              :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/26 18:20:33 by bfranco       #+#    #+#                 */
+/*   Updated: 2023/11/28 11:57:27 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
 #include <unistd.h>
+#include <string.h>
+#include <string>
 
 int	parseServer(std::string line, struct ServerSettings *server)
 {
 	std::string key = line.substr(0, line.find_first_of(WHITESPACE));
 	std::string value = line.substr(line.find_first_of(WHITESPACE) + 1);
 
-	// std::cout << "key: " << key << std::endl;
-	// std::cout << "value: " << value << std::endl;
 	if (key.empty() || value.empty())
 		return 1;
 	
@@ -31,10 +31,12 @@ int	parseServer(std::string line, struct ServerSettings *server)
 	}
 	else if (key == "root")
 	{
-		if (access(value.c_str(), W_OK) == -1)
+		if (access(value.c_str(), F_OK | R_OK) == -1) 
 			return 1;
 		server->_rootFolder = value;
 	}
+	else if (key == "upload_dir")
+		server->_uploadDir = value;
 	else if (key == "listen")
 	{
 		if (value.length() >= 10 || value.find_first_not_of(NUMBERS) != std::string::npos)
@@ -66,9 +68,7 @@ int	parseLocation(std::string line, struct LocationSettings *location)
 {
 	std::string key = line.substr(0, line.find_first_of(WHITESPACE));
 	std::string value = line.substr(line.find_first_of(WHITESPACE) + 1);
-	
-	// std::cout << "key: " << key << std::endl;
-	// std::cout << "value: " << value << std::endl;
+
 	if (key.empty() || value.empty())
 		return 1;
 	if (key == "allow")
@@ -84,7 +84,7 @@ int	parseLocation(std::string line, struct LocationSettings *location)
 			return 1;
 		location->_index = value;
 	}
-	else if (key == "autoindex")
+	else if (key == "dirListing")
 	{
 		if (value == "on")
 			location->_dirListing = true;
@@ -98,7 +98,7 @@ int	parseLocation(std::string line, struct LocationSettings *location)
 		std::string code = value.substr(0, value.find_first_of(WHITESPACE));
 		std::string uri = value.substr(value.find_first_of(WHITESPACE) + 1);
 		
-		if (code.empty() || uri.empty() || uri[0] != '/')
+		if (code.empty() || uri.empty() || uri.find_first_of(WHITESPACE) != std::string::npos)
 			return 1;
 		if (code.length() != 3 || code.find_first_not_of(NUMBERS) != std::string::npos)
 			return 1;
@@ -119,10 +119,8 @@ int	parseErrorPage(std::string line, std::map<int, std::string> *errorPages)
 {
 	std::string key = line.substr(0, line.find_first_of(WHITESPACE));
 	std::string value = line.substr(line.find_first_of(WHITESPACE) + 1);
-	
-	// std::cout << "key: " << key << std::endl;
-	// std::cout << "value: " << value << std::endl;
-	if (key.empty() || value.empty() || key.find_first_of(" \t") != std::string::npos)
+
+	if (key.empty() || value.empty() || value.find_first_of(WHITESPACE) != std::string::npos)
 		return 1;
 	if (key.length() != 3 || key.find_first_not_of(NUMBERS) != std::string::npos || value[0] != '/')
 		return 1;
@@ -139,22 +137,45 @@ int	parseErrorPage(std::string line, std::map<int, std::string> *errorPages)
 
 void	*initServerBlock()
 {
-	void	*server = new struct ServerSettings();
+	struct ServerSettings *server = new struct ServerSettings();
 
-	static_cast<struct ServerSettings *>(server)->_locations = std::list<struct LocationSettings*>();
-	static_cast<struct ServerSettings *>(server)->_errorPages = nullptr;
+	server->_serverName = "";
+	server->_rootFolder = "";
+	server->_uploadDir = "";
+	server->_index = "";
+	server->_port = 0;
+	server->_maxBodySize = 0;
+	server->_errorPages = nullptr;
+	server->_locations = std::list<struct LocationSettings*>();
 
-	return server;
+	return static_cast<void *>(server);
 }
 
 void	*initLocationBlock(std::string line)
 {
-	void	*location = new struct LocationSettings();
+	struct LocationSettings	*location = new struct LocationSettings();
 
 	line = line.substr(9);
-	size_t	start = 0;
-	size_t	end = line.find_first_of(" \t\n\v\f\r{");
-	static_cast<struct LocationSettings *>(location)->_locationId = line.substr(start, end);
+	location->_locationId = line.substr(0, line.find_first_of(" \t\n\v\f\r{"));
+	location->_allowedMethods = std::set<std::string>();
+	location->_redirect = std::map<int, std::string>();
+	location->_index = "";
+	location->_dirListing = false;
 
-	return location;
+	return static_cast<void *>(location);
+}
+
+void	deleteBlock(const configBlock& currentBlock, void *currentBlockPtr)
+{
+	if (currentBlock == LOCATION)
+	{
+		struct LocationSettings *location = static_cast<struct LocationSettings *>(currentBlockPtr);
+		delete location;
+	}
+	else if (currentBlock == ERROR_PAGE)
+	{
+		std::map<int, std::string> *errorPages = static_cast<std::map<int, std::string> *>(currentBlockPtr);
+		delete errorPages;
+	}
+	currentBlockPtr = nullptr;
 }

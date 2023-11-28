@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/13 09:46:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/27 11:54:34 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/27 21:30:07 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,11 +104,11 @@ bool hasHeader(std::string name) const {
 		}
 		return false;
 	}
-	else
-	{
-		for (const auto& header : valueMap) {
+	// else
+	// {
+	// 	for (const auto& header : valueMap) {
 
-	}
+	// }
 }
 
 
