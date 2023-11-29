@@ -24,6 +24,7 @@ def listFiles(path) -> (int, str):
 def listDirs() -> (int, str):
 
 	# Check if the server sent the root path
+	os.environ["PATH_INFO"] = "./data"
 	if os.environ.get("PATH_INFO") != None:
 
 		# Check if the server sent the query string
