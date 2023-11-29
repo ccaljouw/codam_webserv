@@ -5,6 +5,9 @@ message=""
 filename=""
 dir=""
 
+PATH_INFO="./data"
+UPLOAD_DIR="uploads"
+
 # checks if the query string is empty and if no argument was given
 if [[ -z "$QUERY_STRING"  && -z "$1" ]]
 then
@@ -28,7 +31,7 @@ else
 fi
 
 # checks if the server sent the root path
-if [-z "$PATH_INFO"]
+if [ -z "$PATH_INFO" ]
 then
 	message="Internal Server Error"
 	status="500"
@@ -40,7 +43,7 @@ then
 	message="Internal Server Error"
 	status="500"
 else
-	dir="$PATHINFO/$UPLOAD_DIR"
+	dir="$PATH_INFO/$UPLOAD_DIR"
 fi
 
 # checks if status was previously set
@@ -76,6 +79,7 @@ body="<!DOCTYPE html>
 		<title>Delete File</title>
 	</head>
 	<body>
+		<h1>"$dir/$filename"</h1>
 		<h1>$message</h1>
 	</body>
 </html>\r\n"
@@ -92,5 +96,6 @@ Connection: close\r
 Server: $SERVER\r\n\r"
 
 echo "$header"
-echo "$body"
-echo "\0"
+echo "$body\0"
+exec 1>&-
+

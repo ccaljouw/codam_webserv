@@ -3,75 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delete Files</title>
+    <title>Delete File</title>
 </head>
 <body>
 
-<h2>List of Files</h2>
+<h2>Delete File</h2>
 
-<ul id="fileList">
-    <!-- File list will be populated here -->
-</ul>
-
-<button onclick="deleteFiles()">Delete Selected File</button>
+<form id="deleteForm">
+    <label for="filename">Enter Filename:</label>
+    <input type="text" id="filename" name="filename" required>
+    <button type="button" onclick="deleteFile()">Delete File</button>
+</form>
 
 <script>
-    // Function to fetch and display the list of files
-    function fetchFileList() {
-        fetch('/cgi-bin/index.py')
-            .then(response => response.text())
-            .then(data => {
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = data;
+    function deleteFile() {
+        const filename = document.getElementById('filename').value;
 
-                const fileList = tempDiv.querySelector('#fileList');
-                document.getElementById('fileList').innerHTML = fileList.innerHTML;
-            })
-            .catch(error => console.error('Error fetching file list:', error));
-    }
-
-    // Function to send a delete request for the first selected file
-    function deleteFiles() {
-        const fileList = document.getElementById('fileList');
-        const selectedFiles = Array.from(fileList.getElementsByTagName('li'))
-            .find(li => li.classList.contains('selected'));
-
-        if (!selectedFiles) {
-            console.error('Please select a file to delete.');
+        // Check if the filename is provided
+        if (!filename) {
+            alert('Please enter a filename.');
             return;
         }
 
-        const file = selectedFiles.textContent;
-
         // Construct the delete URL with the filename as a query parameter
-        const deleteUrl = `/cgi-bin/delete.sh?filename=${encodeURIComponent(file)}`;
+        const deleteUrl = `/cgi-bin/delete.sh?filename=${encodeURIComponent(filename)}`;
 
         // Send a DELETE request to the delete CGI script
         fetch(deleteUrl, { method: 'DELETE' })
             .then(response => {
                 if (response.ok) {
-                    console.log(`File ${file} deleted successfully!`);
-                    fetchFileList(); // Refresh the file list after deletion
+                    console.log(`File ${filename} deleted successfully!`);
                 } else {
-                    console.error(`Error deleting file ${file}. Status: ${response.status}`);
+                    console.error(`Error deleting file ${filename}. Status: ${response.status}`);
                 }
             })
-            .catch(error => console.error(`Error deleting file ${file}:`, error));
+            .catch(error => console.error(`Error deleting file ${filename}:`, error));
     }
-
-    // Event listener to toggle selection on click
-    document.getElementById('fileList').addEventListener('click', function (event) {
-        if (event.target.tagName === 'LI') {
-            // Clear previous selections
-            Array.from(fileList.getElementsByTagName('li')).forEach(li => li.classList.remove('selected'));
-
-            // Toggle selection for the clicked file
-            event.target.classList.add('selected');
-        }
-    });
-
-    // Fetch the initial file list when the page loads
-    fetchFileList();
 </script>
 
 </body>
