@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/27 22:23:39 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/29 12:05:54 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,16 @@ class HttpRequest {
 		Uri											uri;
 
 	// ============= Getters ================
-		bool										isDirListing(void) const;
-		std::string									getDefault(void) const;
+		//location settings
+		bool										getDirListing(void) const;
+		std::string									getRoot(void) const;
+		std::string									getIndex(void) const;
+		std::set<std::string>						getAllowedMethods(void) const;
+		std::string									getLocationId(void) const;
+		std::map<int, std::string>					getRedirect(void) const;
+		const Server*								getServer(void) const;
+
+		//headers and request data
 		std::string									getMethod(void) const;
 		std::string									getProtocol(void) const;
 		std::string									getBody(void) const;
@@ -46,7 +54,7 @@ class HttpRequest {
 		std::string									getQueryString(void) const;
 		char**										getEnvArray(void) const;
 		bool										isHeader(std::string key);
-		
+
 	// ============= Setters ================
 		void										setMethod(const std::string& method);
 		void										setProtocol(const std::string& protocol);

@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/29 10:07:03 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/29 12:01:21 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,15 @@ void	handleRequest(int epollFd, connection *conn) {
 
 		//handle default for directories
 		if (request.uri.isDir()) {
-			// std::cout << BLUE << "Is Directory" << RESET << std::endl;
-			std::string index = request.getDefault();
+			std::cout << BLUE << "Is Directory" << RESET << std::endl;
+		
+			std::string index = request.getIndex(); 
 			if (!index.empty()) {
-				std::string bodyPath = "data/text/html" + request.uri.getPath() + index;		//todo add root
+		
+				std::cout << BLUE << "index found: " << index << RESET << std::endl;
+				std::cout << BLUE << "root: " << request.getRoot() << RESET << std::endl;
+
+				std::string bodyPath = "data/text/html/" + index;		//todo get from root
 				HttpResponse response(request);
 				response.setBody(bodyPath, false);
 				response.addHeader("Content-type", contentType);

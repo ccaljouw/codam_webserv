@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/27 23:22:04 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/29 12:08:08 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,19 +37,24 @@ void	setErrorResponse(connection *conn, int error)
 	HttpResponse	response(request);
 	
 	response.setStatusCode(error);
-	std::map<int, std::string> *providedErrorPages = conn->server->get_errorPages(request.getHeaderValue("host"));
 	
+	// check for error pages set in config
+	std::map<int, std::string> *providedErrorPages = conn->server->get_errorPages(request.getHeaderValue("host"));
 	if (providedErrorPages->size() != 0) {
 		for (const auto& pair : *providedErrorPages) {
 			if (pair.first == error) {
 				//**test
-				std::cout << BLUE << "directed to configured error page" << RESET << std::endl;
+				std::cout << BLUE << "directed to error page set in config with nr: " << error <<  RESET << std::endl;
 				errorHtmlPath = "data/text/html" + pair.second; //todo from root
 			}
 		}
 	}
+	
+	//check for error 404 and check for dir listing is true >>
 	if (errorHtmlPath.empty()) {
-		if (error == 404 && request.isDirListing() == true)
+		std::cout << BLUE << "dirlist: " <<  request.getDirListing() <<  RESET << std::endl;
+		if (error == 404 && request.getDirListing() == true)
+
 			std::cout << RED << "Need to add code here" << RESET << std::endl; //todo: add script
 		else	
 			errorHtmlPath = generateErrorPage(error);

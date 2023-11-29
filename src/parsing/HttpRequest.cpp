@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/29 10:06:53 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/29 12:18:11 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,10 +93,14 @@ try {
 
 
 // === set environ vars ===
+	std::string host = getHeaderValue("host");
 	addEnvironVar("REQUEST_METHOD", getMethod());
 	addEnvironVar("QUERY_STRING", getQueryString());
-	addEnvironVar("REMOTE_HOST", getHeaderValue("host"));
+	addEnvironVar("REMOTE_HOST", host);
 	addEnvironVar("BODY", getBody());
+	addEnvironVar("PATH_INFO", _server->get_rootFolder(host));
+	addEnvironVar("UPLOAD_DIR", _server->get_uploadDir(host));
+	std::cout << "upload: " << _server->get_uploadDir(host) << std:: endl;
 
 
 }
@@ -134,15 +138,19 @@ HttpRequest::~HttpRequest() {
 
 
 //========= Getters ===============================
-
-bool		HttpRequest::isDirListing() const								{	return (this->_settings->_dirListing);	}
-std::string	HttpRequest::getDefault(void) const								{	return (this->_settings->_index);		}
-std::string	HttpRequest::getMethod(void) const								{	return _method;							}
-std::string	HttpRequest::getProtocol(void) const							{	return _protocol;						}
-std::string	HttpRequest::getBody(void) const								{	return _body;							}
-std::string	HttpRequest::getUri(void)										{	return uri.serializeUri();				}
-int	HttpRequest::getRequestStatus(void) const								{	return _requestStatus;					}
-std::map<std::string, std::string>	HttpRequest::getHeaders(void) const		{	return _headers; 						}
+const Server* HttpRequest::getServer(void) const 							{	return _server;								}
+bool		HttpRequest::getDirListing() const								{	return (this->_settings->_dirListing);		}
+std::string	HttpRequest::getRoot(void) const								{	return (this->_settings->_locationRoot);	}
+std::string	HttpRequest::getIndex(void) const								{	return (this->_settings->_index);			}
+std::set<std::string>	HttpRequest::getAllowedMethods(void) const			{	return (this->_settings->_allowedMethods);	}
+std::string	HttpRequest::getLocationId(void) const							{	return (this->_settings->_locationId);		}
+std::map<int, std::string>	HttpRequest:: getRedirect(void) const			{	return (this->_settings->_redirect);		}
+std::string	HttpRequest::getMethod(void) const								{	return _method;								}
+std::string	HttpRequest::getProtocol(void) const							{	return _protocol;							}
+std::string	HttpRequest::getBody(void) const								{	return _body;								}
+std::string	HttpRequest::getUri(void)										{	return uri.serializeUri();					}
+int	HttpRequest::getRequestStatus(void) const								{	return _requestStatus;						}
+std::map<std::string, std::string>	HttpRequest::getHeaders(void) const		{	return _headers; 							}
 
 std::string HttpRequest::getHeaderValue(std::string key) const {
 	for (const auto& headerPair : _headers) {
@@ -151,7 +159,6 @@ std::string HttpRequest::getHeaderValue(std::string key) const {
 	}
 	return "";
 }
-
 
 std::vector<char*>	HttpRequest::getHeaderVector(void) const {
 		
@@ -228,8 +235,6 @@ bool	HttpRequest::isHeader(std::string key) {
 		return true;
 	return false;
 }
-
-
 
 
 //========= Setters ===============================
