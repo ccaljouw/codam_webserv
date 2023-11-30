@@ -49,15 +49,17 @@ class Server
 		struct ServerSettings*		get_hostSettings(std::string host) const;
 		struct LocationSettings*	get_locationSettings(std::string host, std::string location) const;
 		
-		std::string					get_serverName(std::string host) const;
 		std::string					get_rootFolder(std::string host) const;
 		std::string					get_uploadDir(std::string host) const;
+		std::string					get_serverName(std::string host) const;
 		std::map<int, std::string>*	get_errorPages(std::string host) const;
 		size_t						get_maxBodySize(std::string host) const;
 
 		std::string					get_index(std::string host, std::string location) const;
 		bool						get_dirListing(std::string host, std::string location) const;
-		std::string 				get_locationRoot(std::string host, std::string location) const;
+		std::map<int, std::string>	get_redirect(std::string host, std::string location) const;
+		std::string					get_rootFolder(std::string host, std::string location) const;
+		std::string					get_uploadDir(std::string host, std::string location) const;
 		
 		// ============= setters ================
 		void	set_connection(struct connection *conn);
