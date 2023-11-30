@@ -23,7 +23,6 @@ TODO:
 	Each file or subdirectory is typically presented as a clickable link.
 
 - Research how to test
-- Delete (Bruno)
 
 - change scripts with root -Bruno
 - cookie script -Bruno
@@ -31,6 +30,7 @@ TODO:
 - cleanup includes
 
 DONE:
+- Delete (Bruno)
 - finish config parser (check for at least all mandatory settings in location / and server) -Bruno
 - Error pages - add check on defined error pages for server 
 - change scripts with root -Bruno
@@ -48,4 +48,5 @@ ERROR CODES TO CONSIDER:
 
 CHECK/THOUGHTS:
 - close connection header CGI
+- check cgi timeout
 - only update nr of times visited when GET request with .html extension. That way it would maybe make some more sense to the user. 

@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/30 13:08:46 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/30 14:56:06 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ void	setErrorResponse(connection *conn, int error)
 		conn->close_after_response = 1;
 		response.setHeader("Connection", "close");		
 	}
+	// std::string errorHtmlPath = generateErrorPage(conn, error); //for confid error page
 
 	//check if path is ok
 	std::ifstream f(errorHtmlPath);
@@ -83,8 +84,13 @@ void	setResponse(connection *conn, HttpResponse resp)
 int	checkTimeout(connection *conn)
 {
 	// smaller timeout value for internal timeouts?
-	if (difftime(std::time(nullptr), conn->time_last_request) > conn->server->get_timeout()) {
+	double timeout;
 
+	if (conn->state == IN_CGI)
+		timeout = CGI_TIMEOUT;
+	else
+		timeout = conn->server->get_timeout();
+	if (std::difftime(std::time(nullptr), conn->time_last_request) >= timeout) {
 		switch(conn->state)
 		{
 			case READING:

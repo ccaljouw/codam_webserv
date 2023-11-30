@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/30 11:37:12 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/30 14:55:42 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #define MAX_EVENTS 10
 #define BUFFER_SIZE 1024
 #define TIMEOUT	5
+#define CGI_TIMEOUT 3
 #define	MAX_NR_REQUESTS 30
 
 

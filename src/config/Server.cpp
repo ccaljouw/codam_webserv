@@ -168,13 +168,31 @@ std::string	Server::get_index(std::string host, std::string location) const {
 	return get_locationSettings(host, location)->_index;
 }
 
-bool		Server::get_dirListing(std::string host, std::string location) const {
+bool Server::get_dirListing(std::string host, std::string location) const {
 	return get_locationSettings(host, location)->_dirListing;
 }
 
-// std::string	Server::get_locationRoot(std::string host, std::string location) const {
-// 	return get_locationSettings(host, location)->_locationRoot;
-// }
+std::map<int, std::string>	Server::get_redirect(std::string host, std::string location) const {
+	return get_locationSettings(host, location)->_redirect;
+}
+
+std::string	Server::get_rootFolder(std::string host, std::string location) const {
+	std::string root;
+
+	root = get_locationSettings(host, location)->_rootFolder;
+	if (root.empty())
+		root = get_rootFolder(host);
+	return root;
+}
+
+std::string	Server::get_uploadDir(std::string host, std::string location) const {
+	std::string dir;
+
+	dir = get_locationSettings(host, location)->_uploadDir;
+	if (dir.empty())
+		dir = get_uploadDir(host);
+	return dir;
+}
 
 // ============= setters ================
 void	Server::set_connection(struct connection *conn) {
