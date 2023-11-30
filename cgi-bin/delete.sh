@@ -30,29 +30,20 @@ else
 	fi
 fi
 
-# checks if the server sent the root path
-if [ -z "$PATH_INFO" ]
-then
-	message="Internal Server Error"
-	status="500"
-fi
-
 # checks if the server sent the upload directory
 if [[ -z "$status" && -z "$UPLOAD_DIR" ]]
 then
 	message="Internal Server Error"
 	status="500"
-else
-	dir="$PATH_INFO/$UPLOAD_DIR"
 fi
 
 # checks if status was previously set
 if [ -z "$status" ]
 then
 	# checks if the file exists
-	if [ -f "$dir/$filename" ]
+	if [ -f "$UPLOAD_DIR/$filename" ]
 	then
-		rm -rf "$dir/$filename" 2> /dev/null > /dev/null 
+		rm -rf "$UPLOAD_DIR/$filename" 2> /dev/null > /dev/null 
 
 		# checks if the file was deleted successfully
 		if [ $? -eq 0 ]
@@ -79,7 +70,6 @@ body="<!DOCTYPE html>
 		<title>Delete File</title>
 	</head>
 	<body>
-		<h1>"$dir/$filename"</h1>
 		<h1>$message</h1>
 	</body>
 </html>\r\n"
