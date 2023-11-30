@@ -33,7 +33,8 @@ TODO:
 DONE:
 - finish config parser (check for at least all mandatory settings in location / and server) -Bruno
 - Error pages - add check on defined error pages for server 
-- timeouts, add PID to connection (Bruno) finish check on timeouts (Carien)
+- change scripts with root -Bruno
+- add PID to connection (Bruno)
 
 ERROR CODES TO CONSIDER:
 408 Request Timeout

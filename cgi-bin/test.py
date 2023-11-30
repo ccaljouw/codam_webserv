@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import datetime
+import datetime, os
 
 x = datetime.datetime.now()
 date = x.strftime("%a, %d %b %Y %H:%M:%S GMT")
@@ -21,7 +21,7 @@ Content-type: text/html; charset=utf-8\r
 Date: {date}\r
 Last-Modified: {date}\r
 Connection: close\r
-Server: CODAM_WEBSERV\r\n\r"""
+Server: {os.environ.get("SERVER")}\r\n\r"""
 
 print(header)
 print(body)

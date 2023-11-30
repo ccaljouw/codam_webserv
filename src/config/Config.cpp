@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/30 11:36:54 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/30 14:53:00 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,11 @@ void	Config::_readConfigFile()
 
 	// check if file is valid and open
 	if (!configFile.is_open())
+	{
+		std::cerr << RED << "Config file: " << RESET;
+		std::flush(std::cerr);
 		throw NoSuchFileException();
+	}
 
 	// read file line by line
 	while (std::getline(configFile, line))
@@ -113,10 +117,20 @@ void	Config::_readConfigFile()
 		}
 		else
 		{
-			if (_handleBlockContent(line, currentBlock, currentBlockPtr) == 1) {
-				if (currentBlockPtr != nullptr)
-					deleteBlock(currentBlock, currentBlockPtr);
-				throw InvalidParameterException(_lineNr);
+			switch (_handleBlockContent(line, currentBlock, currentBlockPtr))
+			{
+				case 1:
+					if (currentBlockPtr != nullptr)
+						deleteBlock(currentBlock, currentBlockPtr);
+					throw InvalidParameterException(_lineNr);
+					break;
+				case 2:
+					if (currentBlockPtr != nullptr)
+						deleteBlock(currentBlock, currentBlockPtr);
+					std::cerr << RED << "Line " << _lineNr << ": " << RESET;
+					std::flush(std::cerr);
+					throw NoSuchFileException();
+					break;
 			}
 		}
 		_lineNr++;

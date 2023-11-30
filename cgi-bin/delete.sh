@@ -1,8 +1,12 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 status=""
 message=""
 filename=""
+dir=""
+
+PATH_INFO="./data"
+UPLOAD_DIR="uploads"
 
 # checks if the query string is empty and if no argument was given
 if [[ -z "$QUERY_STRING"  && -z "$1" ]]
@@ -26,13 +30,29 @@ else
 	fi
 fi
 
+# checks if the server sent the root path
+if [ -z "$PATH_INFO" ]
+then
+	message="Internal Server Error"
+	status="500"
+fi
+
+# checks if the server sent the upload directory
+if [[ -z "$status" && -z "$UPLOAD_DIR" ]]
+then
+	message="Internal Server Error"
+	status="500"
+else
+	dir="$PATH_INFO/$UPLOAD_DIR"
+fi
+
 # checks if status was previously set
 if [ -z "$status" ]
 then
 	# checks if the file exists
-	if [ -f "./uploads/$filename" ]
+	if [ -f "$dir/$filename" ]
 	then
-		rm -rf "./uploads/$filename" 2> /dev/null > /dev/null 
+		rm -rf "$dir/$filename" 2> /dev/null > /dev/null 
 
 		# checks if the file was deleted successfully
 		if [ $? -eq 0 ]
@@ -52,12 +72,14 @@ fi
 # sets the date
 date=`date -u +"%a, %d %b %Y %H:%M:%S GMT"`
 
-body="<html>
+body="<!DOCTYPE html>
+<html>
 	<head>
 		<link rel=\"icon\" href=\"data:,\">
 		<title>Delete File</title>
 	</head>
 	<body>
+		<h1>"$dir/$filename"</h1>
 		<h1>$message</h1>
 	</body>
 </html>\r\n"
@@ -65,15 +87,16 @@ body="<html>
 # gets the length of the body
 content_length=`echo "$body" | wc -c`
 
-header="HTTP/1.1 $status\r
-Content-Length: $content_length\r
-Content-type: text/html; charset=utf-8\r\
-Date: $date\r
-Last-Modified: $date\r
-Connection: close\r
-Server: CODAM_WEBSERV\r\n\r"
-# Server: $HOST\r\n\r"
+header="HTTP/1.1 $status
+Content-Length: $content_length
+Content-type: text/html; charset=utf-8
+Date: $date
+Last-Modified: $date
+Connection: close
+Server: $SERVER"
 
 echo "$header"
+echo ""
 echo "$body"
 echo "\0"
+
