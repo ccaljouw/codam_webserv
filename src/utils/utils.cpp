@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/30 12:55:16 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/30 13:08:46 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,8 @@ void	setErrorResponse(connection *conn, int error)
 		
 				errorHtmlPath = "./data/text/html" + pair.second; //todo: remove
 				// errorHtmlPath = request.getRoot() + "/text/html" + pair.second;
-		
+				errorHtmlPath = conn->server->get_rootFolder(host) + "/text/html" + pair.second;
+
 				std::cout << BLUE << "errorHtmlPath: " << errorHtmlPath <<  RESET << std::endl;
 			}
 		}

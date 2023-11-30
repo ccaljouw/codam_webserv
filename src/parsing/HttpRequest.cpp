@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/30 12:29:31 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/30 14:31:37 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,16 +94,15 @@ try {
 
 // === set environ vars ===
 	std::string host = getHeaderValue("host");
+	std::string location = uri.getPath();
 	addEnvironVar("REQUEST_METHOD", getMethod());
 	addEnvironVar("QUERY_STRING", getQueryString());
 	addEnvironVar("REMOTE_HOST", host);
 	addEnvironVar("BODY", getBody());
-	addEnvironVar("PATH_INFO", _server->get_rootFolder(host));
-	addEnvironVar("UPLOAD_DIR", _server->get_uploadDir(host));
-	std::cout << "upload: " << _server->get_uploadDir(host) << std:: endl;
-
-
+	// addEnvironVar("PATH_INFO", _server->get_rootFolder(host, location));
+	// addEnvironVar("UPLOAD_DIR", _server->get_uploadDir(host, uri.location));
 }
+
 //catch block	
 	catch (const parsingException& exception) {
 		_requestStatus = exception.getErrorCode();

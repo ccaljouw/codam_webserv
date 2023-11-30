@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/30 12:58:34 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/30 14:49:33 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,19 @@ void	handleRequest(int epollFd, connection *conn) {
 		// Handle parsing error
 		if (request.getRequestStatus() != 200) 
 			setErrorResponse(conn, request.getRequestStatus());
-
+	
 		//check and set cookie
 		std::string cookieValue = checkAndSetCookie(conn, request);
 
+		// std::string location_header = conn->server->get_redirect(request.uri.getHost(), uri.getPath());
+		// if (!location_header.empty()) {
+		// 	request.addHeader("location", location_header);
+		// 	HttpResponse response(request);
+		// 	response.setStatusCode(301);
+		// 	setResponse(conn, response);
+		// return;
+		// }
+		
 		//get extension and type
 		std::string extension = request.uri.getExtension();
 		std::string contentType = request.uri.getMime(extension);
@@ -39,20 +48,26 @@ void	handleRequest(int epollFd, connection *conn) {
 			std::cout << BLUE << "Is Directory" << RESET << std::endl;
 			std::cout << BLUE << "dirlist: " <<  request.getDirListing() <<  RESET << std::endl;
 		
-			if (request.getDirListing() == true) {
-				std::cout << RED << "Need to add script to index here" << RESET << std::endl; //todo: add script
-				//todo remove all below
-				HttpResponse response(request);
-				response.setBody("data/text/html/418.html", false); //todo:make config
-				setResponse(conn, response);
-			}
-		
-			else if (!index.empty()) {
-				std::cout << BLUE << "index found: " << index << RESET << std::endl;
-				std::cout << BLUE << "root: " << request.getRoot() << RESET << std::endl;
+			// if (request.getDirListing() == true) {
 
-				std::string bodyPath = "./data/text/html" + index; //todo: remove
-				// std::string bodyPath = request.getRoot() + "/text/html" + index;
+			// 	HttpResponse response(request);
+			// 	request.addEnvironVar("QUERY_STRING", request.uri.getPath());
+			
+			// 	if (cgiHandler(request, conn, epollFd) == 1 ) 
+			// 		setErrorResponse(conn, 500);	
+			// 	else {
+			// 		conn->request.clear();
+			// 		conn->state = IN_CGI;
+			// 	}
+			// }
+	
+			if (!index.empty()) {
+				std::cout << BLUE << "index found: " << index << RESET << std::endl;
+				std::cout << BLUE << "root: " << conn->server->get_rootFolder(host) << RESET << std::endl;
+
+				// std::string bodyPath = request.getRoot() + "/text/html" + index; 
+				std::string bodyPath = conn->server->get_rootFolder(host) + "/text/html/" + index; //todo remove
+				std::cout << BLUE << "body path: " << bodyPath << RESET << std::endl;
 
 				HttpResponse response(request);
 				response.setBody(bodyPath, false);
@@ -66,7 +81,6 @@ void	handleRequest(int epollFd, connection *conn) {
 					
 		// handle CGI
 		else if (request.uri.getExecutable() == "cgi-bin") {
-			
 			size_t	maxContentLength		= conn->server->get_maxBodySize(request.getHeaderValue("host"));
 			size_t	actualContentLength		= request.getBody().size();
 			size_t	headerContentLength		= 0;
