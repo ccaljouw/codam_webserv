@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/29 12:08:08 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/30 11:33:28 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 #include<string>
 #include<fstream>
-
+#include <signal.h>
 
 std::string getTimeStamp() {
 	//get current time
@@ -30,36 +30,40 @@ std::string getTimeStamp() {
 }
 
 
+	// // check for error pages set in config
+	// std::map<int, std::string> *providedErrorPages = conn->server->get_errorPages(request.getHeaderValue("host"));
+	// if (providedErrorPages->size() != 0) {
+	// 	for (const auto& pair : *providedErrorPages) {
+	// 		if (pair.first == error) {
+	// 			//**test
+	// 			std::cout << BLUE << "directed to error page set in config with nr: " << error <<  RESET << std::endl;
+	// 			errorHtmlPath = "data/text/html" + pair.second; //todo from root
+	// 		}
+	// 	}
+	// }
+	
+	// //check for error 404 and check for dir listing is true >>
+	// if (errorHtmlPath.empty()) {
+	// 	std::cout << BLUE << "dirlist: " <<  request.getDirListing() <<  RESET << std::endl;
+	// 	if (error == 404 && request.getDirListing() == true)
+
+	// 		std::cout << RED << "Need to add code here" << RESET << std::endl; //todo: add script
+	// 	else	
+	// 		errorHtmlPath = generateErrorPage(error);
+	// }
+
+
 void	setErrorResponse(connection *conn, int error)
 {
-	std::string		errorHtmlPath = "";
-	HttpRequest		request(conn->request, conn->server);
-	HttpResponse	response(request);
-	
+	HttpResponse response;
+	std::string errorHtmlPath = generateErrorPage(error);
 	response.setStatusCode(error);
-	
-	// check for error pages set in config
-	std::map<int, std::string> *providedErrorPages = conn->server->get_errorPages(request.getHeaderValue("host"));
-	if (providedErrorPages->size() != 0) {
-		for (const auto& pair : *providedErrorPages) {
-			if (pair.first == error) {
-				//**test
-				std::cout << BLUE << "directed to error page set in config with nr: " << error <<  RESET << std::endl;
-				errorHtmlPath = "data/text/html" + pair.second; //todo from root
-			}
-		}
+	if (error == 408 || error == 429 || error == 500 || error == 504) {
+		conn->close_after_response = 1;
+		response.setHeader("Connection", "close");		
 	}
-	
-	//check for error 404 and check for dir listing is true >>
-	if (errorHtmlPath.empty()) {
-		std::cout << BLUE << "dirlist: " <<  request.getDirListing() <<  RESET << std::endl;
-		if (error == 404 && request.getDirListing() == true)
+	// std::string errorHtmlPath = generateErrorPage(conn, error); //for confid error page
 
-			std::cout << RED << "Need to add code here" << RESET << std::endl; //todo: add script
-		else	
-			errorHtmlPath = generateErrorPage(error);
-	}
-		
 	std::ifstream f(errorHtmlPath);
 	if (f.good())
 		response.setBody(errorHtmlPath, false);
@@ -79,21 +83,34 @@ void	setResponse(connection *conn, HttpResponse resp)
 
 // Some browsers (eg Firefox), check form timeout based on header keep-alive with timeout.
 // others (eg safari) do not close the connection themselves
-void	checkTimeout(connection *conn)
+int	checkTimeout(connection *conn)
 {
-	if (conn->request.empty()) 
-	{
-		// std::cout << "checkout timeout: " << difftime(std::time(nullptr), conn->time_last_request) << std::endl;
-		if (difftime(std::time(nullptr), conn->time_last_request) > conn->server->get_timeout()) {
+	// smaller timeout value for internal timeouts?
+	if (difftime(std::time(nullptr), conn->time_last_request) > conn->server->get_timeout()) {
 
-			std::cout << CYAN << "Timeout" << RESET << std::endl;
-			conn->state = CLOSING; 
+		switch(conn->state)
+		{
+			case READING:
+				std::cerr << CYAN << "request timeout" << RESET << std::endl;
+				setErrorResponse(conn, 408);
+				return 1;
+			case IN_CGI:
+				std::cerr << CYAN << "timeout in cgi" << RESET << std::endl;
+				if (conn->cgiPID) {
+					close(conn->cgiPID);
+					kill(conn->cgiPID, SIGTERM);
+				}
+				setErrorResponse(conn, 504);
+				return 1;
+			case HANDLING:
+				std::cerr << CYAN << "timout in process" << RESET << std::endl;
+				setErrorResponse(conn, 500);
+				return 1;
+			default:
+				return 0;
 		}
-		else
-			conn->state = READING;
 	}
-	else
-		conn->state = HANDLING;
+	return 0;
 }
 
 
@@ -109,7 +126,6 @@ std::string	removeWhitespaces(std::string str) {
 }
 
 
-void handleSignal(int signal)
-{
+void handleSignal(int signal) {
 	g_shutdown_flag = signal;
 }

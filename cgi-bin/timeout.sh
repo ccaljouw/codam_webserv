@@ -1,4 +1,4 @@
-#/usr/bin/env bash
+#/usr/bin/env sh
 
 # Get the start time
 start_time=`date +%s`

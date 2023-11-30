@@ -6,12 +6,14 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/26 18:20:33 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/29 10:09:29 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/30 11:36:22 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
 #include <unistd.h>
+#include <string.h>
+#include <string>
 
 int	parseServer(std::string line, struct ServerSettings *server)
 {
@@ -29,7 +31,7 @@ int	parseServer(std::string line, struct ServerSettings *server)
 	}
 	else if (key == "root")
 	{
-		if (access(value.c_str(), F_OK | R_OK) == -1)
+		if (access(value.c_str(), F_OK | R_OK) == -1) 
 			return 1;
 		server->_rootFolder = value;
 	}

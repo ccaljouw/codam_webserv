@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/29 10:09:25 by carlo         ########   odam.nl         */
+/*   Updated: 2023/11/30 11:36:54 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,30 +39,8 @@ Config::Config(int argc, char** argv) : _error(false), _lineNr(1)
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
-	}
-
-	std::cout << "\nnb servers = " << _servers.size()<< std::endl;
-
-	for (const auto server : _servers) {
-		std::cout << "Server: " << server->_serverName << std::endl;
-		std::cout << server->_index <<  std::endl;
-		std::cout << server->_maxBodySize <<  std::endl;
-		std::cout << server->_port << std::endl;
-		std::cout << server->_rootFolder <<  std::endl;
-
-		std::cout << "location size: " << server->_locations.size()<< std::endl;
-		for (const auto location : server->_locations) {
-			std::cout << "Location ID: " << location->_locationId << std::endl;
-			std::cout << location->_dirListing << std::endl;
-			std::cout << location->_index << std::endl;
-			// std::cout << location->_redirect[0] << std::endl;
-			for (const auto& method : location->_allowedMethods)
-				std::cout << method << std::endl;
-		}
-
-		// std::cout << server->_errorPages << std::endl;
-			
+		std::cerr << RED << e.what() << RESET << std::endl;
+		_error = true;
 	}
 
 }
