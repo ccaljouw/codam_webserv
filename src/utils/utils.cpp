@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/30 11:42:50 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/30 12:55:16 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <string>
 #include <fstream>
 #include <signal.h>
+
 
 std::string getTimeStamp() {
 	//get current time
@@ -28,47 +29,42 @@ std::string getTimeStamp() {
     std::strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S GMT", timeInfoGmt);
     return buffer;
 }
-
-
-	// // check for error pages set in config
-	// std::map<int, std::string> *providedErrorPages = conn->server->get_errorPages(request.getHeaderValue("host"));
-	// if (providedErrorPages->size() != 0) {
-	// 	for (const auto& pair : *providedErrorPages) {
-	// 		if (pair.first == error) {
-	// 			//**test
-	// 			std::cout << BLUE << "directed to error page set in config with nr: " << error <<  RESET << std::endl;
-	// 			errorHtmlPath = "data/text/html" + pair.second; //todo from root
-	// 		}
-	// 	}
-	// }
 	
-	// //check for error 404 and check for dir listing is true >>
-	// if (errorHtmlPath.empty()) {
-	// 	std::cout << BLUE << "dirlist: " <<  request.getDirListing() <<  RESET << std::endl;
-	// 	if (error == 404 && request.getDirListing() == true)
-
-	// 		std::cout << RED << "Need to add code here" << RESET << std::endl; //todo: add script
-	// 	else	
-	// 		errorHtmlPath = generateErrorPage(error);
-	// }
-
 
 void	setErrorResponse(connection *conn, int error)
 {
-	HttpResponse response(HttpRequest(conn->request, conn->server));
-	std::string errorHtmlPath = generateErrorPage(error);
+	HttpRequest request(conn->request, conn->server);
+	std::string errorHtmlPath;
+	std::string host = request.getHeaderValue("host");
+	
+	// check for error pages set in config
+	std::map<int, std::string> *providedErrorPages = conn->server->get_errorPages(host);
+	if (providedErrorPages->size() != 0) {
+		for (const auto& pair : *providedErrorPages) {
+			if (pair.first == error) {
+				std::cout << BLUE << "directed to error page set in config with nr: " << error <<  RESET << std::endl;
+		
+				errorHtmlPath = "./data/text/html" + pair.second; //todo: remove
+				// errorHtmlPath = request.getRoot() + "/text/html" + pair.second;
+		
+				std::cout << BLUE << "errorHtmlPath: " << errorHtmlPath <<  RESET << std::endl;
+			}
+		}
+	}
+	else 
+		errorHtmlPath = generateErrorPage(error);
+	
+	HttpResponse response(request);
 	response.setStatusCode(error);
 	if (error == 408 || error == 429 || error == 500 || error == 504) {
 		conn->close_after_response = 1;
 		response.setHeader("Connection", "close");		
 	}
-	// std::string errorHtmlPath = generateErrorPage(conn, error); //for confid error page
 
+	//check if path is ok
 	std::ifstream f(errorHtmlPath);
 	if (f.good())
 		response.setBody(errorHtmlPath, false);
-	// if (std::remove(errorHtmlPath.c_str()) != 0) //todo uncomment to remove error pages
-	// 	std::cerr << RED << "Error remoiving tmp error page" << RESET <<  std:: endl; 
 	setResponse(conn, response);
 }
 

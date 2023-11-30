@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/30 12:06:19 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/30 12:58:34 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,22 +33,27 @@ void	handleRequest(int epollFd, connection *conn) {
 
 		//handle default for directories
 		if (request.uri.isDir()) {
+			std::string index = request.getIndex();
+			std::string host = request.uri.getHost();
+					
 			std::cout << BLUE << "Is Directory" << RESET << std::endl;
-			/*autoindex 
-				yes > return index script
-				no > check index defined for location
-					yes > index
-					no > 404
-			*/
-
-			
-			std::string index = request.getIndex(); 
-			if (!index.empty()) {
+			std::cout << BLUE << "dirlist: " <<  request.getDirListing() <<  RESET << std::endl;
 		
+			if (request.getDirListing() == true) {
+				std::cout << RED << "Need to add script to index here" << RESET << std::endl; //todo: add script
+				//todo remove all below
+				HttpResponse response(request);
+				response.setBody("data/text/html/418.html", false); //todo:make config
+				setResponse(conn, response);
+			}
+		
+			else if (!index.empty()) {
 				std::cout << BLUE << "index found: " << index << RESET << std::endl;
 				std::cout << BLUE << "root: " << request.getRoot() << RESET << std::endl;
 
-				std::string bodyPath = "data/text/html/" + index;		//todo get from root
+				std::string bodyPath = "./data/text/html" + index; //todo: remove
+				// std::string bodyPath = request.getRoot() + "/text/html" + index;
+
 				HttpResponse response(request);
 				response.setBody(bodyPath, false);
 				response.addHeader("Content-type", contentType);
