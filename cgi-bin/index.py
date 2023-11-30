@@ -30,7 +30,7 @@ def listDirs() -> (int, str):
 		# Check if the server sent the query string
 		# else list the files in the root directory
 		if os.environ.get("QUERY_STRING") != None:
-			_ , value = os.environ.get("QUERY_STRING").split("=")
+			value = os.environ.get("QUERY_STRING")
 			if value == "cgi-bin":
 				return listFiles(pathlib.Path("./cgi-bin"))
 			else:
