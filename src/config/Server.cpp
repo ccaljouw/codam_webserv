@@ -172,9 +172,9 @@ bool		Server::get_dirListing(std::string host, std::string location) const {
 	return get_locationSettings(host, location)->_dirListing;
 }
 
-std::string	Server::get_locationRoot(std::string host, std::string location) const {
-	return get_locationSettings(host, location)->_locationRoot;
-}
+// std::string	Server::get_locationRoot(std::string host, std::string location) const {
+// 	return get_locationSettings(host, location)->_locationRoot;
+// }
 
 // ============= setters ================
 void	Server::set_connection(struct connection *conn) {

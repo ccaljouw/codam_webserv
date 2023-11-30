@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
-import datetime, os, cgi, cgitb, sys
-
-import time
-time.sleep(8)
+import datetime, os, cgi, cgitb
 
 cgitb.enable(display=1)
 form = cgi.FieldStorage()
@@ -27,7 +24,10 @@ def genFilename(filePath) -> str:
 def uploadFile(form) -> (int, str) :
 
 	# Create uploads folder if it doesn't exist
-	uploadDir = os.getcwd() + '/uploads'
+	# if os.path.exists(os.environ.get("PATH_INFO")) == False:
+	# 	return (500, "Internal Server Error")
+	# uploadDir = os.environ.get("PATH_INFO") + "/" + os.environ.get("UPLOAD_DIR")
+	uploadDir = "./data/uploads"
 	if os.path.exists(uploadDir) == False:
 		os.mkdir(uploadDir)
 	
@@ -77,8 +77,7 @@ Connection: close\r
 Date: {date}\r
 Last-Modified: {date}\r
 Connection: close\r
-Server: Codam_Webserver\r\n\r"""
-# Server: {os.environ.get("SERVER_NAME")}\r\n\r"""
+Server: {os.environ.get("SERVER")}\r\n\r"""
 
 print(header)
 print(body)

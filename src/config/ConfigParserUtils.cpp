@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/26 18:20:33 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/28 11:57:27 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/28 11:49:21 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ int	parseServer(std::string line, struct ServerSettings *server)
 	}
 	else if (key == "root")
 	{
-		if (access(value.c_str(), F_OK | R_OK) == -1) 
-			return 1;
+		if (access(value.c_str(), F_OK | R_OK) == -1)
+			return 2;
 		server->_rootFolder = value;
 	}
 	else if (key == "upload_dir")

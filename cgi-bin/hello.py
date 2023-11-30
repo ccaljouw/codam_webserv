@@ -48,8 +48,7 @@ Content-type: text/html; charset=utf-8\r
 Date: {date}\r
 Last-Modified: {date}\r
 Connection: close\r
-Server: Codam_Webserver\r\n\r"""
-# Server: {os.environ.get("SERVER_NAME")}\r\n\r"""
+# Server: {os.environ.get("SERVER")}\r\n\r"""
 
 print(header)
 print(body)
