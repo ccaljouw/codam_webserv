@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/30 15:06:21 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/30 15:54:52 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ void	handleRequest(int epollFd, connection *conn) {
 			if (conn->server->get_dirListing(host, request.uri.getPath()) == true) {
 
 				HttpResponse response(request);
+				request.uri.setPath("/cgi-bin/index.py");
 				request.addEnvironVar("QUERY_STRING", request.uri.getPath());
 			
 				if (cgiHandler(request, conn, epollFd) == 1 ) 
@@ -61,7 +62,7 @@ void	handleRequest(int epollFd, connection *conn) {
 				}
 			}
 	
-			if (!index.empty()) {
+			else if (!index.empty()) {
 				std::cout << BLUE << "index found: " << index << RESET << std::endl;
 				std::cout << BLUE << "root: " << conn->server->get_rootFolder(host, request.uri.getPath()) << RESET << std::endl;
 

@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/06 12:51:38 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/30 11:37:00 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/30 15:50:46 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ char	*getProgramPath(const Uri& uri, char *program)
 void	execChild(const HttpRequest& req, CGI &cgi, int oldFd)
 {
 	char	program[req.uri.getPath().size() + 2];
+	std::cout << req.uri.getPath() << std::endl;
 	char	*argv[] = {program, NULL};
 	char	**env = req.getEnvArray();
 	getProgramPath(req.uri, program);

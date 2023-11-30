@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/30 15:07:15 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/30 15:40:11 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,19 +50,19 @@ void	setErrorResponse(connection *conn, int error)
 
 				std::cout << BLUE << "errorHtmlPath: " << errorHtmlPath <<  RESET << std::endl;
 			}
+			else 
+				errorHtmlPath = generateErrorPage(error);
 		}
 	}
 	else 
 		errorHtmlPath = generateErrorPage(error);
-	
 	HttpResponse response(request);
 	response.setStatusCode(error);
 	if (error == 408 || error == 429 || error == 500 || error == 504) {
 		conn->close_after_response = 1;
 		response.setHeader("Connection", "close");		
 	}
-	// std::string errorHtmlPath = generateErrorPage(conn, error); //for confid error page
-
+	
 	//check if path is ok
 	std::ifstream f(errorHtmlPath);
 	if (f.good())

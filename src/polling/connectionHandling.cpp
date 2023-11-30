@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/30 14:55:48 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/30 15:36:07 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ void writeData(connection *conn)
 	int			len;
 	
 	std::cout << "writeData" << "\tfd = " << conn->fd << std::endl; //for testing
-	// std::cout << PURPLE << conn->response << RESET << std::endl; //for testing
+	std::cout << PURPLE << conn->response << RESET << std::endl; //for testing
 	len = std::min(static_cast<int>(conn->response.length()), BUFFER_SIZE);
     len = send(conn->fd, conn->response.c_str(), conn->response.length(), 0);
 	if (len == -1)
