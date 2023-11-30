@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   Config.hpp                                         :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/28 11:48:16 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/11/30 14:27:19 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,13 @@ enum configBlock
 struct LocationSettings
 {
 	std::string								_locationId;
+	std::string								_index;
+// 	std::string								_locationRoot;
+	std::string								_rootFolder;
+	std::string								_uploadDir;
+	bool									_dirListing;
 	std::set<std::string>					_allowedMethods;
 	std::map<int, std::string>				_redirect;
-	std::string								_index;
-	bool									_dirListing;
-	std::string								_locationRoot;
 };
 
 struct ServerSettings
