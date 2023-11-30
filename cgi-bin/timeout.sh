@@ -1,4 +1,4 @@
-#/usr/bin/env bash
+#!/usr/bin/env bash
 
 # Get the start time
 start_time=`date +%s`
@@ -17,5 +17,4 @@ while true; do
 		break
 	fi
 
-	sleep 5
 	done

@@ -19,25 +19,16 @@
     function deleteFile() {
         const filename = document.getElementById('filename').value;
 
-        // Check if the filename is provided
-        if (!filename) {
-            alert('Please enter a filename.');
-            return;
-        }
-
         // Construct the delete URL with the filename as a query parameter
         const deleteUrl = `/cgi-bin/delete.sh?filename=${encodeURIComponent(filename)}`;
 
         // Send a DELETE request to the delete CGI script
-        fetch(deleteUrl, { method: 'DELETE' })
-            .then(response => {
-                if (response.ok) {
-                    console.log(`File ${filename} deleted successfully!`);
-                } else {
-                    console.error(`Error deleting file ${filename}. Status: ${response.status}`);
-                }
+        let response = fetch(deleteUrl, { method: 'DELETE' })
+            .then(response => response.text())
+            .then(data => {
+                // Replace the entire body with the response content
+                document.body.innerHTML = data;
             })
-            .catch(error => console.error(`Error deleting file ${filename}:`, error));
     }
 </script>
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 status=""
 message=""
@@ -87,15 +87,16 @@ body="<!DOCTYPE html>
 # gets the length of the body
 content_length=`echo "$body" | wc -c`
 
-header="HTTP/1.1 $status\r
-Content-Length: $content_length\r
-Content-type: text/html; charset=utf-8\r\
-Date: $date\r
-Last-Modified: $date\r
-Connection: close\r
-Server: $SERVER\r\n\r"
+header="HTTP/1.1 $status
+Content-Length: $content_length
+Content-type: text/html; charset=utf-8
+Date: $date
+Last-Modified: $date
+Connection: close
+Server: $SERVER"
 
 echo "$header"
-echo "$body\0"
-exec 1>&-
+echo ""
+echo "$body"
+echo "\0"
 
