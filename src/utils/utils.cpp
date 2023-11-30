@@ -6,14 +6,14 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/30 11:33:28 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/30 11:42:50 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webServ.hpp"
 
-#include<string>
-#include<fstream>
+#include <string>
+#include <fstream>
 #include <signal.h>
 
 std::string getTimeStamp() {
@@ -55,7 +55,7 @@ std::string getTimeStamp() {
 
 void	setErrorResponse(connection *conn, int error)
 {
-	HttpResponse response;
+	HttpResponse response(HttpRequest(conn->request, conn->server));
 	std::string errorHtmlPath = generateErrorPage(error);
 	response.setStatusCode(error);
 	if (error == 408 || error == 429 || error == 500 || error == 504) {

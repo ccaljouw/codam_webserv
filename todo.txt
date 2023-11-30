@@ -1,8 +1,8 @@
 TODO:
 - Root shit
-	The root /path/to/server/root; directive at the server level sets the base directory for the entire server. 
+	The root  base directory for the entire server. 
 	It serves as the default root for all locations unless overridden in specific location blocks.
-	The location / block inherits the server-level root unless overwritten in the block.
+	The location / block inherits the server-level root unless overwritte/path/to/server/root; directive at the server level sets then in the block.
 
 - Redirects
 	HTTP Status Codes: Redirects are implemented using HTTP status codes. The most common status codes for redirects are:

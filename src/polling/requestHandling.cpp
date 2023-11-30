@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/30 11:33:36 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/30 12:06:19 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,14 @@ void	handleRequest(int epollFd, connection *conn) {
 		//handle default for directories
 		if (request.uri.isDir()) {
 			std::cout << BLUE << "Is Directory" << RESET << std::endl;
-		
+			/*autoindex 
+				yes > return index script
+				no > check index defined for location
+					yes > index
+					no > 404
+			*/
+
+			
 			std::string index = request.getIndex(); 
 			if (!index.empty()) {
 		
