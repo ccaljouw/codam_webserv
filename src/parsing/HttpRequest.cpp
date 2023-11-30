@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/30 14:31:37 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/30 14:58:36 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,13 +138,9 @@ HttpRequest::~HttpRequest() {
 
 //========= Getters ===============================
 const Server*				HttpRequest::getServer(void) const 			{	return _server;								}
-bool						HttpRequest::getDirListing() const			{	return (this->_settings->_dirListing);		}
-std::string					HttpRequest::getRoot(void) const			{	return (this->_settings->_locationRoot);	}
-std::string					HttpRequest::getIndex(void) const			{	return (this->_settings->_index);			}
 std::set<std::string>		HttpRequest::getAllowedMethods(void) const	{	return (this->_settings->_allowedMethods);	}
 std::string					HttpRequest::getLocationId(void) const		{	return (this->_settings->_locationId);		}
 std::map<int, std::string>	HttpRequest::getRedirect(void) const		{	return (this->_settings->_redirect);		}
-
 std::string					HttpRequest::getMethod(void) const			{	return _method;								}
 std::string					HttpRequest::getProtocol(void) const		{	return _protocol;							}
 std::string					HttpRequest::getBody(void) const			{	return _body;								}

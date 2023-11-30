@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/30 12:28:57 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/11/30 14:58:11 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,7 @@ class HttpRequest {
 		Uri											uri;
 
 	// ============= Getters ================
-		//location settings
-		bool										getDirListing(void) const;
-		std::string									getRoot(void) const;
-		std::string									getIndex(void) const;
+		
 		std::set<std::string>						getAllowedMethods(void) const;
 		std::string									getLocationId(void) const;
 		std::map<int, std::string>					getRedirect(void) const;

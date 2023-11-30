@@ -49,8 +49,6 @@ class Server
 		struct ServerSettings*		get_hostSettings(std::string host) const;
 		struct LocationSettings*	get_locationSettings(std::string host, std::string location) const;
 		
-		std::string					get_rootFolder(std::string host) const;
-		std::string					get_uploadDir(std::string host) const;
 		std::string					get_serverName(std::string host) const;
 		std::map<int, std::string>*	get_errorPages(std::string host) const;
 		size_t						get_maxBodySize(std::string host) const;
@@ -77,6 +75,9 @@ class Server
 		};
 	
 	private:
+
+		std::string							get_rootFolder(std::string host) const;
+		std::string							get_uploadDir(std::string host) const;
 
 		int 								_fd;
 		struct sockaddr_in					_serverAddr;
