@@ -1,17 +1,39 @@
 TODO:
 - Root shit
+	The root /path/to/server/root; directive at the server level sets the base directory for the entire server. 
+	It serves as the default root for all locations unless overridden in specific location blocks.
+	The location / block inherits the server-level root unless overwritten in the block.
+
 - Redirects
-- Delete
-- Research how to test
+	HTTP Status Codes: Redirects are implemented using HTTP status codes. The most common status codes for redirects are:
+		301 Moved Permanently: Indicates a permanent redirect.
+		302 Found (or 307 Temporary Redirect): Indicates a temporary redirect. 
+		Browsers may not cache this, and the original URL may be used in future requests.
+	Location Header: The server sends a response with the appropriate status code along with a Location header that contains the new URL.
+		response.setHeader("Location", "http://" + ("Host") + req.path);
+
 - dir listing (if 404 and dir listing == 1, call script with dir=.... in query string) -Carlo
-- timeouts, add PID to connection (Bruno) finish check on timeouts (Carien)
+	"Turn on or off directory listing" refers to the ability to display a list of files within a directory 
+	when the client requests a URL that corresponds to a directory rather than a specific file. Directory 
+	listing is also known as directory browsing or index listing.
+
+- Set a default file to answer if the request is a directory
+	When directory listing is turned on, and a client requests a URL that maps to a directory (e.g., http://example.com/directory/), 
+	the web server generates and displays a page containing a list of files and subdirectories within that directory. 
+	Each file or subdirectory is typically presented as a clickable link.
+
+- Research how to test
+- Delete (Bruno)
+
 - change scripts with root -Bruno
 - cookie script -Bruno
+
 - cleanup includes
 
 DONE:
 - finish config parser (check for at least all mandatory settings in location / and server) -Bruno
 - Error pages - add check on defined error pages for server 
+- timeouts, add PID to connection (Bruno) finish check on timeouts (Carien)
 
 ERROR CODES TO CONSIDER:
 408 Request Timeout
@@ -22,8 +44,7 @@ ERROR CODES TO CONSIDER:
 	a Retry-After header field and after how long can the client retry.
 429 Too Many Requests
 501/418 Not Implemented
-503 Service Unavailable
 
 CHECK/THOUGHTS:
-- close connection CGI
+- close connection header CGI
 - only update nr of times visited when GET request with .html extension. That way it would maybe make some more sense to the user. 

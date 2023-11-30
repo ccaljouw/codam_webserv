@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/28 23:18:58 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/29 19:46:25 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,19 +66,29 @@ void readCGI(int epollFd, connection *conn)
 	char buffer[BUFFER_SIZE];
     ssize_t bytesRead;
 	
-	std::cout << "readCGI" << "\tcgiFd = " << conn->cgiFd << std::endl; //for testing
+	// std::cout << "readCGI" << "\tcgiFd = " << conn->cgiFd << std::endl; //for testing
     if ((bytesRead = read(conn->cgiFd, buffer, BUFFER_SIZE)) > 0) {
 		conn->response.append(buffer, static_cast<long unsigned int>(bytesRead));
     }
-	if (bytesRead < BUFFER_SIZE) {
-		std::cout << BLUE << buffer << RESET << std::endl;
-		close(conn->cgiFd);
-		epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->cgiFd, nullptr);
-		conn->state = WRITING;
-	}
-	if (conn->response.empty() || bytesRead == -1) {
-		std::cerr << RED << "Error\nproblem reading CGI" << RESET << std::endl;
-		setErrorResponse(conn, 500);
+	switch(bytesRead)
+	{
+		case -1:
+			std::cerr << RED << "Error\nproblem reading CGI" << RESET << std::endl;
+			setErrorResponse(conn, 500);
+			break;
+		case 0:
+			if (conn->response.empty()) {
+				std::cerr << RED << "Error\nnothing to read from CGI" << RESET << std::endl;
+				setErrorResponse(conn, 500);		
+			}
+			break;
+		case BUFFER_SIZE:
+			break;
+		default:
+			// std::cout << BLUE << buffer << RESET << std::endl;
+			close(conn->cgiFd);
+			epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->cgiFd, nullptr);
+			conn->state = WRITING;
 	}
 }
 

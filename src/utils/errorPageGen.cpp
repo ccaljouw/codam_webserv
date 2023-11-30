@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/24 08:20:32 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/28 16:06:45 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/29 22:04:07 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ std::string	generateErrorPage(int e) {
 			title = pair.second;
 
 //set page content
-	std::string htmlContent = R"(
+std::string htmlContent = R"(
 <!DOCTYPE html>
 <html>
 <head>

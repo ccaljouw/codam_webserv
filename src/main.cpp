@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/28 23:19:54 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/28 23:23:47 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
 				closeConnection(epollFd, conn);
 		}
 	}
-	std::cout << CYAN << "clean up" << RESET << std::endl;
+	std::cout << CYAN << "\nclean up" << RESET << std::endl;
 	int numEvents = epoll_wait(epollFd, events, MAX_EVENTS, 0);
 	for (int i = 0; i < numEvents; i++) {
 		connection *conn = static_cast<connection *>(events[i].data.ptr);

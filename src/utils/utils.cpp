@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/28 23:12:15 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/11/29 22:03:09 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ void	setErrorResponse(connection *conn, int error)
 		conn->close_after_response = 1;
 		response.setHeader("Connection", "close");		
 	}
+	if (error == )
 	// std::string errorHtmlPath = generateErrorPage(conn, error); //for confid error page
 
 	std::ifstream f(errorHtmlPath);
@@ -61,8 +62,7 @@ void	setResponse(connection *conn, HttpResponse resp)
 // others (eg safari) do not close the connection themselves
 int	checkTimeout(connection *conn)
 {
-	// if (conn->state == IN_CGI || conn->state == WRITING) // for testing
-	// 	std::cout << GREEN << "in check timeout: " << conn->state << RESET << std::endl; // for testing
+	// smaller timeout value for internal timeouts?
 	if (difftime(std::time(nullptr), conn->time_last_request) > conn->server->get_timeout()) {
 
 		switch(conn->state)
