@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   webServ.hpp                                        :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/28 23:45:40 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   webServ.hpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/03 16:57:19 by carlo             #+#    #+#             */
+/*   Updated: 2023/11/30 13:14:54 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 #define MAX_EVENTS 10
 #define BUFFER_SIZE 1024
 #define TIMEOUT	5
+#define CGI_TIMEOUT 3
 #define	MAX_NR_REQUESTS 30
 
 

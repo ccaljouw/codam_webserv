@@ -1,19 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   utils.cpp                                          :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: carlo <carlo@student.codam.nl>               +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/29 22:03:09 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   utils.cpp                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/22 21:57:55 by carlo             #+#    #+#             */
+/*   Updated: 2023/11/30 12:52:08 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webServ.hpp"
 
-#include<string>
-#include<fstream>
+#include <string>
+#include <fstream>
 #include <signal.h>
 
 std::string getTimeStamp() {
@@ -39,7 +39,6 @@ void	setErrorResponse(connection *conn, int error)
 		conn->close_after_response = 1;
 		response.setHeader("Connection", "close");		
 	}
-	if (error == )
 	// std::string errorHtmlPath = generateErrorPage(conn, error); //for confid error page
 
 	std::ifstream f(errorHtmlPath);
@@ -63,8 +62,13 @@ void	setResponse(connection *conn, HttpResponse resp)
 int	checkTimeout(connection *conn)
 {
 	// smaller timeout value for internal timeouts?
-	if (difftime(std::time(nullptr), conn->time_last_request) > conn->server->get_timeout()) {
+	double timeout;
 
+	if (conn->state == IN_CGI)
+		timeout = CGI_TIMEOUT;
+	else
+		timeout = conn->server->get_timeout();
+	if (std::difftime(std::time(nullptr), conn->time_last_request) >= timeout) {
 		switch(conn->state)
 		{
 			case READING:
