@@ -39,3 +39,11 @@ a {
 a:hover {
     color: #ff0000;
 }
+
+#image {
+	/* display: block; */
+	width: 50%;
+	/* margin: auto; */
+	float: right;
+	border-radius: 25%;
+  }

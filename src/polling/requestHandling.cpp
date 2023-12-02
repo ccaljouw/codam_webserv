@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/28 20:06:13 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/02 15:54:02 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,9 +64,21 @@ void	handleRequest(int epollFd, connection *conn) {
 					request.uri.setPath(fullPath);
 				else
 					throw HttpRequest::parsingException(404, "Path not found");
-	
+
+				std::string path(request.uri.getPath());
+				long unsigned int pos = path.find("cookie.png");
+				std::cout << "PATH: " << path << std::endl;
+				if (pos < path.size()) {
+					std::string trigger = cookieValue.substr(cookieValue.rfind("=") + 1) ;
+					if (trigger == "cats")
+						path = path.substr(0, pos) + "cat.png";
+					else if (trigger == "dogs")
+						path = path.substr(0, pos) + "dog.png";
+					std::cout << "PATH: " << path << std::endl;
+				}
+				
 				HttpResponse response(request);
-				response.setBody(request.uri.getPath(), request.uri.getIsBinary());
+				response.setBody(path, request.uri.getIsBinary());
 				response.addHeader("Content-type", contentType);
 				response.setHeader("Set-Cookie", cookieValue);
 				setResponse(conn, response);

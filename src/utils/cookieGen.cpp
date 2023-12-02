@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   cookieGen.cpp                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/24 08:20:32 by carlo             #+#    #+#             */
-/*   Updated: 2023/11/27 17:07:19 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   cookieGen.cpp                                      :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/24 08:20:32 by carlo         #+#    #+#                 */
+/*   Updated: 2023/12/02 15:52:24 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,11 @@ std::string		checkAndSetCookie(connection* conn, HttpRequest& request) {
 		cookieId = std::to_string(static_cast<long int>(id));
 		conn->server->addClientId(cookieId);
 	}
-	std::string newCookieValue = "name=" + std::string(HOST) + ", id=" + cookieId + ", trigger=" + cookieTrigger; //todo: host from config
-
+	if (!request.uri.getQuery().empty())
+		cookieTrigger = request.uri.getQuery();
+	else
+		cookieTrigger = "trigger=" + cookieTrigger;
+	std::string newCookieValue = "name=" + std::string(HOST) + ", id=" + cookieId + ", " + cookieTrigger; //todo: host from config
+	std::cout << CYAN << "new cookie set to: " << newCookieValue << RESET << std::endl;
 	return newCookieValue;
 }
