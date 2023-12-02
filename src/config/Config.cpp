@@ -6,15 +6,11 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/28 11:48:24 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/12/02 21:26:03 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
-#include "webServ.hpp"
-#include <fstream>
-#include <map>
-#include <list>
 
 Config::Config(int argc, char** argv) : _error(false), _lineNr(1)
 {

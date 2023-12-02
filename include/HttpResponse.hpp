@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/28 13:48:21 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/02 22:28:54 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,7 @@
 #ifndef HTTPRESPONSE_H
 # define HTTPRESPONSE_H
 
-#include "webServ.hpp"
-
-#include <string>
-#include <map>
+#include "defines.hpp"
 
 class HttpRequest;
 
@@ -40,7 +37,6 @@ class HttpResponse {
 		void	setBody(const std::string& filePath, bool isBinary);
 		void	setHeader(const std::string& key, const std::string& value);
 		void	fillStandardHeaders(void); //todo: get from config
-		void	updateDateLength(void);
 
 		// =========== Other ===============
 		std::string	serializeResponse(void);

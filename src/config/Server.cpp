@@ -10,12 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webServ.hpp"
 #include <Server.hpp>
-#include "Config.hpp"
-#include <map>
-#include <set>
-#include <algorithm>
+#include "webServ.hpp" //fix
 
 // ============= con-/destructors ================
 

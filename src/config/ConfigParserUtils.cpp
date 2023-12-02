@@ -6,20 +6,16 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/26 18:20:33 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/28 11:49:21 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/12/02 21:24:51 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
-#include <unistd.h>
-#include <string.h>
-#include <string>
 
 int	parseServer(std::string line, struct ServerSettings *server)
 {
-	std::string key = line.substr(0, line.find_first_of(WHITESPACE));
-	std::string value = line.substr(line.find_first_of(WHITESPACE) + 1);
-
+	std::string key = line.substr(0, line.find_first_of(WHITE_SPACE));
+	std::string value = line.substr(line.find_first_of(WHITE_SPACE) + 1);
 	if (key.empty() || value.empty())
 		return 1;
 	
@@ -66,8 +62,8 @@ int	parseServer(std::string line, struct ServerSettings *server)
 
 int	parseLocation(std::string line, struct LocationSettings *location)
 {
-	std::string key = line.substr(0, line.find_first_of(WHITESPACE));
-	std::string value = line.substr(line.find_first_of(WHITESPACE) + 1);
+	std::string key = line.substr(0, line.find_first_of(WHITE_SPACE));
+	std::string value = line.substr(line.find_first_of(WHITE_SPACE) + 1);
 
 	if (key.empty() || value.empty())
 		return 1;
@@ -95,10 +91,10 @@ int	parseLocation(std::string line, struct LocationSettings *location)
 	}
 	else if (key == "return")
 	{
-		std::string code = value.substr(0, value.find_first_of(WHITESPACE));
-		std::string uri = value.substr(value.find_first_of(WHITESPACE) + 1);
+		std::string code = value.substr(0, value.find_first_of(WHITE_SPACE));
+		std::string uri = value.substr(value.find_first_of(WHITE_SPACE) + 1);
 		
-		if (code.empty() || uri.empty() || uri.find_first_of(WHITESPACE) != std::string::npos)
+		if (code.empty() || uri.empty() || uri.find_first_of(WHITE_SPACE) != std::string::npos)
 			return 1;
 		if (code.length() != 3 || code.find_first_not_of(NUMBERS) != std::string::npos)
 			return 1;
@@ -117,10 +113,10 @@ int	parseLocation(std::string line, struct LocationSettings *location)
 
 int	parseErrorPage(std::string line, std::map<int, std::string> *errorPages)
 {
-	std::string key = line.substr(0, line.find_first_of(WHITESPACE));
-	std::string value = line.substr(line.find_first_of(WHITESPACE) + 1);
+	std::string key = line.substr(0, line.find_first_of(WHITE_SPACE));
+	std::string value = line.substr(line.find_first_of(WHITE_SPACE) + 1);
 
-	if (key.empty() || value.empty() || value.find_first_of(WHITESPACE) != std::string::npos)
+	if (key.empty() || value.empty() || value.find_first_of(WHITE_SPACE) != std::string::npos)
 		return 1;
 	if (key.length() != 3 || key.find_first_not_of(NUMBERS) != std::string::npos || value[0] != '/')
 		return 1;

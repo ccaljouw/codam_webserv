@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/13 09:46:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/27 11:51:38 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/12/02 22:02:10 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,7 @@
 #ifndef HEADER_H
 # define HEADER_H
 
-#include "webServ.hpp"
-#include <string>
-#include <map>
+#include "defines.hpp"
 
 class Header {
 

@@ -10,12 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include "HttpResponse.hpp"
-// #include "HttpRequest.hpp"
-#include "webServ.hpp"
-
-#include <iostream>
-#include <fstream>
+#include "HttpResponse.hpp"
+#include "HttpRequest.hpp"
+#include "webServ.hpp" //fix
 
 std::string getTimeStamp();
 
@@ -127,9 +124,9 @@ void HttpResponse::setBody(const std::string& filePath, bool isBinary)	{
 void HttpResponse::fillStandardHeaders() {
 	// addHeader("Transfer-Encoding", "chunked");
 	// addHeader("Cache-Control",  "public, max-age=86400");
-	addHeader("Keep-Alive", "timeout=5, max=3"); // get timout and max requests from server in connection struct
+	addHeader("Keep-Alive", "timeout=5, max=3"); // todo: get timout and max requests from server in connection struct
 	addHeader("Date", getTimeStamp());
-	addHeader("Server", HOST); // get server name from server in connection struct
+	addHeader("Server", "host"); // todo: get server name from server in connection struct
 	addHeader("Last-Modified", getTimeStamp());
 	addHeader("Content-Length", std::to_string(_body.length()));
 

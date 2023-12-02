@@ -6,16 +6,12 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/24 08:20:32 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/29 22:04:07 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/02 22:50:50 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webServ.hpp"
-
-#include<string>
-#include<sstream>
-#include<fstream>
-#include<sys/stat.h>
+#include <sys/stat.h>
 
 
 // Success 2xx /  Error 4xx, 5xx / Redirection 3xx

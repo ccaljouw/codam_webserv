@@ -13,9 +13,10 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
-#include <eventloop.hpp>
-#include "Config.hpp"
-#include <string.h>
+#include "defines.hpp"
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <unistd.h>
 
 class Server
 {
@@ -86,7 +87,5 @@ class Server
 		std::list<struct ServerSettings *>	_settings;
 		struct connection					*_conn;
 } ;
-
-std::list<Server> initServers(const Config& config, int epollFd);
 
 #endif /* **************************************************** Server_H */

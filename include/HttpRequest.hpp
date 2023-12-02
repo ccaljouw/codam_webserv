@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/24 14:29:58 by carlo         ########   odam.nl         */
+/*   Updated: 2023/12/02 22:40:56 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,10 @@
 #ifndef HTTPREQUEST_H
 # define HTTPREQUEST_H
 
-#include "webServ.hpp"
+#include "Server.hpp"
 #include "Uri.hpp"
-
-#include <string>
-#include <map>
+#include <sstream>
+#include <algorithm>
 
 class HttpRequest {
 

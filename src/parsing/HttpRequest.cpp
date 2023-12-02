@@ -6,16 +6,12 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/27 19:30:16 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/02 22:40:51 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HttpRequest.hpp"
 #include "webServ.hpp"
-#include "eventloop.hpp"
-#include "Config.hpp"
-
-#include <algorithm>
 
 std::string getTimeStamp();
 
@@ -262,7 +258,7 @@ void	HttpRequest::fillStandardHeaders() {
 	addHeader("Keep-Alive", "timeout=" + timeout + ", max=3");
 
 	addHeader("Date", getTimeStamp());
-	addHeader("Server", HOST); // get server name from server in connection struct
+	addHeader("Server", _server->get_serverName(uri.getHost()));
 	addHeader("Last-Modified", getTimeStamp());
 	addHeader("Content-Length", std::to_string(_body.length()));
 

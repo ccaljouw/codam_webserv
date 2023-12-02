@@ -6,13 +6,11 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:48:35 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/28 23:11:41 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/02 22:49:41 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webServ.hpp"
-#include <string.h>
-#include <fcntl.h>
 
 int	register_server(int epollFd, int fd, Server *server)
 {

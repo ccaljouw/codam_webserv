@@ -6,14 +6,11 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/28 23:23:47 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/02 22:52:06 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "eventloop.hpp"
-#include "Config.hpp"
 #include "webServ.hpp"
-#include <string.h>
 #include <signal.h>
 
 int	g_shutdown_flag = 0;

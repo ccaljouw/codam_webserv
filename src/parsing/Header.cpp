@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/13 09:46:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/27 21:30:07 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/12/02 22:40:00 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,6 @@
 //!!WORK IN PLACE NOT IMPLEMENTED!!
 
 #include "header.hpp"
-
-#include <string>
-#include <map>
-
 
 Header(const std::string& header) : _key(), _value(), _valueVector(), _valueMap(), _valueAmount(0), _definesValuePairs(false) {
 	

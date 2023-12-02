@@ -6,18 +6,12 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/24 09:17:00 by carlo         ########   odam.nl         */
+/*   Updated: 2023/12/02 22:46:31 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Uri.hpp"
-#include "HttpRequest.hpp"
-
-#include <regex>
-#include <exception>
-#include <sstream>
-#include <cstring>
-
+#include "HttpRequest.hpp" //only used for exeption
 
 Uri::Uri() : _scheme(), _authority(), _path(), _extension(), _isBinary(false), _query(), _queryMap(), _fragment(), _userinfo(), _host(), _port() {}
 

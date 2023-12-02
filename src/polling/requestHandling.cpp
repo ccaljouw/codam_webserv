@@ -6,12 +6,11 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/02 15:54:02 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/02 22:50:05 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webServ.hpp"
-#include <fstream>
 
 // TODO:	check allowed methods for contentType
 void	handleRequest(int epollFd, connection *conn) {
@@ -116,3 +115,4 @@ void	handleRequest(int epollFd, connection *conn) {
 	}
 	std::cout << "end of handleRequest" << std::endl; //testing
 }
+
