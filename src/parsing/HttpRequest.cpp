@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/30 14:58:36 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/12/02 09:30:52 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,6 @@ try {
 	uri = Uri(tempUriString);
 
 // === fetch location specific config settings === 
-
 	_settings = _server->get_locationSettings(getHeaderValue("host"), uri.getPath());
 	if (_settings == nullptr)
 		throw parsingException(500, "Bad server settings");
@@ -99,8 +98,8 @@ try {
 	addEnvironVar("QUERY_STRING", getQueryString());
 	addEnvironVar("REMOTE_HOST", host);
 	addEnvironVar("BODY", getBody());
-	// addEnvironVar("PATH_INFO", _server->get_rootFolder(host, location));
-	// addEnvironVar("UPLOAD_DIR", _server->get_uploadDir(host, uri.location));
+	addEnvironVar("PATH_INFO", _server->get_rootFolder(host, location));
+	addEnvironVar("UPLOAD_DIR", _server->get_uploadDir(host, location));
 }
 
 //catch block	

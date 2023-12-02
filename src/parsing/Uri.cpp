@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/27 23:07:23 by carlo         ########   odam.nl         */
+/*   Updated: 2023/12/01 17:20:58 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ Uri::Uri(const std::string& uri) {
 	else 
 		throw HttpRequest::parsingException(400, "bad request");
 
+	std::cout << BLUE << "URI components: '" << "'\n\tsceme: '" << _scheme << "'\n\tauthority: '" << _authority << "'\n\tpath: '" << _path << "'\n\tquery: '" << _query << "'\n\tfragment" << _fragment << "\n" << RESET << std::endl;
 	splitAuthority();
 	
 	//scheme and host are case insensitive and as such are normalized here

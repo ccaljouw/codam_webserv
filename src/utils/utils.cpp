@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/30 15:40:11 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/12/02 09:47:44 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,10 @@ std::string getTimeStamp() {
 
 void	setErrorResponse(connection *conn, int error)
 {
+	//**testprint*
+	std::cout << "\nin setErroResponse\n" << std::endl;
+	
+	// HttpResponse();
 	HttpRequest request(conn->request, conn->server);
 	std::string errorHtmlPath;
 	std::string host = request.getHeaderValue("host");
@@ -44,10 +48,9 @@ void	setErrorResponse(connection *conn, int error)
 			if (pair.first == error) {
 				std::cout << BLUE << "directed to error page set in config with nr: " << error <<  RESET << std::endl;
 		
-				errorHtmlPath = "./data/text/html" + pair.second; //todo: remove
-				// errorHtmlPath = request.getRoot() + "/text/html" + pair.second;
-				errorHtmlPath = conn->server->get_rootFolder(host, request.uri.getPath()) + "/text/html" + pair.second;
-
+				errorHtmlPath = "data/text/html" + pair.second; //todo: remove
+				// errorHtmlPath = conn->server->get_rootFolder(host, location) + "/text/html" + pair.second;
+				// errorHtmlPath = conn->server->get_rootFolder(host, request.uri.getPath()) + "/text/html" + pair.second;
 				std::cout << BLUE << "errorHtmlPath: " << errorHtmlPath <<  RESET << std::endl;
 			}
 			else 
@@ -65,8 +68,10 @@ void	setErrorResponse(connection *conn, int error)
 	
 	//check if path is ok
 	std::ifstream f(errorHtmlPath);
-	if (f.good())
+	if (f.good()) {
+		std::cout << "good error path" << errorHtmlPath <<  std::endl;
 		response.setBody(errorHtmlPath, false);
+	}
 	setResponse(conn, response);
 }
 

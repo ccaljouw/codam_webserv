@@ -19,7 +19,9 @@
 
 std::string getTimeStamp();
 
-HttpResponse::HttpResponse() {}
+HttpResponse::HttpResponse() : _protocol(HTTP_PROTOCOL) {
+	fillStandardHeaders();
+}
 
 
 HttpResponse::HttpResponse(const HttpRequest& request) {
@@ -93,8 +95,8 @@ void HttpResponse::setHeader(const std::string& key, const std::string& value) {
 
 
 void HttpResponse::setBody(const std::string& filePath, bool isBinary)	{
-	std::ifstream inputFile;
-	int length;
+	std::ifstream	inputFile;
+	int				length;
 
 	if (isBinary)
 		inputFile.open(filePath, std::ifstream::binary);
@@ -114,7 +116,6 @@ void HttpResponse::setBody(const std::string& filePath, bool isBinary)	{
 		
 		inputFile.close();
 	}
-	
 	else
 		throw HttpRequest::parsingException(422, "Unprocessable Entity");
 	
