@@ -66,13 +66,13 @@ code {
     color: #f0f; /* Number color */
 }
 
+
 #image {
-	/* display: block; */
-	width: 25%;
-	/* margin: auto; */
-	float: left;
-	border-radius: 25%;
-	padding: 15px;
+	float: right;
+	margin-left: auto;
+	margin-right: auto;
+	width: 10%;
+	border-radius: 10%;
 }
 
 /* Add more classes to mimic different syntax highlightings */
