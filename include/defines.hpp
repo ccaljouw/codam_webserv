@@ -62,5 +62,27 @@ struct connection
 	bool						close_after_response;
 };
 
+struct LocationSettings
+{
+	std::string								_locationId;
+	std::string								_index;
+	std::string								_rootFolder;
+	std::string								_uploadDir;
+	bool									_dirListing;
+	std::set<std::string>					_allowedMethods;
+	std::map<int, std::string>				_redirect;
+};
+
+struct ServerSettings
+{
+	std::string								_serverName;
+	std::string								_rootFolder;
+	std::string								_uploadDir;
+	std::string								_index;
+	uint16_t								_port;
+	size_t									_maxBodySize;
+	std::list<struct LocationSettings *>	_locations;
+	std::map<int, std::string>*				_errorPages;
+};
 #endif
 

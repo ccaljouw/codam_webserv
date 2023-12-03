@@ -42,8 +42,18 @@ a:hover {
 
 #image {
 	/* display: block; */
-	width: 50%;
+	width: 25%;
 	/* margin: auto; */
-	float: right;
+	float: left;
 	border-radius: 25%;
-  }
+	padding-left: 20px;
+	padding-right: 10px;
+}
+
+.center {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 50%;
+	border-radius: 10%;
+}

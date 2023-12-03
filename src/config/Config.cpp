@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/12/02 21:26:03 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/02 23:03:27 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,7 +209,6 @@ void	Config::printServers() const
 		std::cout << "port: " << server->_port << std::endl;
 		std::cout << "root folder: " << server->_rootFolder <<  std::endl;
 		std::cout << "upload dir: " << server->_uploadDir <<  std::endl;
-
 		std::cout << "\nlocation size: " << server->_locations.size() << "\n" << std::endl;
 
 		for (const auto location : server->_locations) {

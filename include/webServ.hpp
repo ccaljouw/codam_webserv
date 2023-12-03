@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/02 22:45:46 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/03 15:14:55 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,8 @@ void	writeData(connection *conn);
 void	closeConnection(int epollFd, connection *conn);
 
 // requestHandling.cpp
-void	handleRequest(int epollFd, connection *conn);
+void		handleRequest(int epollFd, connection *conn);
+std::string replace_cookiePng(HttpRequest request, std::string cookieValue);
 
 // CGIHandling.cpp
 int		cgiHandler(const HttpRequest& req, connection *conn, int epollFd); // todo : const ref request
@@ -46,10 +47,6 @@ char	*getProgramPath(const Uri& uri, char *program);
 int		register_server(int epollFd, int fd, Server *server);
 int		register_client(int epollFd, int severFd, Server *Server);
 int		register_CGI(int epollFd, int cgiFd, connection *conn);
-
-//defined in Uri.cpp
-extern	std::map<std::string, std::string> acceptedExtensions; // todo: can we use this?
-extern	std::vector<std::string> binaryExtensions;			   // todo: can we use this?
 
 //define in Httpresponse.cpp
 extern	std::map<int, std::string> HttpResponseCodes;

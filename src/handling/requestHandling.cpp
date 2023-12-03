@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/02 22:50:05 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/03 15:20:23 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,22 +18,19 @@ void	handleRequest(int epollFd, connection *conn) {
 	try {
 		// Process the request data
 		HttpRequest request(conn->request, conn->server);
-
 		// Handle parsing error
 		if (request.getRequestStatus() != 200) 
 			setErrorResponse(conn, request.getRequestStatus());
-
 		//check and set cookie
 		std::string cookieValue = checkAndSetCookie(conn, request);
-
 		//get extension and type
 		std::string extension = request.uri.getExtension();
 		std::string contentType = request.uri.getMime(extension);
-		
+
 		// handle CGI
 		if (request.uri.getExecutable() == "cgi-bin") {
 			
-			size_t	maxContentLength		= conn->server->get_maxBodySize(request.getHeaderValue("host"));
+			size_t	maxContentLength		= conn->server->get_maxBodySize(request.getHeaderValue("host")); //todo: replace host
 			size_t	actualContentLength		= request.getBody().size();
 			size_t	headerContentLength		= 0;
 			if (request.isHeader("content-length")) {
@@ -64,19 +61,8 @@ void	handleRequest(int epollFd, connection *conn) {
 				else
 					throw HttpRequest::parsingException(404, "Path not found");
 
-				std::string path(request.uri.getPath());
-				long unsigned int pos = path.find("cookie.png");
-				std::cout << "PATH: " << path << std::endl;
-				if (pos < path.size()) {
-					std::string trigger = cookieValue.substr(cookieValue.rfind("=") + 1) ;
-					if (trigger == "cats")
-						path = path.substr(0, pos) + "cat.png";
-					else if (trigger == "dogs")
-						path = path.substr(0, pos) + "dog.png";
-					std::cout << "PATH: " << path << std::endl;
-				}
-				
 				HttpResponse response(request);
+				std::string path = replace_cookiePng(request, cookieValue);
 				response.setBody(path, request.uri.getIsBinary());
 				response.addHeader("Content-type", contentType);
 				response.setHeader("Set-Cookie", cookieValue);
@@ -115,4 +101,14 @@ void	handleRequest(int epollFd, connection *conn) {
 	}
 	std::cout << "end of handleRequest" << std::endl; //testing
 }
+
+std::string replace_cookiePng(HttpRequest request, std::string cookieValue) {
+	std::string path(request.uri.getPath());
+	long unsigned int pos = path.find("cookie.png");
+	if (pos < path.size()) {
+		std::string trigger = cookieValue.substr(cookieValue.rfind("=") + 1) ;
+		path = path.substr(0, pos) + trigger + ".png";
+	}
+	return path;
+}	
 

@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/12/02 21:26:14 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/02 22:59:29 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,29 +24,6 @@ enum configBlock
 	SERVER,
 	LOCATION,
 	ERROR_PAGE
-};
-
-struct LocationSettings
-{
-	std::string								_locationId;
-	std::string								_index;
-	std::string								_rootFolder;
-	std::string								_uploadDir;
-	bool									_dirListing;
-	std::set<std::string>					_allowedMethods;
-	std::map<int, std::string>				_redirect;
-};
-
-struct ServerSettings
-{
-	std::string								_serverName;
-	std::string								_rootFolder;
-	std::string								_uploadDir;
-	std::string								_index;
-	uint16_t								_port;
-	size_t									_maxBodySize;
-	std::list<struct LocationSettings *>	_locations;
-	std::map<int, std::string>*				_errorPages;
 };
 
 class Config

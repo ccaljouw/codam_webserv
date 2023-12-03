@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/24 08:20:32 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/02 21:23:12 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/03 15:06:05 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ std::string		checkAndSetCookie(connection* conn, HttpRequest& request) {
 
 	std::string	cookieName;
 	std::string	cookieId;
-	std::string	cookieTrigger = "placeholder";
+	std::string	cookieTrigger = "cookie";
 
 	std::string cookieValue	= request.getHeaderValue("cookie"); //returns the value part of the cookie
 
