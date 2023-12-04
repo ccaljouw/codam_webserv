@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/04 12:23:13 by carlo         ########   odam.nl         */
+/*   Updated: 2023/12/04 13:41:45 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ std::string getTimeStamp() {
 void	setErrorResponse(connection *conn, int error)
 {
 	//**testprint*
-	std::cout << "\nin setErroResponse\n" << std::endl;
+	std::cout << "\nin setErroResponse with error: " << error << std::endl;
 	
 	HttpRequest		request(conn->request, conn->server);
 	HttpResponse	response = HttpResponse();
@@ -42,7 +42,11 @@ void	setErrorResponse(connection *conn, int error)
 	std::string		errorHtmlPath;
 	std::string		host			= request.uri.getHost();
 	std::string		location		= request.uri.getPath();
-	std::string		root 			= conn->server->get_rootFolder(host, location);
+	std::cout << "errorHtmlPath: '" << errorHtmlPath << "' host: '" << host << "' location: '" << "'" << std::endl;
+	std::string		root 			= conn->server->get_rootFolder(host, location); // todo hier gaat het fout >> + na get wordt er niet goed gesloten
+	
+	// //**testprint*
+	// std::cout << "errorHtmlPath: " << errorHtmlPath << "host: " << host << "location: " << location <<"root: " << root << std::endl;
 	
 	response.setStatusCode(error);
 

@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/04 12:47:28 by carlo         ########   odam.nl         */
+/*   Updated: 2023/12/04 13:51:24 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri
 
 	//  === parse request line === 
 	try {
-	
 		std::size_t RequestLineEnd = request.find("\r\n");
 		if (RequestLineEnd == std::string::npos)
 			throw parsingException(405, "Bad request");
@@ -92,11 +91,9 @@ HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri
 	}
 }
 
-
 HttpRequest::HttpRequest(const HttpRequest& origin) {
 	*this = origin;
 };
-
 
 const HttpRequest& HttpRequest::operator=(const HttpRequest& rhs) {
 	if (this != &rhs) {
@@ -112,7 +109,6 @@ const HttpRequest& HttpRequest::operator=(const HttpRequest& rhs) {
 	}
 	return *this;
 }
-
 
 HttpRequest::~HttpRequest() {}
 

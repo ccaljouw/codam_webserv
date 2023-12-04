@@ -50,3 +50,5 @@ CHECK/THOUGHTS:
 - close connection header CGI
 - check cgi timeout
 - only update nr of times visited when GET request with .html extension. That way it would maybe make some more sense to the user. 
+
+get blijft nu in reaading hangen 

@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/01 17:20:58 by carlo         ########   odam.nl         */
+/*   Updated: 2023/12/04 13:30:47 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ Uri::Uri() : _scheme(), _authority(), _path(), _extension(), _isBinary(false), _
 
 
 // regex teken directly from RFC 2396 : ^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))? added R for ignoring escape characterss
-Uri::Uri(const std::string& uri) {
+Uri::Uri(const std::string& uri) : _isBinary(false) {
 	
 	std::regex uriRegex(R"(^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?)");
 	std::smatch matches;
@@ -61,12 +61,12 @@ const Uri& Uri::operator=(const Uri& rhs) {
 		_scheme			= rhs._scheme;
 		_authority		= rhs._authority;
 		_path			= rhs._path;
+		_query			= rhs._query;
+		_fragment		= rhs._fragment;
 		_extension		= rhs._extension;
 		_isBinary		= rhs._isBinary;
-		_query			= rhs._query;
 		_queryMap.clear();
 		_queryMap		= rhs._queryMap;
-		_fragment		= rhs._fragment;
 		_userinfo		= rhs._userinfo;
 		_host			= rhs._host;
 		_port			= rhs._port;
@@ -139,7 +139,7 @@ std::string	Uri::serializeUri() {
 
 //=========== getters =================
 
-bool Uri::getIsBinary(void) const								{	return _isBinary;	}
+bool		Uri::getIsBinary(void) const						{	return _isBinary;	}
 int			Uri::getPort() const								{	return _port;		}
 std::string	Uri::getScheme() const								{	return _scheme;		}
 std::string	Uri::getAuthority() const							{	return _authority;	}

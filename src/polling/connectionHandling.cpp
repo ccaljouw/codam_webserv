@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/30 15:36:07 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/12/04 13:15:59 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,4 +137,3 @@ void	closeConnection(int epollFd, connection *conn)
 		delete conn;
 	}
 }
-

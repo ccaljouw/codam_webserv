@@ -93,7 +93,7 @@ void			HttpResponse::reSetBody(const std::string& filePath, bool isBinary)	{
 		_body.append(buffer, length);
 
 		if (!inputFile) {
-			std::cout << "could only read " << inputFile.gcount() << " from " << length << " bites" << std::endl;
+			std::cout << "could only read " << inputFile.gcount() << " from " << length << " bites" << std::endl; //todo trow error
 			throw HttpRequest::parsingException(422, "Unable to set response body");
 		}
 		
