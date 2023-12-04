@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/04 10:29:09 by carlo         ########   odam.nl         */
+/*   Updated: 2023/12/04 12:23:13 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void	setErrorResponse(connection *conn, int error)
 
 	if (error == 408 || error == 429 || error == 500 || error == 504) {
 		conn->close_after_response = 1;
-		response.setHeader("Connection", "close");		
+		response.headers->setHeader("Connection", "close");		
 	}
 	
 	//check if path is ok

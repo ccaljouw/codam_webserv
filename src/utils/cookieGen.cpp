@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/24 08:20:32 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/27 23:31:16 by carlo         ########   odam.nl         */
+/*   Updated: 2023/12/04 12:37:22 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,13 @@ float	generateRandomFloat(float fmin, float fmax) {
 }
 
 
-//todo: handle cookie trigger?
 std::string		checkAndSetCookie(connection* conn, HttpRequest& request) {
 
 	std::string	cookieName;
 	std::string	cookieId;
 	std::string	cookieTrigger = "placeholder";
-	std::string host = conn->server->get_serverName(request.getHeaderValue("host"));
-	std::string cookieValue	= request.getHeaderValue("cookie"); //returns the value part of the cookie
+	std::string host = conn->server->get_serverName(request.headers->getHeaderValue("host"));
+	std::string cookieValue	= request.headers->getHeaderValue("cookie"); //returns the value part of the cookie
 
 	size_t ourCookieStart = cookieValue.find("name=" + host);
 	if (ourCookieStart != 0 && ourCookieStart != std::string::npos)
@@ -68,7 +67,6 @@ std::string		checkAndSetCookie(connection* conn, HttpRequest& request) {
 		cookieId = std::to_string(static_cast<long int>(id));
 		conn->server->addClientId(cookieId);
 	}
-	std::string newCookieValue = "name=" + host + ", id=" + cookieId + ", trigger=" + cookieTrigger; //todo: host from config
-
+	std::string newCookieValue = "name=" + host + ", id=" + cookieId + ", trigger=" + cookieTrigger;
 	return newCookieValue;
 }

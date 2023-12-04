@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/04 10:38:18 by carlo         ########   odam.nl         */
+/*   Updated: 2023/12/04 12:22:39 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	handleRequest(int epollFd, connection *conn) {
 			//**testprint**
 			std::cout << BLUE << "\ntarget is redirected to: " << redirect_location_header.begin()->second << RESET << std::endl;
 
-			request.addHeader("location", redirect_location_header.begin()->second);
+			request.headers->addHeader("location", redirect_location_header.begin()->second);
 			HttpResponse response(request);
 			response.setStatusCode(redirect_location_header.begin()->first);
 			setResponse(conn, response);
@@ -83,8 +83,8 @@ void	handleRequest(int epollFd, connection *conn) {
 				
 				HttpResponse response(request);
 				response.reSetBody(bodyPath, false);
-				response.addHeader("Content-type", contentType);
-				response.setHeader("Set-Cookie", cookieValue);
+				response.headers->addHeader("Content-type", contentType);
+				response.headers->setHeader("Set-Cookie", cookieValue);
 				setResponse(conn, response);
 			}
 			else
@@ -98,11 +98,11 @@ void	handleRequest(int epollFd, connection *conn) {
 			std::cout << "\nin CGI\n" << std::endl;
 			
 			// check contentn -length
-			size_t	maxContentLength		= conn->server->get_maxBodySize(request.getHeaderValue("host"));
+			size_t	maxContentLength		= conn->server->get_maxBodySize(request.headers->getHeaderValue("host"));
 			size_t	actualContentLength		= request.getBody().size();
 			size_t	headerContentLength		= 0;
-			if (request.isHeader("content-length")) {
-				headerContentLength = std::stoi(request.getHeaderValue("content-length"));
+			if (request.headers->isHeader("content-length")) {
+				headerContentLength = std::stoi(request.headers->getHeaderValue("content-length"));
 				
 				//**test print
 				std::cout << "header content len: " << headerContentLength << "\n";
@@ -140,8 +140,8 @@ void	handleRequest(int epollFd, connection *conn) {
 		
 				HttpResponse response(request);
 				response.reSetBody(request.uri.getPath(), request.uri.getIsBinary());
-				response.addHeader("Content-type", contentType);
-				response.setHeader("Set-Cookie", cookieValue);
+				response.headers->addHeader("Content-type", contentType);
+				response.headers->setHeader("Set-Cookie", cookieValue);
 				setResponse(conn, response);
 			} 
 			else

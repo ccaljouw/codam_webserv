@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/04 10:08:31 by carlo         ########   odam.nl         */
+/*   Updated: 2023/12/04 12:38:49 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,29 +29,26 @@ class HttpResponse {
 	 	HttpResponse(const HttpResponse& origin);
 	 	const HttpResponse& operator=(const HttpResponse& rhs);
 	 	~HttpResponse(void);
+
+		Header*				headers;
 		
 		// ============= Getters ================
-		int			getStatusCode() const;
-		std::string	getBody() const;
+		int					getStatusCode() const;
+		std::string			getBody() const;
 		
 		// ============= Setters ================
-		void		setProtocol(const std::string& protocol);
-		void		setStatusCode(int status);
-		void		addHeader(const std::string& key, const std::string& value);
-		void		reSetBody(const std::string& filePath, bool isBinary);
-		void		setHeader(const std::string& key, const std::string& value);
-		void		fillStandardHeaders(void); //todo: get from config
-		void		updateDateLength(void);
+		void				setProtocol(const std::string& protocol);
+		void				setStatusCode(int status);
+		void				reSetBody(const std::string& filePath, bool isBinary);
+		void				fillStandardHeaders(void); //todo: get from config
 
 		// =========== Other ===============
-		std::string	serializeResponse(void);
-		std::string	serializeHeaders(void);
+		std::string			serializeResponse(void);
 		
 	private:
-	 	std::string								_protocol;
-	 	int 									_statusCode;
-	 	std::map<std::string, std::string>		_headerMap;
-	 	std::string								_body;
+	 	std::string			_protocol;
+	 	int 				_statusCode;
+	 	std::string			_body;
 };
 
 #endif

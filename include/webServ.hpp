@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/30 14:55:42 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/12/04 11:37:10 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@
 
 //includes
 #include "eventloop.hpp"
+#include "Header.hpp"
 #include "HttpRequest.hpp"
 #include "HttpResponse.hpp"
 #include "CGI_Handler.hpp"

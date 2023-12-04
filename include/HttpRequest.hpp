@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/04 10:42:22 by carlo         ########   odam.nl         */
+/*   Updated: 2023/12/04 12:38:11 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,13 @@
 # define HTTPREQUEST_H
 
 #include "webServ.hpp"
+#include "Header.hpp"
 #include "Uri.hpp"
 
 #include <string>
 #include <map>
+
+class Header;
 
 class HttpRequest {
 
@@ -30,38 +33,32 @@ class HttpRequest {
 		const HttpRequest& operator=(const HttpRequest& rhs);
 		~HttpRequest(void);
 
-		Uri											uri;
+		Uri										uri;
+		Header*									headers;
 
 	// ============= Getters ================
 		
-		std::set<std::string>						getAllowedMethods(void) const;
-		std::string									getLocationId(void) const;
-		std::map<int, std::string>					getRedirect(void) const;
-		const Server*								getServer(void) const;
+		std::set<std::string>					getAllowedMethods(void) const;
+		std::string								getLocationId(void) const;
+		std::map<int, std::string>				getRedirect(void) const;
+		const Server*							getServer(void) const;
 
-		//headers and request data
-		std::string									getMethod(void) const;
-		std::string									getProtocol(void) const;
-		std::string									getBody(void) const;
-		std::string									getUri(void);
-		int											getRequestStatus(void) const;
-		std::map<std::string, std::string>			getHeaders(void) const;
-		std::string									getHeaderValue(std::string) const;
-		std::vector<char*>							getHeaderVector(void) const;
-		std::string									getQueryString(void) const;
-		char**										getEnvArray(void) const;
-		bool										isHeader(std::string key);
+		std::string								getMethod(void) const;
+		std::string								getProtocol(void) const;
+		std::string								getBody(void) const;
+		std::string								getUri(void);
+		int										getRequestStatus(void) const;
+		std::string								getQueryString(void) const;
+		char**									getEnvArray(void) const;
 
 	// ============= Setters ================
-		void										setMethod(const std::string& method);
-		void										setProtocol(const std::string& protocol);
-		void										setBody(const std::string& body);
-		void										setUri(const std::string& str);
-		void										addHeader(const std::string& key, const std::string& value);
-		void										setHeader(const std::string& key, const std::string& value);
-		void										addEnvironVar(const std::string& key, const std::string& value);
-		void										setRequestStatus(int value);
-		void										fillStandardHeaders(void);
+		void									setMethod(const std::string& method);
+		void									setProtocol(const std::string& protocol);
+		void									setBody(const std::string& body);
+		void									setUri(const std::string& str);
+		void									addEnvironVar(const std::string& key, const std::string& value);
+		void									setRequestStatus(int value);
+		void									fillStandardHeaders(void);
 
 	// ============= exception ================
 		class parsingException : public std::exception {
@@ -78,7 +75,6 @@ class HttpRequest {
 	private:
 		std::string								_method;
 		std::string								_protocol;
-		std::map<std::string, std::string>		_headers;
 		std::map<std::string, std::string>		_environVars;
 		std::string								_body;
 		int										_requestStatus;
