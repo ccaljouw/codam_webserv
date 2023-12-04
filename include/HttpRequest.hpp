@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/30 14:58:11 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/12/04 10:42:22 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ class HttpRequest {
 		void										setHeader(const std::string& key, const std::string& value);
 		void										addEnvironVar(const std::string& key, const std::string& value);
 		void										setRequestStatus(int value);
-		void										fillStandardHeaders(void); //todo: get from config
+		void										fillStandardHeaders(void);
 
 	// ============= exception ================
 		class parsingException : public std::exception {

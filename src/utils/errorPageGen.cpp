@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/24 08:20:32 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/02 09:27:11 by carlo         ########   odam.nl         */
+/*   Updated: 2023/12/04 10:09:25 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ bool	directoryExists(const std::string& path) {
 
 
 std::string	generateErrorPage(int e) {
-	std::cout << "\nin error page generator\n" << std::endl;
+	// std::cout << "\nin error page generator\n" << std::endl;
 
 	std::string error = std::to_string(e);
 	std::string title = "Undefined Error";
@@ -83,6 +83,5 @@ std::string	generateErrorPage(int e) {
 	}
 	else
 		std::cerr << RED <<  "unable to generate error HTML file" << RESET <<  std::endl;
-	std::cout << "end of error page generator" << std::endl;
 	return path;
 }

@@ -58,7 +58,9 @@ HttpResponse::~HttpResponse() {
 
 
 // ============= Getters ================
-int HttpResponse::getStatusCode() const {	return _statusCode;	}
+int			HttpResponse::getStatusCode()	const {	return _statusCode;	}
+std::string	HttpResponse::getBody() 		const {	return _body;		}
+
 
 
 // ============= Setters ================
@@ -94,10 +96,12 @@ void HttpResponse::setHeader(const std::string& key, const std::string& value) {
 }
 
 
-void HttpResponse::setBody(const std::string& filePath, bool isBinary)	{
+void HttpResponse::reSetBody(const std::string& filePath, bool isBinary)	{
 	std::ifstream	inputFile;
 	int				length;
 
+	if (!_body.empty())
+		_body.clear();
 	if (isBinary)
 		inputFile.open(filePath, std::ifstream::binary);
 	else

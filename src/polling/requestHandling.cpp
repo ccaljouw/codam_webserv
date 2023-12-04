@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/02 09:33:35 by carlo         ########   odam.nl         */
+/*   Updated: 2023/12/04 10:38:18 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ void	handleRequest(int epollFd, connection *conn) {
 		std::string contentType		= request.uri.getMime(extension);
 		std::string host			= request.uri.getHost();
 		std::string location		= request.uri.getPath();
-		std::string index			= conn->server->get_index(host, location);
 		std::string root 			= conn->server->get_rootFolder(host, location);
+		std::string index			= conn->server->get_index(host, location);
 		bool dirListing				= conn->server->get_dirListing(host, location);
 		
 		//**testprint**
@@ -47,7 +47,7 @@ void	handleRequest(int epollFd, connection *conn) {
 		if (!redirect_location_header.empty()) {
 			
 			//**testprint**
-			std::cout << BLUE << "target is redirected to: " << redirect_location_header.begin()->second << RESET << std::endl;
+			std::cout << BLUE << "\ntarget is redirected to: " << redirect_location_header.begin()->second << RESET << std::endl;
 
 			request.addHeader("location", redirect_location_header.begin()->second);
 			HttpResponse response(request);
@@ -60,7 +60,7 @@ void	handleRequest(int epollFd, connection *conn) {
 		if (request.uri.isDir()) {
 
 			//**testprint**
-			std::cout << BLUE << "target is a directory and its dirlisting = " << dirListing << RESET << std::endl;
+			std::cout << BLUE << "\ntarget is a directory and its dirlisting = " << dirListing << RESET << std::endl;
 					
 			if (dirListing == true) {
 				HttpResponse response(request);
@@ -79,10 +79,10 @@ void	handleRequest(int epollFd, connection *conn) {
 				std::string bodyPath = root + "/text/html/" + index;
 				
 				//**testprint**
-				std::cout << BLUE << "index found: " << index << "setting body to :" << bodyPath <<  RESET << std::endl;
+				std::cout << BLUE << "index found: " << index << " | setting body to :" << bodyPath <<  RESET << std::endl;
 				
 				HttpResponse response(request);
-				response.setBody(bodyPath, false);
+				response.reSetBody(bodyPath, false);
 				response.addHeader("Content-type", contentType);
 				response.setHeader("Set-Cookie", cookieValue);
 				setResponse(conn, response);
@@ -130,7 +130,7 @@ void	handleRequest(int epollFd, connection *conn) {
 			if (!contentType.empty()) {
 				//check if target exists
 				std::string fullPath = root + "/" + contentType + location;
-				std::cout << fullPath << std::endl;
+				std::cout << "full path: " << fullPath << std::endl;
 				std::ifstream f(fullPath);
 				
 				if (f.good())
@@ -139,7 +139,7 @@ void	handleRequest(int epollFd, connection *conn) {
 					throw HttpRequest::parsingException(404, "Path not found");
 		
 				HttpResponse response(request);
-				response.setBody(request.uri.getPath(), request.uri.getIsBinary());
+				response.reSetBody(request.uri.getPath(), request.uri.getIsBinary());
 				response.addHeader("Content-type", contentType);
 				response.setHeader("Set-Cookie", cookieValue);
 				setResponse(conn, response);
@@ -156,7 +156,7 @@ void	handleRequest(int epollFd, connection *conn) {
 			std::cout << "\nin POST handler\n" << std::endl;
 			
 			HttpResponse response(request);
-			response.setBody("data/text/html/upload.html", false); //todo:make config
+			response.reSetBody("data/text/html/upload.html", false); //todo:make config
 			setResponse(conn, response);
 		}
 
@@ -167,7 +167,7 @@ void	handleRequest(int epollFd, connection *conn) {
 			std::cout << "\nin DELETE handler\n" << std::endl;
 			
 			HttpResponse response(request);
-			response.setBody("data/text/html/418.html", false); //todo:make config
+			response.reSetBody("data/text/html/418.html", false); //todo:make config
 			setResponse(conn, response);
 		}
 
