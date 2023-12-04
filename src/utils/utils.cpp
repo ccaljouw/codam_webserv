@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/04 13:41:45 by carlo         ########   odam.nl         */
+/*   Updated: 2023/12/04 14:20:48 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,51 +33,69 @@ std::string getTimeStamp() {
 
 void	setErrorResponse(connection *conn, int error)
 {
-	//**testprint*
-	std::cout << "\nin setErroResponse with error: " << error << std::endl;
-	
-	HttpRequest		request(conn->request, conn->server);
-	HttpResponse	response = HttpResponse();
-
-	std::string		errorHtmlPath;
-	std::string		host			= request.uri.getHost();
-	std::string		location		= request.uri.getPath();
-	std::cout << "errorHtmlPath: '" << errorHtmlPath << "' host: '" << host << "' location: '" << "'" << std::endl;
-	std::string		root 			= conn->server->get_rootFolder(host, location); // todo hier gaat het fout >> + na get wordt er niet goed gesloten
-	
-	// //**testprint*
-	// std::cout << "errorHtmlPath: " << errorHtmlPath << "host: " << host << "location: " << location <<"root: " << root << std::endl;
-	
+	HttpResponse response;
+	std::string errorHtmlPath = generateErrorPage(error);
 	response.setStatusCode(error);
-
-	// check for error pages set in config
-	std::map<int, std::string> *providedErrorPages = conn->server->get_errorPages(host);
-	if (providedErrorPages->size() != 0) {
-		for (const auto& pair : *providedErrorPages) {
-			if (pair.first == error) {
-				std::cout << BLUE << "directed to error page set in config with nr: " << error <<  RESET << std::endl;
-				errorHtmlPath = root + "/text/html" + pair.second;
-				break;
-			}
-			else
-				errorHtmlPath = generateErrorPage(error);
-		}
-	}
-	else
-		errorHtmlPath = generateErrorPage(error);
-
 	if (error == 408 || error == 429 || error == 500 || error == 504) {
 		conn->close_after_response = 1;
 		response.headers->setHeader("Connection", "close");		
 	}
 	
-	//check if path is ok
 	std::ifstream f(errorHtmlPath);
 	if (f.good())
 		response.reSetBody(errorHtmlPath, false);
-
+	
+	//todo : remove tmp file or not
+	// if (std::remove(errorHtmlPath.c_str()) != 0)
+	// 	std::cerr << RED << "Error remoiving tmp error page" << RESET <<  std:: endl; 
 	setResponse(conn, response);
 }
+
+//todo: gaat niet goed. blijft de timeout request zorgt voor een segfault
+// void	setErrorResponse(connection *conn, int error)
+// {
+// 	//**testprint*
+// 	std::cout << "\nin setErroResponse with error: " << error << std::endl;
+	
+// 	HttpRequest		request(conn->request, conn->server);
+// 	HttpResponse	response = HttpResponse();
+
+// 	std::string		errorHtmlPath;
+// 	std::string		host			= request.uri.getHost();
+// 	std::string		location		= request.uri.getPath();
+// 	std::cout << "errorHtmlPath: '" << errorHtmlPath << "' host: '" << host << "' location: '" << "'" << std::endl;
+// 	std::string		root 			= conn->server->get_rootFolder(host, location);
+	
+// 	response.setStatusCode(error);
+
+// 	// check for error pages set in config
+// 	std::map<int, std::string> *providedErrorPages = conn->server->get_errorPages(host);
+// 	if (providedErrorPages->size() != 0) {
+// 		for (const auto& pair : *providedErrorPages) {
+// 			if (pair.first == error) {
+// 				std::cout << BLUE << "directed to error page set in config with nr: " << error <<  RESET << std::endl;
+// 				errorHtmlPath = root + "/text/html" + pair.second;
+// 				break;
+// 			}
+// 			else
+// 				errorHtmlPath = generateErrorPage(error);
+// 		}
+// 	}
+// 	else
+// 		errorHtmlPath = generateErrorPage(error);
+
+// 	if (error == 408 || error == 429 || error == 500 || error == 504) {
+// 		conn->close_after_response = 1;
+// 		response.headers->setHeader("Connection", "close");		
+// 	}
+	
+// 	//check if path is ok
+// 	std::ifstream f(errorHtmlPath);
+// 	if (f.good())
+// 		response.reSetBody(errorHtmlPath, false);
+
+// 	setResponse(conn, response);
+// }
 
 
 void	setResponse(connection *conn, HttpResponse resp)
