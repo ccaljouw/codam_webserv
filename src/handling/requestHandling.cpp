@@ -6,17 +6,22 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/05 07:31:12 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/05 10:50:40 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webServ.hpp"
 #include <fstream>
 
-// TODO:	check allowed methods for contentType
+// function signatures
+void	handleGET(connection *conn, HttpRequest& request, std::string location, std::string cookieValue, std::string root, std::string contentType);
+void	handleCGI(int epollFd, connection *conn, HttpRequest& request);
+void	handleDIR(int epollFd, connection *conn, bool dirListing, HttpRequest& request, std::string location, std::string index, std::string contentType, std::string cookieValue, std::string root);
+
+
 void	handleRequest(int epollFd, connection *conn) {
-	
-	std::cout << "handleRequest" << "\tfd = " << conn->fd << std::endl; //for testing
+
+	std::cout << "in handleRequest:" << "\tfd = " << conn->fd << std::endl; //for testing
 	
 	try {
 		// Process the request data
@@ -36,7 +41,7 @@ void	handleRequest(int epollFd, connection *conn) {
 		bool dirListing				= conn->server->get_dirListing(host, location);
 		
 		//**testprint**
-		std::cout << BLUE << "variables set in requesthandling:\nextension: " << extension << "\ncontentType: " << contentType << "\nhost: " << host << "\nlocation: " 
+		std::cout << BLUE << "variables set in handleRequest:\nextension: " << extension << "\ncontentType: " << contentType << "\nhost: " << host << "\nlocation: " 
 			<< location << "\nindex: " << index << "\nroot: " << root << "\ndirListing: " << dirListing << "\nlocation: " << location << RESET << std::endl;
 
 		//check and set cookie
@@ -58,102 +63,20 @@ void	handleRequest(int epollFd, connection *conn) {
 		
 		//handle default for directories
 		if (request.uri.isDir()) {
-
-			//**testprint**
-			std::cout << BLUE << "\ntarget is a directory and its dirlisting = " << dirListing << RESET << std::endl;
-					
-			if (dirListing == true) {
-				HttpResponse response(request);
-				request.uri.setPath("/cgi-bin/index.py");
-				request.addEnvironVar("QUERY_STRING", location);
-			
-				if (cgiHandler(request, conn, epollFd) == 1 ) 
-					setErrorResponse(conn, 500);	
-				else {
-					conn->request.clear();
-					conn->state = IN_CGI;
-				}
-			}
-	
-			else if (!index.empty()) {
-				std::string bodyPath = root + "/text/html/" + index;
-				
-				//**testprint**
-				std::cout << BLUE << "index found: " << index << " | setting body to :" << bodyPath <<  RESET << std::endl;
-				
-				HttpResponse response(request);
-				response.reSetBody(bodyPath, false);
-				response.headers->addHeader("Content-type", contentType);
-				response.headers->setHeader("Set-Cookie", cookieValue);
-				setResponse(conn, response);
-			}
-			else
-				throw HttpRequest::parsingException(404, "Path not found");
+			handleDIR(epollFd, conn, dirListing,  request,  location,  index,  contentType,  cookieValue,  root);
 		}
 					
 		// handle CGI
 		else if (request.uri.getExecutable() == "cgi-bin") {
-
-			//**testprint**
-			std::cout << "\nin CGI\n" << std::endl;
-			
-			// check contentn -length
-			size_t	maxContentLength		= conn->server->get_maxBodySize(request.headers->getHeaderValue("host"));
-			size_t	actualContentLength		= request.getBody().size();
-			size_t	headerContentLength		= 0;
-			if (request.headers->isHeader("content-length")) {
-				headerContentLength = std::stoi(request.headers->getHeaderValue("content-length"));
-				
-				//**test print
-				std::cout << "header content len: " << headerContentLength << "\n";
-				std::cout << "actual content len: " << actualContentLength << "\n";
-				std::cout << "max content len: " 	<< maxContentLength << "\n";
-			}
-			if (headerContentLength > maxContentLength || headerContentLength != actualContentLength) 
-			 	throw HttpRequest::parsingException(400, "content-length to big or wrong"); //todo check error thrown in this case
-
-			//case error in cgi handler
-			if (cgiHandler(request, conn, epollFd) == 1 ) 
-				setErrorResponse(conn, 500);	
-			else {
-				conn->request.clear();
-				conn->state = IN_CGI;
-			}
+			handleCGI(epollFd, conn, request);
 		}
 		
 		//handle GET
 		else if (request.getMethod() == "GET") {
-			
-			//**testprint**
-			std::cout << "\nin GET handler\n" << std::endl;
-
-			if (!contentType.empty()) {
-				
-				//check cookie.png
-				location = replaceCookiePng(location, cookieValue);
-				
-				//check if target exists
-				std::string fullPath = root + "/" + contentType + location;
-				std::cout << "full path: " << fullPath << std::endl;
-				std::ifstream f(fullPath);
-				
-				if (f.good())
-					request.uri.setPath(fullPath);
-				else
-					throw HttpRequest::parsingException(404, "Path not found");
-		
-				HttpResponse response(request);
-				response.reSetBody(request.uri.getPath(), request.uri.getIsBinary());
-				response.headers->addHeader("Content-type", contentType);
-				response.headers->setHeader("Set-Cookie", cookieValue);
-				setResponse(conn, response);
-			} 
-			else
-				throw HttpRequest::parsingException(404, "Page not found in request handler");
+			handleGET(conn, request, location, cookieValue, root, contentType);
 		}
 
 		//handle POST
-		//todo decide on handling
 		else if (request.getMethod() == "POST") {
 			
 			//**testprint**
@@ -185,4 +108,99 @@ void	handleRequest(int epollFd, connection *conn) {
 		setErrorResponse(conn, exception.getErrorCode());
 	}
 	std::cout << "end of handleRequest" << std::endl; //testing
+}
+
+void	handleDIR(int epollFd, connection *conn, bool dirListing, HttpRequest& request, std::string location, std::string index, std::string contentType, std::string cookieValue, std::string root) {
+
+	//**testprint**
+	std::cout << BLUE << "\ntarget is a directory and its dirlisting = " << dirListing << RESET << std::endl;
+			
+	if (dirListing == true) {
+		HttpResponse response(request);
+		request.uri.setPath("/cgi-bin/index.py");
+		request.addEnvironVar("QUERY_STRING", location);
+	
+		if (cgiHandler(request, conn, epollFd) == 1 ) 
+			setErrorResponse(conn, 500);	
+		else {
+			conn->request.clear();
+			conn->state = IN_CGI;
+		}
+	}
+
+	else if (!index.empty()) {
+		std::string bodyPath = root + "/text/html/" + index;
+		
+		//**testprint**
+		std::cout << BLUE << "index found: " << index << " | setting body to :" << bodyPath <<  RESET << std::endl;
+		
+		HttpResponse response(request);
+		response.reSetBody(bodyPath, false);
+		response.headers->addHeader("Content-type", contentType);
+		response.headers->setHeader("Set-Cookie", cookieValue);
+		setResponse(conn, response);
+	}
+	else
+		throw HttpRequest::parsingException(404, "Path not found");
+}
+
+
+
+void	handleCGI(int epollFd, connection *conn, HttpRequest& request) {
+
+	//**testprint**
+	std::cout << "\nin CGI\n" << std::endl;
+
+	// check content-length
+	size_t	maxContentLength		= conn->server->get_maxBodySize(request.headers->getHeaderValue("host"));
+	size_t	actualContentLength		= request.getBody().size();
+	size_t	headerContentLength		= 0;
+	if (request.headers->isHeader("content-length")) {
+		headerContentLength = std::stoi(request.headers->getHeaderValue("content-length"));
+		
+		//**test print
+		std::cout << "header content len: " << headerContentLength << "\n";
+		std::cout << "actual content len: " << actualContentLength << "\n";
+		std::cout << "max content len: " 	<< maxContentLength << "\n";
+	}
+	if (headerContentLength > maxContentLength || headerContentLength != actualContentLength) 
+		throw HttpRequest::parsingException(400, "content-length to big or wrong"); //todo check error thrown in this case
+
+	//case error in cgi handler
+	if (cgiHandler(request, conn, epollFd) == 1 ) 
+		setErrorResponse(conn, 500);	
+	else {
+		conn->request.clear();
+		conn->state = IN_CGI;
+	}
+}
+
+void	handleGET(connection *conn, HttpRequest& request, std::string location, std::string cookieValue, std::string root, std::string contentType) {
+	
+	//**testprint**
+	std::cout << "\nin GET handler\n" << std::endl;
+
+	if (!contentType.empty()) {
+		
+		//check cookie.png
+		location = replaceCookiePng(location, cookieValue);
+		
+		//check if target exists
+		std::string fullPath = root + "/" + contentType + location;
+		std::cout << "full path: " << fullPath << std::endl;
+		std::ifstream f(fullPath);
+		
+		if (f.good())
+			request.uri.setPath(fullPath);
+		else
+			throw HttpRequest::parsingException(404, "Path not found");
+
+		HttpResponse response(request);
+		response.reSetBody(request.uri.getPath(), request.uri.getIsBinary());
+		response.headers->addHeader("Content-type", contentType);
+		response.headers->setHeader("Set-Cookie", cookieValue);
+		setResponse(conn, response);
+	} 
+	else
+		throw HttpRequest::parsingException(404, "Page not found in request handler");
 }
