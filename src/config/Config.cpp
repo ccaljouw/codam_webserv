@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/12/02 23:03:27 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/05 06:45:33 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ Config::Config(int argc, char** argv) : _error(false), _lineNr(1)
 		std::cerr << RED << e.what() << RESET << std::endl;
 		_error = true;
 	}
+
 }
 
 Config::~Config()

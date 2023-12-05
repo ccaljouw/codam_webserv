@@ -1,8 +1,8 @@
 TODO:
 - Root shit
-	The root /path/to/server/root; directive at the server level sets the base directory for the entire server. 
+	The root  base directory for the entire server. 
 	It serves as the default root for all locations unless overridden in specific location blocks.
-	The location / block inherits the server-level root unless overwritten in the block.
+	The location / block inherits the server-level root unless overwritte/path/to/server/root; directive at the server level sets then in the block.
 
 - Redirects
 	HTTP Status Codes: Redirects are implemented using HTTP status codes. The most common status codes for redirects are:
@@ -33,7 +33,8 @@ DONE:
 - Delete (Bruno)
 - finish config parser (check for at least all mandatory settings in location / and server) -Bruno
 - Error pages - add check on defined error pages for server 
-- timeouts, add PID to connection (Bruno) finish check on timeouts (Carien)
+- change scripts with root -Bruno
+- add PID to connection (Bruno)
 
 ERROR CODES TO CONSIDER:
 408 Request Timeout
@@ -49,3 +50,5 @@ CHECK/THOUGHTS:
 - close connection header CGI
 - check cgi timeout
 - only update nr of times visited when GET request with .html extension. That way it would maybe make some more sense to the user. 
+
+get blijft nu in reaading hangen 

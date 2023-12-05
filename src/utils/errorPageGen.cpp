@@ -6,7 +6,7 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/24 08:20:32 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/02 22:50:50 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/05 06:51:00 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,14 +40,18 @@ bool	directoryExists(const std::string& path) {
 
 
 std::string	generateErrorPage(int e) {
+	// std::cout << "\nin error page generator\n" << std::endl;
+
 	std::string error = std::to_string(e);
 	std::string title = "Undefined Error";
 	for (const auto& pair : errorPages)
-		if (pair.first == e)
+		if (pair.first == e) {
 			title = pair.second;
+			// std::cout << "found matching eror page" << " " <<  e << " " << title << std::endl;	
+		}
 
 //set page content
-std::string htmlContent = R"(
+	std::string htmlContent = R"(
 <!DOCTYPE html>
 <html>
 <head>

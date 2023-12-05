@@ -16,16 +16,17 @@
 
 std::string getTimeStamp();
 
-HttpResponse::HttpResponse() : _protocol(HTTP_PROTOCOL), _statusCode(200), _headerMap(), _body() {
+HttpResponse::HttpResponse() :  headers(), _protocol(HTTP_PROTOCOL), _statusCode(), _body() {
+	headers = new Header();
 	fillStandardHeaders();
 }
 
 
 HttpResponse::HttpResponse(const HttpRequest& request) {
-	_protocol 			= HTTP_PROTOCOL;
+	headers				= request.headers;
+	_protocol 			= HTTP_PROTOCOL; //todo from config
 	_statusCode			= request.getRequestStatus();
 	_body				= request.getBody();
-
 	fillStandardHeaders();
 }
 
@@ -37,63 +38,46 @@ HttpResponse::HttpResponse(const HttpResponse& origin) {
 
 const HttpResponse& HttpResponse::operator=(const HttpResponse& rhs) {
 	if (this != &rhs) {
+		headers			= rhs.headers;
 		_protocol		= rhs._protocol;
 		_statusCode		= rhs._statusCode;
-		_headerMap.clear();
-		_headerMap		= rhs._headerMap;
 		_body			= rhs._body;
 	}
-	setHeader("Last-Modified", getTimeStamp());
+	headers->setHeader("Last-Modified", getTimeStamp());
 	return *this;
 }
 
 
-HttpResponse::~HttpResponse() {
-	_headerMap.clear();
-}
+HttpResponse::~HttpResponse() {}
 
 
 // ============= Getters ================
-int HttpResponse::getStatusCode() const {	return _statusCode;	}
+int				HttpResponse::getStatusCode()	const {	return _statusCode;	}
+std::string		HttpResponse::getBody() 		const {	return _body;		}
+
 
 
 // ============= Setters ================
-void HttpResponse::setProtocol(const std::string& protocol)	{ 
+void			HttpResponse::setProtocol(const std::string& protocol)	{ 
 	_protocol 	= 	protocol;
 
-	setHeader("Last-Modified", getTimeStamp());
+	headers->setHeader("Last-Modified", getTimeStamp());
 }
 
 
-void HttpResponse::setStatusCode(int status) {
+void			HttpResponse::setStatusCode(int status) {
 	_statusCode	= status;
 
-	setHeader("Last-Modified", getTimeStamp());
+	headers->setHeader("Last-Modified", getTimeStamp());
 }
 
 
-void HttpResponse::addHeader(const std::string& key, const std::string& value) {
-	_headerMap.insert(std::make_pair(key, value));
+void			HttpResponse::reSetBody(const std::string& filePath, bool isBinary)	{
+	std::ifstream	inputFile;
+	int				length;
 
-	setHeader("Last-Modified", getTimeStamp());
-}
-
-
-void HttpResponse::setHeader(const std::string& key, const std::string& value) {
-	for (auto& headerPair : _headerMap) {
-		if (key == headerPair.first) {
-			headerPair.second = value;
-			return;
-		}
-	}
-	_headerMap.insert(std::make_pair(key, value));
-}
-
-
-void HttpResponse::setBody(const std::string& filePath, bool isBinary)	{
-	std::ifstream inputFile;
-	int length;
-
+	if (!_body.empty())
+		_body.clear();
 	if (isBinary)
 		inputFile.open(filePath, std::ifstream::binary);
 	else
@@ -107,46 +91,29 @@ void HttpResponse::setBody(const std::string& filePath, bool isBinary)	{
 		inputFile.read(buffer, length);
 		_body.append(buffer, length);
 
-		if (!inputFile)
+		if (!inputFile) {
 			std::cout << "could only read " << inputFile.gcount() << " from " << length << " bites" << std::endl; //todo trow error
+			throw HttpRequest::parsingException(422, "Unable to set response body");
+		}
 		
 		inputFile.close();
 	}
-	
 	else
 		throw HttpRequest::parsingException(422, "Unprocessable Entity");
 	
-	setHeader("Last-Modified", getTimeStamp());
-	setHeader("Content-Length", std::to_string(length));
+	headers->setHeader("Last-Modified", getTimeStamp());
+	headers->setHeader("Content-Length", std::to_string(length));
 }
 
 
-void HttpResponse::fillStandardHeaders() {
-	// addHeader("Transfer-Encoding", "chunked");
-	// addHeader("Cache-Control",  "public, max-age=86400");
-	addHeader("Keep-Alive", "timeout=5, max=3"); // todo: get timout and max requests from server in connection struct
-	addHeader("Date", getTimeStamp());
-	addHeader("Server", "host"); // todo: get server name from server in connection struct
-	addHeader("Last-Modified", getTimeStamp());
-	addHeader("Content-Length", std::to_string(_body.length()));
-
-	// Content-Type: Describes the type of content being returned in the response (e.g., text/html, application/json, etc.).
-
+void		HttpResponse::fillStandardHeaders() {
+	headers->setHeader("Date", getTimeStamp());
+	headers->setHeader("Last-Modified", getTimeStamp());
+	headers->setHeader("Content-Length", std::to_string(_body.length()));
 }
 
 
-//===== Other =============
-
-std::string HttpResponse::serializeHeaders() {
-	std::string serializedHeaders;
-	for(const auto& headerPair : _headerMap)
-		serializedHeaders += headerPair.first + ": " + headerPair.second + LINE_END;
-	
-	return serializedHeaders;
-}
-
-
-std::string HttpResponse::serializeResponse() {
+std::string	HttpResponse::serializeResponse() {
 	std::string serializedResponse;
 	
 	std::string reason = "empty";
@@ -155,7 +122,7 @@ std::string HttpResponse::serializeResponse() {
 			reason = pair.second;
 	}
 
-	serializedResponse += _protocol + " " + std::to_string(_statusCode) + " " + reason + LINE_END + serializeHeaders() + LINE_END + _body + LINE_END;
+	serializedResponse += _protocol + " " + std::to_string(_statusCode) + " " + reason + LINE_END + headers->serializeHeaders() + LINE_END + _body + LINE_END;
 	return serializedResponse;
 }
 

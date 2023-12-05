@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:12:15 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/02 22:46:26 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/05 06:43:56 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,11 @@ class Uri {
 		std::string							getHost(void) const;
 		int									getPort(void) const;
 		std::map<std::string, std::string>	getQueryMap(void) const;
-
 		std::string							getMime(std::string key) const;
 		std::string							getExecutable(void) const;
 		std::string							getPathInfo(void) const;
+		bool								isDir(void);
+
 		
 		// ========== Setters ===========
 		void								mapQueries(void);

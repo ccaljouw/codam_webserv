@@ -6,55 +6,46 @@
 /*   By: carlo <carlo@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/13 09:46:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/02 22:02:10 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/05 06:59:40 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
-
-
-//!!WORK IN PLACE NOT IMPLEMENTED!!
 
 #pragma once
 #ifndef HEADER_H
 # define HEADER_H
 
 #include "defines.hpp"
+#include <sstream>
+#include <algorithm>
 
 class Header {
 
 public:
-
-	Header(const std::string& header);
+	Header(void);
+	Header(const std::string& headerBlock);
 	Header(const Header& origin);
 	const Header& operator=(const Header& rhs);
 	~Header(void);
 
 // ========== Getters ===========
-	std::string							getName(void) const;
-	std::string							getValue(void) const;
-	std::map<std::string, std::string>	getValueVector(void);
-	std::map<std::string, std::string>	getValueMap(void) const;
-	int									getValueAmount(void) const;
-	bool								valuesArePairs(void) const;
-	bool								hasHeader(std::string name) const;
+	std::map<std::string, std::string>	getHeaders(void) const;
+	std::vector<char*>					getHeaderVector(void) const;
+	std::string							getHeaderValue(std::string key) const;
+	bool								isHeader(std::string key) const;
 
 // ========== Setters ===========
-	void	setKey(std::string key);
-	void	addValueToKey(std::string key, std::string value);
-	void	setValue(std::string key, std::string name, std::string value);
-	void	mapValues(void);
-
+	void								addHeader(const std::string& key, const std::string& value);
+	void								setHeader(const std::string& key, const std::string& value);
 
 //========== Other ===============
-	void	printHeaders(void);
-	
-private:
+	void								setHeaderVector(void);
+	void								printHeaders(void);
+	std::string							serializeHeaders(void);
 
-	std::string							_name;
-	std::string							_value;
-	std::vector<std::string>			_valueVector;
-	std::map<std::string, std::string>	_valueMap;
-	int									_valueAmount;
-	bool								_valuesArePairs;
-	bool								_hasHeader;
+private:
+	std::string							_headerBlock;
+	std::map<std::string, std::string>	_headerMap;
+	std::vector<char*>					_headerVector;
 };
 
+#endif

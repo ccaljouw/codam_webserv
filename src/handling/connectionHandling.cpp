@@ -6,11 +6,13 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/02 22:48:42 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/05 06:45:49 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webServ.hpp"
+#include <arpa/inet.h>
+#include <fstream>
 
 void	newConnection(int epollFd, int serverFd, Server *server) 
 {

@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/24 08:20:32 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/03 15:06:05 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/05 07:16:59 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,16 +20,15 @@ float	generateRandomFloat(float fmin, float fmax) {
 }
 
 
-//todo: handle cookie trigger?
 std::string		checkAndSetCookie(connection* conn, HttpRequest& request) {
 
 	std::string	cookieName;
 	std::string	cookieId;
 	std::string	cookieTrigger = "cookie";
+	std::string host = conn->server->get_serverName(request.headers->getHeaderValue("host"));
+	std::string cookieValue	= request.headers->getHeaderValue("cookie"); //returns the value part of the cookie
 
-	std::string cookieValue	= request.getHeaderValue("cookie"); //returns the value part of the cookie
-
-	size_t ourCookieStart = cookieValue.find("name=" + std::string("host")); //todo: host from config
+	size_t ourCookieStart = cookieValue.find("name=" + host);
 	if (ourCookieStart != 0 && ourCookieStart != std::string::npos)
 		cookieValue = cookieValue.substr(ourCookieStart);
 
@@ -72,7 +71,8 @@ std::string		checkAndSetCookie(connection* conn, HttpRequest& request) {
 		cookieTrigger = request.uri.getQuery();
 	else
 		cookieTrigger = "trigger=" + cookieTrigger;
-	std::string newCookieValue = "name=" + std::string("host") + ", id=" + cookieId + ", " + cookieTrigger; //todo: host from config
+		
+	std::string newCookieValue = "name=" + host + ", id=" + cookieId + ", " + cookieTrigger;
 	std::cout << CYAN << "new cookie set to: " << newCookieValue << RESET << std::endl;
 	return newCookieValue;
 }

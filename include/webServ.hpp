@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/03 15:14:55 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/05 07:26:51 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 //includes
 #include "defines.hpp"
 #include "Config.hpp"
+#include "Header.hpp"
 #include "HttpRequest.hpp"
 #include "HttpResponse.hpp"
 #include "CGI.hpp"
@@ -35,7 +36,7 @@ void	closeConnection(int epollFd, connection *conn);
 
 // requestHandling.cpp
 void		handleRequest(int epollFd, connection *conn);
-std::string replace_cookiePng(HttpRequest request, std::string cookieValue);
+std::string replaceCookiePng(std::string location, std::string cookieValue);
 
 // CGIHandling.cpp
 int		cgiHandler(const HttpRequest& req, connection *conn, int epollFd); // todo : const ref request

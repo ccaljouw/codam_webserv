@@ -77,8 +77,8 @@ class Server
 		};
 	
 	private:
-		std::string					get_rootFolder(std::string host) const;
-		std::string					get_uploadDir(std::string host) const;
+		std::string							get_rootFolder(std::string host) const;
+		std::string							get_uploadDir(std::string host) const;
 
 		int 								_fd;
 		struct sockaddr_in					_serverAddr;
