@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/02 22:51:16 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/04 07:41:25 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,6 @@ void	setErrorResponse(connection *conn, int error)
 		conn->close_after_response = 1;
 		response.setHeader("Connection", "close");		
 	}
-	// std::string errorHtmlPath = generateErrorPage(conn, error); //for confid error page
-
 	std::ifstream f(errorHtmlPath);
 	if (f.good())
 		response.setBody(errorHtmlPath, false);
@@ -81,7 +79,7 @@ int	checkTimeout(connection *conn)
 				setErrorResponse(conn, 504);
 				return 1;
 			case HANDLING:
-				std::cerr << CYAN << "timout in process" << RESET << std::endl;
+				std::cerr << CYAN << "timout in processing" << RESET << std::endl;
 				setErrorResponse(conn, 500);
 				return 1;
 			default:
@@ -90,7 +88,6 @@ int	checkTimeout(connection *conn)
 	}
 	return 0;
 }
-
 
 std::string	removeWhitespaces(std::string str) {
 	size_t	index;
@@ -102,7 +99,6 @@ std::string	removeWhitespaces(std::string str) {
 	 	str	= str.substr(0, index + 1);
 	return str;
 }
-
 
 void handleSignal(int signal) {
 	g_shutdown_flag = signal;

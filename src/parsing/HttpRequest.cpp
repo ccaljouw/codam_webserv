@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/02 22:40:51 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/04 07:45:11 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,17 +36,16 @@ try {
 		//check protocol //todo test does not work
 	if (_protocol != HTTP_PROTOCOL)
 		throw parsingException(505, "Version not supported");
-
 	
 //  === parse headers ===
 	//define block of all headers
 	std::size_t headersStart = RequestLineEnd + 2;
 	std::size_t headersEnd = request.find("\r\n\r\n", headersStart);
 	if (headersEnd == std::string::npos)
-		throw parsingException(405, "Bad request");
+		throw parsingException(400, "Bad request");
 
 	std::string HeaderBlock = request.substr(headersStart, headersEnd - headersStart);
-
+	
 	//split header block into seperate lines using a stream and seperating the key value pairs
 	std::istringstream HeaderStream(HeaderBlock);
 	std::string headerLine;
@@ -95,10 +94,10 @@ try {
 
 }
 //catch block	
-	catch (const parsingException& exception) {
-		_requestStatus = exception.getErrorCode();
-		std::cerr << exception.what() << std::endl; 
-	}
+catch (const parsingException& exception) {
+	_requestStatus = exception.getErrorCode();
+	std::cerr << exception.what() << std::endl; 
+}
 }
 
 
