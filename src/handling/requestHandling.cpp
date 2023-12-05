@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/05 11:10:51 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/12/05 12:50:02 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 void	handleGET(connection *conn, HttpRequest& request, std::string location, std::string cookieValue, std::string root, std::string contentType);
 void	handleCGI(int epollFd, connection *conn, HttpRequest& request);
 void	handleDIR(int epollFd, connection *conn, bool dirListing, HttpRequest& request, std::string location, std::string index, std::string contentType, std::string cookieValue, std::string root);
+void	handlePOST(connection *conn, HttpRequest& request);
+void	handleDELETE(connection *conn, HttpRequest& request);
 
 
 void	handleRequest(int epollFd, connection *conn) {
@@ -78,25 +80,14 @@ void	handleRequest(int epollFd, connection *conn) {
 
 		//handle POST
 		else if (request.getMethod() == "POST") {
-			
-			//**testprint**
-			std::cout << "\nin POST handler\n" << std::endl;
-			
-			HttpResponse response(request);
-			response.reSetBody("data/text/html/upload.html", false); //todo:make config
-			setResponse(conn, response);
+			handlePOST(conn, request);
 		}
 
 		// handle DELETE
 		else if (request.getMethod() == "DELETE") {
-
-			//**testprint**
-			std::cout << "\nin DELETE handler\n" << std::endl;
-			
-			HttpResponse response(request);
-			response.reSetBody("data/text/html/418.html", false); //todo:make config
-			setResponse(conn, response);
+			handleDELETE(conn, request);
 		}
+		
 		// handle unsupported methods
 		else
 			throw HttpRequest::parsingException(405, "METHOD or Extension not supported");
@@ -138,8 +129,10 @@ void	handleDIR(int epollFd, connection *conn, bool dirListing, HttpRequest& requ
 		response.headers->setHeader("Set-Cookie", cookieValue);
 		setResponse(conn, response);
 	}
-	else
+	else {
+		std::cout << "here" << std::endl;
 		throw HttpRequest::parsingException(404, "Path not found");
+	}
 }
 
 
@@ -201,4 +194,23 @@ void	handleGET(connection *conn, HttpRequest& request, std::string location, std
 	} 
 	else
 		throw HttpRequest::parsingException(404, "Page not found in request handler");
+}
+
+
+void	handlePOST(connection *conn, HttpRequest& request) { 
+	//**testprint**
+	std::cout << "\nin POST handler\n" << std::endl;
+	
+	HttpResponse response(request);
+	response.reSetBody("data/text/html/upload.html", false);
+	setResponse(conn, response);
+}
+
+void	handleDELETE(connection *conn, HttpRequest& request) { 
+	//**testprint**
+	std::cout << "\nin DELETE handler\n" << std::endl;
+	
+	HttpResponse response(request);
+	response.reSetBody("data/text/html/418.html", false);
+	setResponse(conn, response);
 }
