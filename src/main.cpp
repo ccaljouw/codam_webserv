@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   main.cpp                                           :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/05 06:44:50 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   main.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/03 11:16:40 by cariencaljo       #+#    #+#             */
+/*   Updated: 2023/12/05 11:51:07 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ int main(int argc, char **argv) {
 	std::list<Server>	servers;
 
 	signal(SIGINT, handleSignal);
+	signal(SIGPIPE, handleSignal);
 
 	Config conf(argc, argv);
 	if (conf.getError() == true)
@@ -43,6 +44,7 @@ int main(int argc, char **argv) {
 		
 		for (int i = 0; i < numEvents; i++) {
 			connection *conn = static_cast<connection *>(events[i].data.ptr);
+			// std::cout << "con: " << conn->fd << "event: " << events[i].events << " state: " << conn->state << std::endl;
 			checkTimeout(conn);
 			if (events[i].events & EPOLLIN && conn->state == LISTENING)
 				newConnection(epollFd, conn->fd, conn->server);

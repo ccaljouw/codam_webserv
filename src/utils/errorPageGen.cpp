@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   errorPageGen.cpp                                   :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: carlo <carlo@student.codam.nl>               +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/24 08:20:32 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/05 06:51:00 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   errorPageGen.cpp                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/24 08:20:32 by carlo             #+#    #+#             */
+/*   Updated: 2023/12/05 09:54:54 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,11 @@ std::string	generateErrorPage(int e) {
 <!DOCTYPE html>
 <html>
 <head>
+	<link rel="stylesheet" href="90s_styles.css">
 	<title>)" + error + " " + title + R"(</title>
 </head>
 <body>
+	<img class="small" src="cookie.png">
 	<h1>)" + error + " " + title + R"(</h1>
 </body>
 </html>

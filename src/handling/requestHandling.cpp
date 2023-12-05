@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   requestHandling.cpp                                :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/05 07:31:12 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   requestHandling.cpp                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
+/*   Updated: 2023/12/05 12:05:51 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ void	handleRequest(int epollFd, connection *conn) {
 		bool dirListing				= conn->server->get_dirListing(host, location);
 		
 		//**testprint**
-		std::cout << BLUE << "variables set in requesthandling:\nextension: " << extension << "\ncontentType: " << contentType << "\nhost: " << host << "\nlocation: " 
-			<< location << "\nindex: " << index << "\nroot: " << root << "\ndirListing: " << dirListing << "\nlocation: " << location << RESET << std::endl;
+		// std::cout << BLUE << "variables set in requesthandling:\nextension: " << extension << "\ncontentType: " << contentType << "\nhost: " << host << "\nlocation: " 
+		// 	<< location << "\nindex: " << index << "\nroot: " << root << "\ndirListing: " << dirListing << "\nlocation: " << location << RESET << std::endl;
 
 		//check and set cookie
 		std::string cookieValue = checkAndSetCookie(conn, request);
@@ -130,10 +130,10 @@ void	handleRequest(int epollFd, connection *conn) {
 			if (!contentType.empty()) {
 				
 				//check cookie.png
-				location = replaceCookiePng(location, cookieValue);
+				std::string file = replaceCookiePng(location, cookieValue);
 				
 				//check if target exists
-				std::string fullPath = root + "/" + contentType + location;
+				std::string fullPath = root + "/" + contentType + file;
 				std::cout << "full path: " << fullPath << std::endl;
 				std::ifstream f(fullPath);
 				
@@ -143,9 +143,17 @@ void	handleRequest(int epollFd, connection *conn) {
 					throw HttpRequest::parsingException(404, "Path not found");
 		
 				HttpResponse response(request);
+				// std::cout << "set body with: " << request.uri.getPath() << " file: " << file << std::endl;
 				response.reSetBody(request.uri.getPath(), request.uri.getIsBinary());
 				response.headers->addHeader("Content-type", contentType);
 				response.headers->setHeader("Set-Cookie", cookieValue);
+				
+				// //**test print
+				// response.headers->printHeaders();
+				// if (request.headers->isHeader("Content-Length")) {
+				// 	size_t	actualContentLength		= response.getBody().size();
+				// 	std::cout << "actual content len: " << actualContentLength << "\n";
+				// }
 				setResponse(conn, response);
 			} 
 			else

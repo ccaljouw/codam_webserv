@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   utils.cpp                                          :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/05 07:31:03 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   utils.cpp                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/22 21:57:55 by carlo             #+#    #+#             */
+/*   Updated: 2023/12/05 11:56:06 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,5 +135,8 @@ std::string replaceCookiePng(std::string location, std::string cookieValue) {
 }
 
 void handleSignal(int signal) {
-	g_shutdown_flag = signal;
+	if (signal == 13)
+		std::cerr << RED << "sigpipe ignored: " << signal << RESET << std::endl;
+	else
+		g_shutdown_flag = signal;
 }

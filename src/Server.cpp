@@ -161,7 +161,15 @@ size_t	Server::get_maxBodySize(std::string host) const {
 }
 
 std::string	Server::get_index(std::string host, std::string location) const {
-	return get_locationSettings(host, location)->_index;
+	struct LocationSettings* settings = get_locationSettings(host, location);
+	if (settings->_locationId == location) {
+		std::cout << "sending location: " << settings->_index << std::endl;
+		return settings->_index;
+	}
+	else {
+		std::cout << "sending empty location" << std::endl;
+		return "";
+	}
 }
 
 bool Server::get_dirListing(std::string host, std::string location) const {

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   connectionHandling.cpp                             :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/05 06:45:49 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   connectionHandling.cpp                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
+/*   Updated: 2023/12/05 11:58:14 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ void readData(connection *conn)
     ssize_t bytesRead;
 
 	// std::cout << "readData" << "\tfd = " << conn->fd << std::endl; //for testing
+	// std::cout << "nr of requests: " << conn->nr_of_requests << " max: " << conn->server->get_maxNrOfRequests() << std::endl;
 	if (conn->nr_of_requests == conn->server->get_maxNrOfRequests()) {
 		std::cout << CYAN << "Too many requests on open socket, closing connection" << RESET << std::endl;
 		setErrorResponse(conn, 429);
@@ -46,6 +47,7 @@ void readData(connection *conn)
 		std::time(&conn->time_last_request);
 		conn->request.append(buffer, static_cast<long unsigned int>(bytesRead));
 	}
+	// std::cout << BLUE << "bytes read: " << bytesRead << RESET << std::endl;
 	switch(bytesRead)
 	{
 		case -1:
@@ -66,7 +68,7 @@ void readCGI(int epollFd, connection *conn)
 	char buffer[BUFFER_SIZE];
     ssize_t bytesRead;
 	
-	// std::cout << "readCGI" << "\tcgiFd = " << conn->cgiFd << std::endl; //for testing
+	std::cout << "readCGI" << "\tcgiFd = " << conn->cgiFd << std::endl; //for testing
     if ((bytesRead = read(conn->cgiFd, buffer, BUFFER_SIZE)) > 0) {
 		conn->response.append(buffer, static_cast<long unsigned int>(bytesRead));
     }
@@ -85,7 +87,6 @@ void readCGI(int epollFd, connection *conn)
 		case BUFFER_SIZE:
 			break;
 		default:
-			// std::cout << BLUE << buffer << RESET << std::endl;
 			close(conn->cgiFd);
 			epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->cgiFd, nullptr);
 			conn->state = WRITING;
@@ -100,12 +101,13 @@ void writeData(connection *conn)
 	// std::cout << PURPLE << conn->response << RESET << std::endl; //for testing
 	len = std::min(static_cast<int>(conn->response.length()), BUFFER_SIZE);
     len = send(conn->fd, conn->response.c_str(), conn->response.length(), 0);
+	std::cout << "bytes send: " << len << " response len: " << conn->response.size() << std::endl;
 	if (len == -1)
 	{
 		std::cout << "error sending" << std::endl; // for testing
 		conn->state = CLOSING;
 	}
-	else if (len < static_cast<int>(conn->response.length()))
+	else if (len < static_cast<int>(conn->response.size()))
 	{
 		std::cout << "not finished writing yet" << std::endl; // for testing
 		conn->response = conn->response.substr(len, conn->response.npos);
@@ -113,12 +115,12 @@ void writeData(connection *conn)
 	}
 	else
 	{
-		std::cout << "Response sent, nr of requsts: " << conn->nr_of_requests << std::endl; //for testing
 		conn->response.clear();
 		if (conn->close_after_response)
 			conn->state = CLOSING;
 		else
 			conn->state = READING;
+		std::cout << "Response sent, nr of requests: " << conn->nr_of_requests << " state now: " << conn->state << std::endl; //for testing
 	}
 }
 

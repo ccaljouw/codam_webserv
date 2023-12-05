@@ -19,7 +19,7 @@
 
 // settings
 #define MAX_EVENTS 10
-#define BUFFER_SIZE 1024
+#define BUFFER_SIZE 1027
 #define TIMEOUT	5
 #define CGI_TIMEOUT 3
 #define	MAX_NR_REQUESTS 50
