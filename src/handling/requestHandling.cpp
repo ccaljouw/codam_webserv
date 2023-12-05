@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/05 10:50:40 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/12/05 11:10:51 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,11 +97,9 @@ void	handleRequest(int epollFd, connection *conn) {
 			response.reSetBody("data/text/html/418.html", false); //todo:make config
 			setResponse(conn, response);
 		}
-
 		// handle unsupported methods
 		else
 			throw HttpRequest::parsingException(405, "METHOD or Extension not supported");
-
 
 	} catch (const HttpRequest::parsingException& exception) {
 		std::cout << RED << "Error: " + std::to_string(exception.getErrorCode()) << " " << exception.what() << RESET << std::endl;
@@ -109,6 +107,7 @@ void	handleRequest(int epollFd, connection *conn) {
 	}
 	std::cout << "end of handleRequest" << std::endl; //testing
 }
+
 
 void	handleDIR(int epollFd, connection *conn, bool dirListing, HttpRequest& request, std::string location, std::string index, std::string contentType, std::string cookieValue, std::string root) {
 
@@ -127,7 +126,6 @@ void	handleDIR(int epollFd, connection *conn, bool dirListing, HttpRequest& requ
 			conn->state = IN_CGI;
 		}
 	}
-
 	else if (!index.empty()) {
 		std::string bodyPath = root + "/text/html/" + index;
 		
@@ -143,7 +141,6 @@ void	handleDIR(int epollFd, connection *conn, bool dirListing, HttpRequest& requ
 	else
 		throw HttpRequest::parsingException(404, "Path not found");
 }
-
 
 
 void	handleCGI(int epollFd, connection *conn, HttpRequest& request) {
@@ -174,6 +171,7 @@ void	handleCGI(int epollFd, connection *conn, HttpRequest& request) {
 		conn->state = IN_CGI;
 	}
 }
+
 
 void	handleGET(connection *conn, HttpRequest& request, std::string location, std::string cookieValue, std::string root, std::string contentType) {
 	

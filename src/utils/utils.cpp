@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/05 07:31:03 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/05 11:13:04 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	setErrorResponse(connection *conn, int error)
 	if (providedErrorPages->size() != 0) {
 		for (const auto& pair : *providedErrorPages) {
 			if (pair.first == error) {
-				std::cout << BLUE << "directed to error page set in config with nr: " << error <<  RESET << std::endl;
+				std::cout << RED << "directed to error page set in config with nr: " << error <<  RESET << std::endl;
 				errorHtmlPath = "data/text/html" + pair.second;
 				break;
 			}
