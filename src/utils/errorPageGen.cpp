@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   errorPageGen.cpp                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/24 08:20:32 by carlo             #+#    #+#             */
-/*   Updated: 2023/12/05 09:54:54 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   errorPageGen.cpp                                   :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/24 08:20:32 by carlo         #+#    #+#                 */
+/*   Updated: 2023/12/05 14:35:33 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ std::string	generateErrorPage(int e) {
 		}
 
 //set page content
-	std::string htmlContent = R"(
+std::string htmlContent = R"(
 <!DOCTYPE html>
 <html>
 <head>
@@ -59,7 +59,6 @@ std::string	generateErrorPage(int e) {
 	<title>)" + error + " " + title + R"(</title>
 </head>
 <body>
-	<img class="small" src="cookie.png">
 	<h1>)" + error + " " + title + R"(</h1>
 </body>
 </html>

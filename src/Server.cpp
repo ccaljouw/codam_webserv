@@ -69,7 +69,7 @@ int Server::initServer(struct ServerSettings *settings, int epollFd, double time
 			throw ServerException(settings->_serverName + " socket: ");
 		if (assign_name())
 			throw ServerException(settings->_serverName + " bind: ");
-		if (set_to_listen(5))
+		if (set_to_listen(0))
 			throw ServerException(settings->_serverName + " listen: ");
 		if (register_server(epollFd, this->_fd, this))
 			throw ServerException(settings->_serverName + " register: ");

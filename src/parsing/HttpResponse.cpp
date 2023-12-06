@@ -101,8 +101,8 @@ void			HttpResponse::reSetBody(const std::string& filePath, bool isBinary)	{
 	else
 		throw HttpRequest::parsingException(422, "Unprocessable Entity");
 	
-	headers->setHeader("Last-Modified", getTimeStamp());
 	headers->setHeader("Content-Length", std::to_string(length));
+	headers->setHeader("Last-Modified", getTimeStamp());
 }
 
 

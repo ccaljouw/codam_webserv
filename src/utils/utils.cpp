@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   utils.cpp                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/22 21:57:55 by carlo             #+#    #+#             */
-/*   Updated: 2023/12/05 11:56:06 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   utils.cpp                                          :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
+/*   Updated: 2023/12/05 16:35:01 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	setErrorResponse(connection *conn, int error)
 	if (providedErrorPages->size() != 0) {
 		for (const auto& pair : *providedErrorPages) {
 			if (pair.first == error) {
-				std::cout << BLUE << "directed to error page set in config with nr: " << error <<  RESET << std::endl;
+				std::cout << RED << "directed to error page set in config with nr: " << error <<  RESET << std::endl;
 				errorHtmlPath = "data/text/html" + pair.second;
 				break;
 			}
@@ -85,7 +85,7 @@ int	checkTimeout(connection *conn)
 	// smaller timeout value for internal timeouts?
 	double timeout;
 
-	if (conn->state == IN_CGI)
+	if (conn->state == IN_CGI || conn->state == WRITING)
 		timeout = CGI_TIMEOUT;
 	else
 		timeout = conn->server->get_timeout();
@@ -107,6 +107,9 @@ int	checkTimeout(connection *conn)
 			case HANDLING:
 				std::cerr << CYAN << "timout in processing" << RESET << std::endl;
 				setErrorResponse(conn, 500);
+				return 1;
+			case WRITING:
+				std::cerr << CYAN << "stuck in writing" << RESET << std::endl;
 				return 1;
 			default:
 				return 0;
@@ -135,8 +138,6 @@ std::string replaceCookiePng(std::string location, std::string cookieValue) {
 }
 
 void handleSignal(int signal) {
-	if (signal == 13)
-		std::cerr << RED << "sigpipe ignored: " << signal << RESET << std::endl;
-	else
-		g_shutdown_flag = signal;
+	g_shutdown_flag = signal;
+	std::cout << "signal received: " << signal << std::endl;
 }

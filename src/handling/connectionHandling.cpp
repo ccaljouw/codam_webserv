@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   connectionHandling.cpp                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/12/05 11:58:14 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   connectionHandling.cpp                             :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
+/*   Updated: 2023/12/05 16:50:29 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void readData(connection *conn)
 		setErrorResponse(conn, 429);
 		return;
 	}
-	if ((bytesRead = recv(conn->fd, buffer, sizeof(buffer), 0)) > 0) {
+	if ((bytesRead = recv(conn->fd, buffer, sizeof(buffer), MSG_DONTWAIT)) > 0) {
 		// std::cout << YELLOW << buffer << RESET << std::endl; //for testing
 		std::time(&conn->time_last_request);
 		conn->request.append(buffer, static_cast<long unsigned int>(bytesRead));
@@ -97,19 +97,20 @@ void writeData(connection *conn)
 {
 	int			len;
 	
-	std::cout << "writeData" << "\tfd = " << conn->fd << std::endl; //for testing
-	// std::cout << PURPLE << conn->response << RESET << std::endl; //for testing
+	// std::cout << "writeData" << "\tfd = " << conn->fd << std::endl; //for testing
 	len = std::min(static_cast<int>(conn->response.length()), BUFFER_SIZE);
-    len = send(conn->fd, conn->response.c_str(), conn->response.length(), 0);
-	std::cout << "bytes send: " << len << " response len: " << conn->response.size() << std::endl;
+    len = send(conn->fd, conn->response.c_str(), len, MSG_DONTWAIT);
+	// std::cout << PURPLE << conn->response.substr(0, len) << RESET << std::endl; //for testing
+	// std::cout << "bytes send: " << len << " response len: " << conn->response.size() << std::endl;
 	if (len == -1)
 	{
 		std::cout << "error sending" << std::endl; // for testing
+		std::cout << RED << "erno after send: " << std::string(strerror(errno)) << std::endl;
 		conn->state = CLOSING;
 	}
 	else if (len < static_cast<int>(conn->response.size()))
 	{
-		std::cout << "not finished writing yet" << std::endl; // for testing
+		// std::cout << "not finished writing yet" << std::endl; // for testing
 		conn->response = conn->response.substr(len, conn->response.npos);
 		conn->state = WRITING;
 	}
