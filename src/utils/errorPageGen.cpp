@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   errorPageGen.cpp                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/24 08:20:32 by carlo             #+#    #+#             */
-/*   Updated: 2023/12/07 12:13:28 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   errorPageGen.cpp                                   :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/24 08:20:32 by carlo         #+#    #+#                 */
+/*   Updated: 2023/12/07 21:22:14 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,11 +55,23 @@ std::string htmlContent = R"(
 <!DOCTYPE html>
 <html>
 <head>
-	<link rel="stylesheet" href="90s_styles.css">
+	<link rel="stylesheet" href="/90s_styles.css">
 	<title>)" + error + " " + title + R"(</title>
 </head>
 <body>
-	<h1>)" + error + " " + title + R"(</h1>
+	<nav class="left-menu">
+			<ul>
+			<li><a href="/index.html"><img class="small" src="/cookie.png"></a></li>
+			<li><a href="/upload.html">Upload</a></li>
+			<li><a href="/delete.html">Delete</a></li>
+			<li><a href="/other.html">Cookies</a></li>
+			<li><a href="sockets.html">Sockets</a></li>
+			<li><a href="epoll.html">Epoll</a></li>
+			</ul>
+	</nav>
+	<div class="container">
+		<h1>)" + error + " " + title + R"(</h1>
+	</div>
 </body>
 </html>
 )";

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   requestHandling.cpp                                :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/12/07 15:47:31 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   requestHandling.cpp                                :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
+/*   Updated: 2023/12/07 19:36:01 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,8 +175,8 @@ void	handleGET(connection *conn, HttpRequest& request, std::string location, std
 		location = replaceCookiePng(location, cookieValue);
 		
 		//check if target exists
-		if (contentType == "text/css")
-			location = location.substr(location.rfind("/"));
+		// if (contentType == "text/css")
+		// 	location = location.substr(location.rfind("/"));
 		std::string fullPath = root + "/" + contentType + location;
 		std::cout << "full path: " << fullPath << std::endl;
 		std::ifstream f(fullPath);

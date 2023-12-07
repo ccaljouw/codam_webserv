@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   Config.cpp                                         :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/12/05 06:45:33 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/07 13:48:16 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,9 +188,7 @@ void	Config::_checkMandatoryParameters(const struct ServerSettings *server)
 	for (const auto location : server->_locations)
 	{
 		if (location->_locationId.empty())
-			throw MissingParameterException("location");
-		if (location->_index.empty())
-			throw MissingParameterException("location index");
+			throw MissingParameterException("location name");
 		if (location->_locationId == "/")
 			hasRootLocation = true;
 	}

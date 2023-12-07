@@ -24,12 +24,12 @@ def genFilename(filePath) -> str:
 def uploadFile(form) -> (int, str) :
 
 	# Create uploads folder if it doesn't exist
-	# if os.path.exists(os.environ.get("PATH_INFO")) == False:
-	# 	return (500, "Internal Server Error")
-	# uploadDir = os.environ.get("PATH_INFO") + "/" + os.environ.get("UPLOAD_DIR")
-	uploadDir = "./data/uploads"
+	uploadDir = os.environ.get("UPLOAD_DIR")
 	if os.path.exists(uploadDir) == False:
 		os.mkdir(uploadDir)
+
+	if os.path.exists(os.environ.get("UPLOAD_DIR")) == False:
+		return (500, "Internal Server Error")
 	
 	# Checks if the file is uploaded
 	if form.getvalue('filename'):
@@ -59,14 +59,26 @@ status, message =  uploadFile(form)
 x = datetime.datetime.now()
 date = x.strftime("%a, %d %b %Y %H:%M:%S GMT")
 
-		# <link rel="icon" href="data:,">
 body = f"""<!DOCTYPE html>
 <html>
 	<head>
 		<title>File Upload</title>
+		<link rel="stylesheet" href="/90s_styles.css">
 	</head>
 	<body>
-		<h1>{message}</h1>
+		<nav class="left-menu">
+			<ul>
+			<li><a href="/index.html"><img class="small" src="/cookie.png"></a></li>
+			<li><a href="/upload.html">Upload</a></li>
+			<li><a href="/delete.html">Delete</a></li>
+			<li><a href="/other.html">Cookies</a></li>
+			<li><a href="sockets.html">Sockets</a></li>
+			<li><a href="epoll.html">Epoll</a></li>
+			</ul>
+		</nav>
+		<div class="container">
+			<h1>{message}</h1>
+		</div>
 	</body>
 </html>"""
 

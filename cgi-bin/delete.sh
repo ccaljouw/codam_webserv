@@ -5,8 +5,6 @@ message=""
 filename=""
 dir=""
 
-PATH_INFO="./data"
-UPLOAD_DIR="uploads"
 
 # checks if the query string is empty and if no argument was given
 if [[ -z "$QUERY_STRING"  && -z "$1" ]]
@@ -30,29 +28,20 @@ else
 	fi
 fi
 
-# checks if the server sent the root path
-if [ -z "$PATH_INFO" ]
-then
-	message="Internal Server Error"
-	status="500"
-fi
-
 # checks if the server sent the upload directory
 if [[ -z "$status" && -z "$UPLOAD_DIR" ]]
 then
 	message="Internal Server Error"
 	status="500"
-else
-	dir="$PATH_INFO/$UPLOAD_DIR"
 fi
 
 # checks if status was previously set
 if [ -z "$status" ]
 then
 	# checks if the file exists
-	if [ -f "$dir/$filename" ]
+	if [ -f "$UPLOAD_DIR/$filename" ]
 	then
-		rm -rf "$dir/$filename" 2> /dev/null > /dev/null 
+		rm -rf "$UPLOAD_DIR/$filename" 2> /dev/null > /dev/null 
 
 		# checks if the file was deleted successfully
 		if [ $? -eq 0 ]
@@ -75,12 +64,23 @@ date=`date -u +"%a, %d %b %Y %H:%M:%S GMT"`
 body="<!DOCTYPE html>
 <html>
 	<head>
-		<link rel=\"icon\" href=\"data:,\">
 		<title>Delete File</title>
+		<link rel="stylesheet" href="/90s_styles.css">
 	</head>
 	<body>
-		<h1>"$dir/$filename"</h1>
-		<h1>$message</h1>
+		<nav class="left-menu">
+			<ul>
+			<li><a href="/index.html"><img class="small" src="/cookie.png"></a></li>
+			<li><a href="/upload.html">Upload</a></li>
+			<li><a href="/delete.html">Delete</a></li>
+			<li><a href="/other.html">Cookies</a></li>
+			<li><a href="sockets.html">Sockets</a></li>
+			<li><a href="epoll.html">Epoll</a></li>
+			</ul>
+		</nav>
+		<div class="container">
+			<h1>$message</h1>
+		</div>
 	</body>
 </html>\r\n"
 
