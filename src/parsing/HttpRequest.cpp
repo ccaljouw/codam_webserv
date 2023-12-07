@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   HttpRequest.cpp                                    :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/05 06:48:21 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   HttpRequest.cpp                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/01 14:21:11 by carlo             #+#    #+#             */
+/*   Updated: 2023/12/07 12:35:58 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,18 +24,25 @@ HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri
 
 	//  === parse request line === 
 	try {
+		std::cout << "start request contructor" << std::endl;
 		std::size_t RequestLineEnd = request.find("\r\n");
 		if (RequestLineEnd == std::string::npos)
-			throw parsingException(405, "Bad request");
+			throw parsingException(400, "Bad request");
 			
 		std::string RequestLine = request.substr(0, RequestLineEnd);
 		
+		std::cout << " request contructor" << std::endl;
 		std::stringstream RequestLineStream(RequestLine);
+		// if (!RequestLineStream.good())
+		// 	std::cout << "string stream error" << std::endl;
 		std::string tempUriString;
-
+		std::cout << "before processing stream request contructor" << std::endl;
 		RequestLineStream >> _method >> tempUriString >> _protocol;
+		std::cout << "after processing stream request contructor" << std::endl;	
+		// === set uri object === 
+		uri = Uri(tempUriString);
 		
-			//check protocol //todo test does not work
+		//check protocol //todo test does not work
 		if (_protocol != HTTP_PROTOCOL)
 			throw parsingException(505, "Version not supported");
 
@@ -45,7 +52,7 @@ HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri
 		std::size_t headersStart = RequestLineEnd + 2;
 		std::size_t headersEnd = request.find("\r\n\r\n", headersStart);
 		if (headersEnd == std::string::npos)
-			throw parsingException(405, "Bad request");
+			throw parsingException(400, "Bad request");
 
 		std::string HeaderBlock = request.substr(headersStart, headersEnd - headersStart);
 
@@ -53,9 +60,6 @@ HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri
 
 	// === parse body ===
 		_body = request.substr(headersEnd + 4);
-
-	// === set uri object === 
-		uri = Uri(tempUriString);
 
 	// === fetch location specific config settings === 
 		_settings = _server->get_locationSettings(headers->getHeaderValue("host"), uri.getPath());

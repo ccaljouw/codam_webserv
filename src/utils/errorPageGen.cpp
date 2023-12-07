@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   errorPageGen.cpp                                   :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/24 08:20:32 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/05 14:35:33 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   errorPageGen.cpp                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/24 08:20:32 by carlo             #+#    #+#             */
+/*   Updated: 2023/12/07 12:13:28 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,9 @@ std::string htmlContent = R"(
 		errorPageStream << htmlContent;
 		errorPageStream.close();
 	}
-	else
+	else {
 		std::cerr << RED <<  "unable to generate error HTML file" << RESET <<  std::endl;
+		return "";
+	}
 	return path;
 }

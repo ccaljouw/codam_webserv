@@ -80,8 +80,10 @@ void			HttpResponse::reSetBody(const std::string& filePath, bool isBinary)	{
 		_body.clear();
 	if (isBinary)
 		inputFile.open(filePath, std::ifstream::binary);
-	else
+	else {
 		inputFile.open(filePath);
+		std::cout << "input file opened: " << filePath << std::endl;
+	}
 	if (inputFile.good()) {
 		inputFile.seekg(0, inputFile.end);
 		length = inputFile.tellg();
@@ -90,16 +92,11 @@ void			HttpResponse::reSetBody(const std::string& filePath, bool isBinary)	{
 		char buffer[length];
 		inputFile.read(buffer, length);
 		_body.append(buffer, length);
-
-		if (!inputFile) {
-			std::cout << "could only read " << inputFile.gcount() << " from " << length << " bites" << std::endl; //todo trow error
-			throw HttpRequest::parsingException(422, "Unable to set response body");
-		}
-		
-		inputFile.close();
+		inputFile.close();	
 	}
-	else
-		throw HttpRequest::parsingException(422, "Unprocessable Entity");
+	else {
+		throw HttpRequest::parsingException(500, "Internal Server error");
+	}
 	
 	headers->setHeader("Content-Length", std::to_string(length));
 	headers->setHeader("Last-Modified", getTimeStamp());

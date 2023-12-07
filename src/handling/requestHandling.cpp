@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   requestHandling.cpp                                :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/05 16:46:02 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   requestHandling.cpp                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
+/*   Updated: 2023/12/07 11:26:56 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,10 @@ void	handleRequest(int epollFd, connection *conn) {
 		HttpRequest request(conn->request, conn->server);
 
 		// Handle parsing error
-		if (request.getRequestStatus() != 200) 
+		if (request.getRequestStatus() != 200)  {
 			setErrorResponse(conn, request.getRequestStatus());
+			return ;
+		}
 	
 		//set variables
 		std::string extension		= request.uri.getExtension();

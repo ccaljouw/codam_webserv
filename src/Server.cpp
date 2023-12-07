@@ -162,7 +162,7 @@ size_t	Server::get_maxBodySize(std::string host) const {
 
 std::string	Server::get_index(std::string host, std::string location) const {
 	struct LocationSettings* settings = get_locationSettings(host, location);
-	if (settings->_locationId == location) {
+	if (settings && settings->_locationId == location) {
 		std::cout << "sending location: " << settings->_index << std::endl;
 		return settings->_index;
 	}
@@ -173,17 +173,29 @@ std::string	Server::get_index(std::string host, std::string location) const {
 }
 
 bool Server::get_dirListing(std::string host, std::string location) const {
-	return get_locationSettings(host, location)->_dirListing;
+	struct LocationSettings* settings = get_locationSettings(host, location);
+	if (settings)
+		return settings->_dirListing;
+	else
+		return false;
 }
 
 std::map<int, std::string>	Server::get_redirect(std::string host, std::string location) const {
-	return get_locationSettings(host, location)->_redirect;
+	struct LocationSettings* settings = get_locationSettings(host, location);
+	if (settings)
+		return settings->_redirect;
+	else {
+		std::cout << "sending empty redirect" << std::endl;
+		std::map<int, std::string> map;
+		return map;
+	}
 }
 
 std::string	Server::get_rootFolder(std::string host, std::string location) const {
 	std::string root;
-
-	root = get_locationSettings(host, location)->_rootFolder;
+	struct LocationSettings* settings = get_locationSettings(host, location);
+	if (settings)
+		root = settings->_rootFolder;
 	if (root.empty())
 		root = get_rootFolder(host);
 	return root;
@@ -191,8 +203,9 @@ std::string	Server::get_rootFolder(std::string host, std::string location) const
 
 std::string	Server::get_uploadDir(std::string host, std::string location) const {
 	std::string dir;
-
-	dir = get_locationSettings(host, location)->_uploadDir;
+	struct LocationSettings* settings = get_locationSettings(host, location);
+	if (settings)
+		dir = settings->_uploadDir;
 	if (dir.empty())
 		dir = get_uploadDir(host);
 	return dir;

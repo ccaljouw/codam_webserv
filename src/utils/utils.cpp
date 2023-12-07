@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   utils.cpp                                          :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/05 16:35:01 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   utils.cpp                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/22 21:57:55 by carlo             #+#    #+#             */
+/*   Updated: 2023/12/07 12:44:27 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,42 +30,39 @@ std::string getTimeStamp() {
 
 void	setErrorResponse(connection *conn, int error)
 {
-	//**testprint*
-	std::cout << "\nin setErroResponse with error: " << error << std::endl;
-	
-	HttpRequest		request(conn->request, conn->server);
 	HttpResponse	response;
 	std::string		errorHtmlPath;
-	std::string		host = request.uri.getHost();
 
 	response.setStatusCode(error);
-
+	
 	// check for error pages set in config
-	std::map<int, std::string> *providedErrorPages = conn->server->get_errorPages(host);
-	if (providedErrorPages->size() != 0) {
-		for (const auto& pair : *providedErrorPages) {
-			if (pair.first == error) {
-				std::cout << RED << "directed to error page set in config with nr: " << error <<  RESET << std::endl;
-				errorHtmlPath = "data/text/html" + pair.second;
-				break;
+	if (!conn->request.empty()) {
+		HttpRequest		request(conn->request, conn->server);
+		std::string		host = request.uri.getHost();
+		std::map<int, std::string> *providedErrorPages = conn->server->get_errorPages(host);
+		if (providedErrorPages->size() != 0) {
+			for (const auto& pair : *providedErrorPages) {
+				if (pair.first == error) {
+					std::cout << RED << "directed to error page set in config with nr: " << error <<  RESET << std::endl;
+					errorHtmlPath = "data/text/html" + pair.second;
+					break;
+				}
+				else
+					errorHtmlPath = generateErrorPage(error);
 			}
-			else
-				errorHtmlPath = generateErrorPage(error);
 		}
+		else
+			errorHtmlPath = generateErrorPage(error);
+		//check if path is ok
+		std::ifstream f(errorHtmlPath);
+		if (f.good())
+			response.reSetBody(errorHtmlPath, false);
 	}
-	else
-		errorHtmlPath = generateErrorPage(error);
-
+	
 	if (error == 408 || error == 429 || error == 500 || error == 504) {
 		conn->close_after_response = 1;
 		response.headers->setHeader("Connection", "close");		
 	}
-	
-	//check if path is ok
-	std::ifstream f(errorHtmlPath);
-	if (f.good())
-		response.reSetBody(errorHtmlPath, false);
-
 	setResponse(conn, response);
 }
 
