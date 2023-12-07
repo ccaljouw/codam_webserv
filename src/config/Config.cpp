@@ -6,15 +6,11 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/30 14:33:42 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/12/07 13:48:16 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
-#include "webServ.hpp"
-#include <fstream>
-#include <map>
-#include <list>
 
 Config::Config(int argc, char** argv) : _error(false), _lineNr(1)
 {
@@ -42,6 +38,7 @@ Config::Config(int argc, char** argv) : _error(false), _lineNr(1)
 		std::cerr << RED << e.what() << RESET << std::endl;
 		_error = true;
 	}
+
 }
 
 Config::~Config()
@@ -211,7 +208,6 @@ void	Config::printServers() const
 		std::cout << "port: " << server->_port << std::endl;
 		std::cout << "root folder: " << server->_rootFolder <<  std::endl;
 		std::cout << "upload dir: " << server->_uploadDir <<  std::endl;
-
 		std::cout << "\nlocation size: " << server->_locations.size() << "\n" << std::endl;
 
 		for (const auto location : server->_locations) {

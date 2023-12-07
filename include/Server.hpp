@@ -10,12 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#pragma once
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
-#include <eventloop.hpp>
-#include "Config.hpp"
-#include <string.h>
+#include "defines.hpp"
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <unistd.h>
 
 class Server
 {
@@ -50,14 +52,14 @@ class Server
 		struct LocationSettings*	get_locationSettings(std::string host, std::string location) const;
 		
 		std::string					get_serverName(std::string host) const;
-		std::string					get_rootFolder(std::string host) const;
-		std::string					get_uploadDir(std::string host) const;
 		std::map<int, std::string>*	get_errorPages(std::string host) const;
 		size_t						get_maxBodySize(std::string host) const;
 
 		std::string					get_index(std::string host, std::string location) const;
 		bool						get_dirListing(std::string host, std::string location) const;
-		std::string 				get_locationRoot(std::string host, std::string location) const;
+		std::map<int, std::string>	get_redirect(std::string host, std::string location) const;
+		std::string					get_rootFolder(std::string host, std::string location) const;
+		std::string					get_uploadDir(std::string host, std::string location) const;
 		
 		// ============= setters ================
 		void	set_connection(struct connection *conn);
@@ -75,6 +77,8 @@ class Server
 		};
 	
 	private:
+		std::string							get_rootFolder(std::string host) const;
+		std::string							get_uploadDir(std::string host) const;
 
 		int 								_fd;
 		struct sockaddr_in					_serverAddr;
@@ -84,7 +88,5 @@ class Server
 		std::list<struct ServerSettings *>	_settings;
 		struct connection					*_conn;
 } ;
-
-std::list<Server> initServers(const Config& config, int epollFd);
 
 #endif /* **************************************************** Server_H */

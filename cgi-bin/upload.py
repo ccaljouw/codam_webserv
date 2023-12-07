@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import datetime, os, cgi, cgitb, sys
+import datetime, os, cgi, cgitb
 
 cgitb.enable(display=1)
 form = cgi.FieldStorage()

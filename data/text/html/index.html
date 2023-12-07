@@ -4,25 +4,33 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="90s_styles.css">
     <title>C++ Sockets and Epoll Tutorial</title>
-    <link rel="icon" href="favicon.ico">
+    <!-- <link rel="icon" href="favicon.ico"> -->
     <style>
         /* Apply previous styles */
         /* ... Paste the CSS styles for body, container, h1, p, ul, li, a, a:hover here ... */
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Welcome to our WebServ Example page</h1>
+	<div class="container">
+		<h1>Welcome to our WebServ Example page</h1>
         <p>This is the index page. Below are some useful links to explore:</p>
         <ul>
-            <li>Learn about <a href="sockets.html">Sockets</a> in C++ for network communication.</li>
+			<li>Try uploading a file in the <a href="upload.html">Upload Section</a>.</li>
+			<li>Do you like <a href="other.html">Cookies</a>??</li>
+			<li>Learn about <a href="sockets.html">Sockets</a> in C++ for network communication.</li>
             <li>Discover how to use <a href="epoll.html">Epoll</a> in C++ for scalable I/O event handling.</li>
         </ul>
-        <p>Or try exploring other sections:</p>
-        <ul>
-            <li>Visit the <a href="other.html">Other Page</a>.</li>
-            <li>Try uploading a file in the <a href="upload.html">Upload Section</a>.</li>
-        </ul>
+		<form>
+			<p>Oh, and a random question... do you prefer cats or dogs?</p>
+			<img id="image" src="cookie.png"><br>
+			<input type="radio" id="html" name="trigger" value="cat">
+			<label for="Cats">Cats!</label><br>
+			<input type="radio" id="css" name="trigger" value="dog">
+			<label for="css">Dogs!</label><br>
+			<input type="radio" id="css" name="trigger" value="cookie">
+			<label for="css">Both!</label><br>
+			<input type="submit" value="change picture"/><br><br>
+		</form>
     </div>
 </body>
 </html>

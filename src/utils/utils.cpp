@@ -1,19 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   utils.cpp                                          :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: carlo <carlo@student.codam.nl>               +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/24 13:53:19 by carlo         ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   utils.cpp                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/22 21:57:55 by carlo             #+#    #+#             */
+/*   Updated: 2023/12/07 12:44:27 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webServ.hpp"
-
-#include<string>
-#include<fstream>
+#include <signal.h>
 
 
 std::string getTimeStamp() {
@@ -28,23 +26,46 @@ std::string getTimeStamp() {
     std::strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S GMT", timeInfoGmt);
     return buffer;
 }
-
+	
 
 void	setErrorResponse(connection *conn, int error)
 {
-	HttpResponse response;
-	response.setStatusCode(error);
-	std::string errorHtmlPath = generateErrorPage(error);
-	// std::string errorHtmlPath = generateErrorPage(conn, error); //for confid error page
+	HttpResponse	response;
+	std::string		errorHtmlPath;
 
-	std::ifstream f(errorHtmlPath);
-	if (f.good())
-		response.setBody(errorHtmlPath, false);
-	//todo : remove tmp file or not
-	// if (std::remove(errorHtmlPath.c_str()) != 0) //todo uncomment
-	// 	std::cerr << RED << "Error remoiving tmp error page" << RESET <<  std:: endl; 
+	response.setStatusCode(error);
+	
+	// check for error pages set in config
+	if (!conn->request.empty()) {
+		HttpRequest		request(conn->request, conn->server);
+		std::string		host = request.uri.getHost();
+		std::map<int, std::string> *providedErrorPages = conn->server->get_errorPages(host);
+		if (providedErrorPages->size() != 0) {
+			for (const auto& pair : *providedErrorPages) {
+				if (pair.first == error) {
+					std::cout << RED << "directed to error page set in config with nr: " << error <<  RESET << std::endl;
+					errorHtmlPath = "data/text/html" + pair.second;
+					break;
+				}
+				else
+					errorHtmlPath = generateErrorPage(error);
+			}
+		}
+		else
+			errorHtmlPath = generateErrorPage(error);
+		//check if path is ok
+		std::ifstream f(errorHtmlPath);
+		if (f.good())
+			response.reSetBody(errorHtmlPath, false);
+	}
+	
+	if (error == 408 || error == 429 || error == 500 || error == 504) {
+		conn->close_after_response = 1;
+		response.headers->setHeader("Connection", "close");		
+	}
 	setResponse(conn, response);
 }
+
 
 void	setResponse(connection *conn, HttpResponse resp)
 {
@@ -53,25 +74,46 @@ void	setResponse(connection *conn, HttpResponse resp)
 	conn->state = WRITING;
 }
 
+
 // Some browsers (eg Firefox), check form timeout based on header keep-alive with timeout.
 // others (eg safari) do not close the connection themselves
-void	checkTimeout(connection *conn)
+int	checkTimeout(connection *conn)
 {
-	if (conn->request.empty()) 
-	{
-		// std::cout << "checkout timeout: " << difftime(std::time(nullptr), conn->time_last_request) << std::endl;
-		if (difftime(std::time(nullptr), conn->time_last_request) > conn->server->get_timeout()) {
+	// smaller timeout value for internal timeouts?
+	double timeout;
 
-			std::cout << CYAN << "Timeout" << RESET << std::endl;
-			conn->state = CLOSING; 
-		}
-		else
-			conn->state = READING;
-	}
+	if (conn->state == IN_CGI || conn->state == WRITING)
+		timeout = CGI_TIMEOUT;
 	else
-		conn->state = HANDLING;
+		timeout = conn->server->get_timeout();
+	if (std::difftime(std::time(nullptr), conn->time_last_request) >= timeout) {
+		switch(conn->state)
+		{
+			case READING:
+				std::cerr << CYAN << "request timeout" << RESET << std::endl;
+				setErrorResponse(conn, 408);
+				return 1;
+			case IN_CGI:
+				std::cerr << CYAN << "timeout in cgi" << RESET << std::endl;
+				if (conn->cgiPID) {
+					close(conn->cgiPID);
+					kill(conn->cgiPID, SIGTERM);
+				}
+				setErrorResponse(conn, 504);
+				return 1;
+			case HANDLING:
+				std::cerr << CYAN << "timout in processing" << RESET << std::endl;
+				setErrorResponse(conn, 500);
+				return 1;
+			case WRITING:
+				std::cerr << CYAN << "stuck in writing" << RESET << std::endl;
+				return 1;
+			default:
+				return 0;
+		}
+	}
+	return 0;
 }
-
 
 std::string	removeWhitespaces(std::string str) {
 	size_t	index;
@@ -84,8 +126,15 @@ std::string	removeWhitespaces(std::string str) {
 	return str;
 }
 
+std::string replaceCookiePng(std::string location, std::string cookieValue) {
+	if (location == "/cookie.png") {
+		std::string trigger = cookieValue.substr(cookieValue.rfind("=") + 1) ;
+		location = "/" + trigger + ".png";	
+	}
+	return location;
+}
 
-void handleSignal(int signal)
-{
+void handleSignal(int signal) {
 	g_shutdown_flag = signal;
+	std::cout << "signal received: " << signal << std::endl;
 }

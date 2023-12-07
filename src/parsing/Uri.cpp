@@ -1,29 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   Uri.cpp                                            :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/24 09:17:00 by carlo         ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   Uri.cpp                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/03 12:17:27 by carlo             #+#    #+#             */
+/*   Updated: 2023/12/07 11:17:09 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Uri.hpp"
-#include "HttpRequest.hpp"
-
-#include <regex>
-#include <exception>
-#include <sstream>
-#include <cstring>
-
+#include "HttpRequest.hpp" //only used for exeption
 
 Uri::Uri() : _scheme(), _authority(), _path(), _extension(), _isBinary(false), _query(), _queryMap(), _fragment(), _userinfo(), _host(), _port() {}
 
 
 // regex teken directly from RFC 2396 : ^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))? added R for ignoring escape characterss
-Uri::Uri(const std::string& uri) {
+Uri::Uri(const std::string& uri) : _isBinary(false) {
 	
 	std::regex uriRegex(R"(^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?)");
 	std::smatch matches;
@@ -41,6 +35,7 @@ Uri::Uri(const std::string& uri) {
 	else 
 		throw HttpRequest::parsingException(400, "bad request");
 
+	std::cout << BLUE << "URI components: '" << "'\n\tsceme: '" << _scheme << "'\n\tauthority: '" << _authority << "'\n\tpath: '" << _path << "'\n\tquery: '" << _query << "'\n\tfragment" << _fragment << "\n" << RESET << std::endl;
 	splitAuthority();
 	
 	//scheme and host are case insensitive and as such are normalized here
@@ -60,12 +55,12 @@ const Uri& Uri::operator=(const Uri& rhs) {
 		_scheme			= rhs._scheme;
 		_authority		= rhs._authority;
 		_path			= rhs._path;
+		_query			= rhs._query;
+		_fragment		= rhs._fragment;
 		_extension		= rhs._extension;
 		_isBinary		= rhs._isBinary;
-		_query			= rhs._query;
 		_queryMap.clear();
 		_queryMap		= rhs._queryMap;
-		_fragment		= rhs._fragment;
 		_userinfo		= rhs._userinfo;
 		_host			= rhs._host;
 		_port			= rhs._port;
@@ -88,11 +83,10 @@ void	Uri::splitAuthority() {
 		_userinfo	= _authority.substr(0, atPos);
 		_host		= _authority.substr(atPos + 1);
 	}
-	
 	else
 		_host = _authority;
 
-	//check for optional port
+	// todo: check for optional port and validity
 	size_t columPos	= _host.find(":");
 	if (columPos != std::string::npos) {
 		std::string portString  = _host.substr(columPos + 1);
@@ -109,9 +103,7 @@ void	Uri::splitAuthority() {
     	catch (const std::out_of_range& e) {
             std::cerr << RED << "Port number out of range: " << e.what() << std::endl;
         }
-		//todo set default port
 	}
-	else _port = 0;
 }
 
 std::string	Uri::serializeUri() {
@@ -141,7 +133,7 @@ std::string	Uri::serializeUri() {
 
 //=========== getters =================
 
-bool Uri::getIsBinary(void) const								{	return _isBinary;	}
+bool		Uri::getIsBinary(void) const						{	return _isBinary;	}
 int			Uri::getPort() const								{	return _port;		}
 std::string	Uri::getScheme() const								{	return _scheme;		}
 std::string	Uri::getAuthority() const							{	return _authority;	}
@@ -155,6 +147,9 @@ std::map<std::string, std::string> Uri::getQueryMap(void) const	{	return _queryM
 
 
 std::string	Uri::getExecutable(void) const {
+	if (_path.empty())
+		return "";
+	
 	std::string temp = _path;
 	if (temp[0] == '/')
 		temp = temp.substr(1);
@@ -162,11 +157,14 @@ std::string	Uri::getExecutable(void) const {
 	if (slash != std::string::npos)
 		return temp.substr(0, slash);
 	
-	return ""; //todo error
+	return "";
 }
 
 
 std::string	Uri::getPathInfo(void) const {
+	if (_path.empty())
+		return "";
+
 	std::string temp = _path;
 	if (temp[0] == '/')
 		temp = temp.substr(1);
@@ -174,7 +172,14 @@ std::string	Uri::getPathInfo(void) const {
 	if (slash != std::string::npos)
 		return  temp.substr(slash + 1);
 	
-	return "";	//todo error
+	return "";
+}
+
+
+bool	Uri::isDir() {
+	if (_path.empty())
+		return false;
+	return _path.back() == '/';
 }
 
 

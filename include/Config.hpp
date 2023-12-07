@@ -6,25 +6,17 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/30 14:27:19 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/12/05 06:41:40 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-// #pragma once
+#pragma once
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
 
-#include <string>
-#include <list>
-#include <map>
-#include <iostream>
+#include "defines.hpp"
 #include <unistd.h>
-#include <set>
-#include <cstdint>
-
-#define LETTERS "abcdefghijklmnopqrstuvwxyz"
-#define NUMBERS "0123456789"
-#define WHITESPACE " \t\n\v\f\r"
+#include <fstream>
 
 enum configBlock
 {
@@ -32,32 +24,6 @@ enum configBlock
 	SERVER,
 	LOCATION,
 	ERROR_PAGE
-};
-
-struct LocationSettings
-{
-	std::string								_locationId;
-	std::string								_index;
-// 	std::string								_locationRoot;
-	std::string								_rootFolder;
-	std::string								_uploadDir;
-	bool									_dirListing;
-	std::set<std::string>					_allowedMethods;
-	std::map<int, std::string>				_redirect;
-};
-
-struct ServerSettings
-{
-	std::string								_serverName;
-	std::string								_rootFolder;
-	std::string								_uploadDir;
-	std::string								_index; //default
-	uint16_t								_port;
-	size_t									_maxBodySize;
-	std::list<struct LocationSettings *>	_locations;
-	std::map<int, std::string>*				_errorPages;
-	// double									_timeout;
-	// int										_maxNrOfRequests;
 };
 
 class Config
@@ -111,8 +77,6 @@ class Config
 		std::list<struct ServerSettings*>	_servers;
 		bool								_error;
 		unsigned int						_lineNr;
-		// double									_timeout; // to add in the future
-		// int										_maxNrOfRequests; // to add in the future
 
 		void								_readConfigFile();
 		int									_handleBlockEnd(configBlock *currentBlock, void *currentBlockPtr);

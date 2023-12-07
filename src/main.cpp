@@ -6,14 +6,11 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/11/28 11:54:14 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/05 16:41:29 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "eventloop.hpp"
-#include "Config.hpp"
 #include "webServ.hpp"
-#include <string.h>
 #include <signal.h>
 
 int	g_shutdown_flag = 0;
@@ -25,6 +22,7 @@ int main(int argc, char **argv) {
 	std::list<Server>	servers;
 
 	signal(SIGINT, handleSignal);
+	signal(SIGPIPE, handleSignal);
 
 	Config conf(argc, argv);
 	if (conf.getError() == true)
@@ -46,21 +44,23 @@ int main(int argc, char **argv) {
 		
 		for (int i = 0; i < numEvents; i++) {
 			connection *conn = static_cast<connection *>(events[i].data.ptr);
+			// std::cout << "con: " << conn->fd << "event: " << events[i].events << " state: " << conn->state << std::endl;
+			checkTimeout(conn);
 			if (events[i].events & EPOLLIN && conn->state == LISTENING)
 				newConnection(epollFd, conn->fd, conn->server);
 			if (events[i].events & EPOLLIN && conn->state == READING)
 				readData(conn);
 			if (conn->state == HANDLING)
 				handleRequest(epollFd, conn);
-			if (events[i].events & EPOLLIN && conn->state == IN_CGI)
+			if (events[i].events & EPOLLHUP && conn->state == IN_CGI)
 				readCGI(epollFd, conn);
 			if (events[i].events & EPOLLOUT && conn->state == WRITING)
 				writeData(conn);
-			if (events[i].events & EPOLLERR || events[i].events & EPOLLHUP || conn->state == CLOSING)
+			if (events[i].events & EPOLLERR || conn->state == CLOSING)
 				closeConnection(epollFd, conn);
 		}
 	}
-	std::cout << CYAN << "clean up" << RESET << std::endl;
+	std::cout << CYAN << "\nclean up" << RESET << std::endl;
 	int numEvents = epoll_wait(epollFd, events, MAX_EVENTS, 0);
 	for (int i = 0; i < numEvents; i++) {
 		connection *conn = static_cast<connection *>(events[i].data.ptr);

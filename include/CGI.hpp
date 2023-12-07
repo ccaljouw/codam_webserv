@@ -1,23 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   CGI_Handler.hpp                                    :+:    :+:            */
+/*   CGI.hpp                                            :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/06 12:06:07 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/11/20 14:58:52 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/12/02 22:25:05 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-#ifndef CGI_HANDLER_HPP
-#define CGI_HANDLER_HPP
+#ifndef CGI_HPP
+#define CGI_HPP
 
-#include "Uri.hpp"
-#include "HttpRequest.hpp"
-#include "HttpResponse.hpp"
-#include "eventloop.hpp"
+#include "defines.hpp"
+#include <unistd.h>
 
 class CGI
 {
@@ -40,6 +38,5 @@ class CGI
 		int		_fdOut;
 };
 
-int	cgiHandler(const HttpRequest& req, connection *conn, int epollFd); // todo : const ref request
-
+int		register_CGI(int epollFd, int cgiFd, connection *conn);
 #endif

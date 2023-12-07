@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:12:15 by carlo         #+#    #+#                 */
-/*   Updated: 2023/11/23 18:36:09 by carlo         ########   odam.nl         */
+/*   Updated: 2023/12/05 06:43:56 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,11 @@
 #ifndef URI_H
 # define URI_H
 
-#include <string>
-#include <vector>
-#include <map>
+#include "defines.hpp"
+#include <regex>
+
+extern	std::map<std::string, std::string> acceptedExtensions; // todo: can we use this?
+extern	std::vector<std::string> binaryExtensions;			   // todo: can we use this?
 
 class Uri {
 
@@ -41,10 +43,11 @@ class Uri {
 		std::string							getHost(void) const;
 		int									getPort(void) const;
 		std::map<std::string, std::string>	getQueryMap(void) const;
-
 		std::string							getMime(std::string key) const;
 		std::string							getExecutable(void) const;
 		std::string							getPathInfo(void) const;
+		bool								isDir(void);
+
 		
 		// ========== Setters ===========
 		void								mapQueries(void);

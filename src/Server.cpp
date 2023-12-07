@@ -10,12 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webServ.hpp"
 #include <Server.hpp>
-#include "Config.hpp"
-#include <map>
-#include <set>
-#include <algorithm>
+#include "webServ.hpp" //fix
 
 // ============= con-/destructors ================
 
@@ -73,7 +69,7 @@ int Server::initServer(struct ServerSettings *settings, int epollFd, double time
 			throw ServerException(settings->_serverName + " socket: ");
 		if (assign_name())
 			throw ServerException(settings->_serverName + " bind: ");
-		if (set_to_listen(5))
+		if (set_to_listen(0))
 			throw ServerException(settings->_serverName + " listen: ");
 		if (register_server(epollFd, this->_fd, this))
 			throw ServerException(settings->_serverName + " register: ");
@@ -96,7 +92,7 @@ int	Server::checkClientId(std::string id, struct connection* conn) {
 	{
 		if (pair.first == id)
 		{
-			if (conn->nr_of_requests == 1)
+			if (conn->nr_of_requests == 1) 
 				pair.second += 1;
 			std::cout << "user_id :"<< id << " has visited us " << pair.second << " times!" << std::endl; //for testing
 			return  1;
@@ -165,16 +161,55 @@ size_t	Server::get_maxBodySize(std::string host) const {
 }
 
 std::string	Server::get_index(std::string host, std::string location) const {
-	return get_locationSettings(host, location)->_index;
+	struct LocationSettings* settings = get_locationSettings(host, location);
+	if (settings && settings->_locationId == location) {
+		std::cout << "sending location: " << settings->_index << std::endl;
+		return settings->_index;
+	}
+	else {
+		std::cout << "sending empty location" << std::endl;
+		return "";
+	}
 }
 
-bool		Server::get_dirListing(std::string host, std::string location) const {
-	return get_locationSettings(host, location)->_dirListing;
+bool Server::get_dirListing(std::string host, std::string location) const {
+	struct LocationSettings* settings = get_locationSettings(host, location);
+	if (settings)
+		return settings->_dirListing;
+	else
+		return false;
 }
 
-// std::string	Server::get_locationRoot(std::string host, std::string location) const {
-// 	return get_locationSettings(host, location)->_locationRoot;
-// }
+std::map<int, std::string>	Server::get_redirect(std::string host, std::string location) const {
+	struct LocationSettings* settings = get_locationSettings(host, location);
+	if (settings)
+		return settings->_redirect;
+	else {
+		std::cout << "sending empty redirect" << std::endl;
+		std::map<int, std::string> map;
+		return map;
+	}
+}
+
+std::string	Server::get_rootFolder(std::string host, std::string location) const {
+	std::string root;
+	struct LocationSettings* settings = get_locationSettings(host, location);
+	if (settings)
+		root = settings->_rootFolder;
+	if (root.empty())
+		root = get_rootFolder(host);
+	return root;
+}
+
+std::string	Server::get_uploadDir(std::string host, std::string location) const {
+	std::string dir;
+	struct LocationSettings* settings = get_locationSettings(host, location);
+	if (settings)
+		dir = settings->_uploadDir;
+	if (dir.empty())
+		dir = get_uploadDir(host);
+	return dir;
+}
 
 // ============= setters ================
 void	Server::set_connection(struct connection *conn) {
