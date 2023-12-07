@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 21:57:55 by carlo             #+#    #+#             */
-/*   Updated: 2023/12/07 12:44:27 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/12/07 16:17:49 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ void	setErrorResponse(connection *conn, int error)
 		std::ifstream f(errorHtmlPath);
 		if (f.good())
 			response.reSetBody(errorHtmlPath, false);
+		f.close();
 	}
 	
 	if (error == 408 || error == 429 || error == 500 || error == 504) {
@@ -135,6 +136,8 @@ std::string replaceCookiePng(std::string location, std::string cookieValue) {
 }
 
 void handleSignal(int signal) {
-	g_shutdown_flag = signal;
-	std::cout << "signal received: " << signal << std::endl;
+	if (signal == SIGPIPE)
+		std::cout << CYAN << "Ignoring SIGPIPE signal" << std::endl;
+	else
+		g_shutdown_flag = signal;
 }

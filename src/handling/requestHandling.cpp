@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/12/07 11:26:56 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/12/07 15:47:31 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,8 @@ void	handleRequest(int epollFd, connection *conn) {
 		bool dirListing				= conn->server->get_dirListing(host, location);
 		
 		//**testprint**
-		std::cout << BLUE << "variables set in handleRequest:\nextension: " << extension << "\ncontentType: " << contentType << "\nhost: " << host << "\nlocation: " 
-			<< location << "\nindex: " << index << "\nroot: " << root << "\ndirListing: " << dirListing << "\nlocation: " << location << RESET << std::endl;
+		// std::cout << BLUE << "variables set in handleRequest:\nextension: " << extension << "\ncontentType: " << contentType << "\nhost: " << host << "\nlocation: " 
+		// 	<< location << "\nindex: " << index << "\nroot: " << root << "\ndirListing: " << dirListing << "\nlocation: " << location << RESET << std::endl;
 
 		//check and set cookie
 		std::string cookieValue = checkAndSetCookie(conn, request);
@@ -105,7 +105,7 @@ void	handleRequest(int epollFd, connection *conn) {
 void	handleDIR(int epollFd, connection *conn, bool dirListing, HttpRequest& request, std::string location, std::string index, std::string contentType, std::string cookieValue, std::string root) {
 
 	//**testprint**
-	std::cout << BLUE << "\ntarget is a directory and its dirlisting = " << dirListing << RESET << std::endl;
+	// std::cout << BLUE << "\ntarget is a directory and its dirlisting = " << dirListing << RESET << std::endl;
 			
 	if (dirListing == true) {
 		HttpResponse response(request);
@@ -115,7 +115,6 @@ void	handleDIR(int epollFd, connection *conn, bool dirListing, HttpRequest& requ
 		if (cgiHandler(request, conn, epollFd) == 1 ) 
 			setErrorResponse(conn, 500);	
 		else {
-			conn->request.clear();
 			conn->state = IN_CGI;
 		}
 	}
@@ -123,7 +122,7 @@ void	handleDIR(int epollFd, connection *conn, bool dirListing, HttpRequest& requ
 		std::string bodyPath = root + "/text/html/" + index;
 		
 		//**testprint**
-		std::cout << BLUE << "index found: " << index << " | setting body to :" << bodyPath <<  RESET << std::endl;
+		// std::cout << BLUE << "index found: " << index << " | setting body to :" << bodyPath <<  RESET << std::endl;
 		
 		HttpResponse response(request);
 		response.reSetBody(bodyPath, false);
@@ -131,10 +130,8 @@ void	handleDIR(int epollFd, connection *conn, bool dirListing, HttpRequest& requ
 		response.headers->setHeader("Set-Cookie", cookieValue);
 		setResponse(conn, response);
 	}
-	else {
-		std::cout << "here" << std::endl;
+	else
 		throw HttpRequest::parsingException(404, "Path not found");
-	}
 }
 
 
@@ -162,7 +159,6 @@ void	handleCGI(int epollFd, connection *conn, HttpRequest& request) {
 	if (cgiHandler(request, conn, epollFd) == 1 ) 
 		setErrorResponse(conn, 500);	
 	else {
-		conn->request.clear();
 		conn->state = IN_CGI;
 	}
 }

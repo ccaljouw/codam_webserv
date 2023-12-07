@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 23:48:35 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/12/05 11:35:39 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/12/07 14:57:10 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	register_server(int epollFd, int fd, Server *server)
 	conn->server = server;
 	conn->time_last_request = std::time(nullptr);
 	conn->nr_of_requests = 0;
-    event.events = EPOLLIN | EPOLLET;
+    event.events = EPOLLIN;
     event.data.ptr = conn;
 	conn->close_after_response = 0;
 	server->set_connection(conn);

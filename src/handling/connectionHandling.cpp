@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   connectionHandling.cpp                             :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/05 16:50:29 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   connectionHandling.cpp                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
+/*   Updated: 2023/12/07 16:14:12 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 
 void	newConnection(int epollFd, int serverFd, Server *server) 
 {
-	int					fd;
-
+	int	fd;
+	
 	std::cout << "new connection request" << std::endl; // for testing
 	try {
 		if ((fd = accept(serverFd, nullptr, nullptr)) == -1)
@@ -27,7 +27,8 @@ void	newConnection(int epollFd, int serverFd, Server *server)
 	}
 	catch (std::runtime_error& e) {
 		std::cerr << RED << "Error\n" << e.what() << RESET << std::endl;
-	}	
+	}
+	std::cout << "connection setup on fd: " << fd << std::endl;
 }
 
 void readData(connection *conn) 
@@ -38,15 +39,17 @@ void readData(connection *conn)
 	// std::cout << "readData" << "\tfd = " << conn->fd << std::endl; //for testing
 	// std::cout << "nr of requests: " << conn->nr_of_requests << " max: " << conn->server->get_maxNrOfRequests() << std::endl;
 	if (conn->nr_of_requests == conn->server->get_maxNrOfRequests()) {
-		std::cout << CYAN << "Too many requests on open socket, closing connection" << RESET << std::endl;
+		std::cout << RED << "Too many requests on open socket, closing connection" << RESET << std::endl;
 		setErrorResponse(conn, 429);
 		return;
 	}
+	// std::cout << "before recv" << std::endl;
 	if ((bytesRead = recv(conn->fd, buffer, sizeof(buffer), MSG_DONTWAIT)) > 0) {
 		// std::cout << YELLOW << buffer << RESET << std::endl; //for testing
 		std::time(&conn->time_last_request);
 		conn->request.append(buffer, static_cast<long unsigned int>(bytesRead));
 	}
+	// std::cout << "after recv" << std::endl;
 	// std::cout << BLUE << "bytes read: " << bytesRead << RESET << std::endl;
 	switch(bytesRead)
 	{
@@ -91,6 +94,7 @@ void readCGI(int epollFd, connection *conn)
 			epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->cgiFd, nullptr);
 			conn->state = WRITING;
 	}
+	conn->request.clear();
 }
 
 void writeData(connection *conn) 
@@ -99,7 +103,9 @@ void writeData(connection *conn)
 	
 	// std::cout << "writeData" << "\tfd = " << conn->fd << std::endl; //for testing
 	len = std::min(static_cast<int>(conn->response.length()), BUFFER_SIZE);
-    len = send(conn->fd, conn->response.c_str(), len, MSG_DONTWAIT);
+	// std::cout << "before send" << std::endl;
+    len = send(conn->fd, conn->response.c_str(), len, MSG_NOSIGNAL | MSG_DONTWAIT);
+	// std::cout << "after send on fd " << conn->fd << std::endl;
 	// std::cout << PURPLE << conn->response.substr(0, len) << RESET << std::endl; //for testing
 	// std::cout << "bytes send: " << len << " response len: " << conn->response.size() << std::endl;
 	if (len == -1)
@@ -127,7 +133,7 @@ void writeData(connection *conn)
 
 void	closeConnection(int epollFd, connection *conn)
 {
-	std::cout << "closeConnection" << "\tfd = " << conn->fd  << "\tCGIfd = " << conn->cgiFd << std::endl; //for testing
+	// std::cout << "closeConnection" << "\tfd = " << conn->fd  << "\tCGIfd = " << conn->cgiFd << std::endl; //for testing
 	epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->fd, nullptr);
 	if (conn->cgiFd) {
 		std::cout << CYAN << "Connection on CGIfd " << conn->cgiFd << " closed" << RESET << std::endl;
@@ -136,7 +142,8 @@ void	closeConnection(int epollFd, connection *conn)
 	}
 	else {
 		std::cout << CYAN << "Connection on fd " << conn->fd << " closed" << RESET << std::endl;
-		close(conn->fd);
+		if (close(conn->fd))
+			std::cout << "failed to close fd " << conn->fd << std::endl;
 		delete conn;
 	}
 }

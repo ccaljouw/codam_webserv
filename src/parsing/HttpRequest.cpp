@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 14:21:11 by carlo             #+#    #+#             */
-/*   Updated: 2023/12/07 12:35:58 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/12/07 14:45:35 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,21 +24,21 @@ HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri
 
 	//  === parse request line === 
 	try {
-		std::cout << "start request contructor" << std::endl;
+		// std::cout << "start request contructor" << std::endl;
 		std::size_t RequestLineEnd = request.find("\r\n");
 		if (RequestLineEnd == std::string::npos)
 			throw parsingException(400, "Bad request");
 			
 		std::string RequestLine = request.substr(0, RequestLineEnd);
 		
-		std::cout << " request contructor" << std::endl;
+		// std::cout << " request contructor" << std::endl;
 		std::stringstream RequestLineStream(RequestLine);
 		// if (!RequestLineStream.good())
 		// 	std::cout << "string stream error" << std::endl;
 		std::string tempUriString;
-		std::cout << "before processing stream request contructor" << std::endl;
+		// std::cout << "before processing stream request contructor" << std::endl;
 		RequestLineStream >> _method >> tempUriString >> _protocol;
-		std::cout << "after processing stream request contructor" << std::endl;	
+		// std::cout << "after processing stream request contructor" << std::endl;	
 		// === set uri object === 
 		uri = Uri(tempUriString);
 		
