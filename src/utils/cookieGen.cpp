@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   cookieGen.cpp                                      :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/24 08:20:32 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/05 07:16:59 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   cookieGen.cpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/24 08:20:32 by carlo             #+#    #+#             */
+/*   Updated: 2023/12/07 14:45:58 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,6 @@ std::string		checkAndSetCookie(connection* conn, HttpRequest& request) {
 		cookieTrigger = "trigger=" + cookieTrigger;
 		
 	std::string newCookieValue = "name=" + host + ", id=" + cookieId + ", " + cookieTrigger;
-	std::cout << CYAN << "new cookie set to: " << newCookieValue << RESET << std::endl;
+	// std::cout << CYAN << "new cookie set to: " << newCookieValue << RESET << std::endl;
 	return newCookieValue;
 }

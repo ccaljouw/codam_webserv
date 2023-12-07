@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 12:17:27 by carlo             #+#    #+#             */
-/*   Updated: 2023/12/07 11:17:09 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/12/07 14:42:12 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ Uri::Uri(const std::string& uri) : _isBinary(false) {
 	else 
 		throw HttpRequest::parsingException(400, "bad request");
 
-	std::cout << BLUE << "URI components: '" << "'\n\tsceme: '" << _scheme << "'\n\tauthority: '" << _authority << "'\n\tpath: '" << _path << "'\n\tquery: '" << _query << "'\n\tfragment" << _fragment << "\n" << RESET << std::endl;
+	// std::cout << BLUE << "URI components: '" << "'\n\tsceme: '" << _scheme << "'\n\tauthority: '" << _authority << "'\n\tpath: '" << _path << "'\n\tquery: '" << _query << "'\n\tfragment" << _fragment << "\n" << RESET << std::endl;
 	splitAuthority();
 	
 	//scheme and host are case insensitive and as such are normalized here

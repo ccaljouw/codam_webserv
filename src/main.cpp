@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   main.cpp                                           :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/05 16:41:29 by cariencaljo   ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   main.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/03 11:16:40 by cariencaljo       #+#    #+#             */
+/*   Updated: 2023/12/07 15:01:40 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
 	std::list<Server>	servers;
 
 	signal(SIGINT, handleSignal);
-	signal(SIGPIPE, handleSignal);
+	signal(SIGPIPE, handleSignal); // what to do?
 
 	Config conf(argc, argv);
 	if (conf.getError() == true)
@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
 		
 		for (int i = 0; i < numEvents; i++) {
 			connection *conn = static_cast<connection *>(events[i].data.ptr);
-			// std::cout << "con: " << conn->fd << "event: " << events[i].events << " state: " << conn->state << std::endl;
+			// std::cout << "con: " << conn->fd << " event: " << events[i].events << " state: " << conn->state << std::endl;
 			checkTimeout(conn);
 			if (events[i].events & EPOLLIN && conn->state == LISTENING)
 				newConnection(epollFd, conn->fd, conn->server);

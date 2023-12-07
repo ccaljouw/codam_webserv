@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 21:57:55 by carlo             #+#    #+#             */
-/*   Updated: 2023/12/07 12:44:27 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/12/07 15:03:25 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ void	setErrorResponse(connection *conn, int error)
 		std::ifstream f(errorHtmlPath);
 		if (f.good())
 			response.reSetBody(errorHtmlPath, false);
+		f.close();
 	}
 	
 	if (error == 408 || error == 429 || error == 500 || error == 504) {
@@ -91,7 +92,8 @@ int	checkTimeout(connection *conn)
 		{
 			case READING:
 				std::cerr << CYAN << "request timeout" << RESET << std::endl;
-				setErrorResponse(conn, 408);
+				// setErrorResponse(conn, 408);
+				conn->state = CLOSING; //testing
 				return 1;
 			case IN_CGI:
 				std::cerr << CYAN << "timeout in cgi" << RESET << std::endl;
@@ -99,11 +101,13 @@ int	checkTimeout(connection *conn)
 					close(conn->cgiPID);
 					kill(conn->cgiPID, SIGTERM);
 				}
-				setErrorResponse(conn, 504);
+				// setErrorResponse(conn, 504);
+				conn->state = CLOSING; //testing
 				return 1;
 			case HANDLING:
 				std::cerr << CYAN << "timout in processing" << RESET << std::endl;
-				setErrorResponse(conn, 500);
+				// setErrorResponse(conn, 500);
+				conn->state = CLOSING; //testing
 				return 1;
 			case WRITING:
 				std::cerr << CYAN << "stuck in writing" << RESET << std::endl;
@@ -135,6 +139,8 @@ std::string replaceCookiePng(std::string location, std::string cookieValue) {
 }
 
 void handleSignal(int signal) {
-	g_shutdown_flag = signal;
-	std::cout << "signal received: " << signal << std::endl;
+	if (signal == SIGPIPE)
+		std::cout << CYAN << "Ignoring SIGPIPE signal" << std::endl;
+	else
+		g_shutdown_flag = signal;
 }
