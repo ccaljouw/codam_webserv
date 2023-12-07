@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/26 18:20:33 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/12/05 06:45:44 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/07 17:56:05 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,12 @@ int	parseLocation(std::string line, struct LocationSettings *location)
 		else
 			return 1;
 	}
+	else if (key == "root")
+	{
+		if (access(value.c_str(), F_OK | R_OK) == -1)
+			return 2;
+		location->_rootFolder = value;
+	}
 	else if (key == "index")
 	{
 		if (value.find_first_not_of(std::string(LETTERS) + std::string(NUMBERS) + std::string("_/.")) != std::string::npos)
@@ -88,6 +94,14 @@ int	parseLocation(std::string line, struct LocationSettings *location)
 			location->_dirListing = false;
 		else
 			return 1;
+	}
+	else if (key == "client_max_body_size")
+	{
+		if (value.length() >= 10 || value.find_first_not_of(NUMBERS) != std::string::npos)
+			return 1;
+		try { location->_maxBodySize = std::stol(value); }
+		catch (const std::exception& e)
+		{ return 1; }
 	}
 	else if (key == "return")
 	{
@@ -156,6 +170,8 @@ void	*initLocationBlock(std::string line)
 	location->_allowedMethods = std::set<std::string>();
 	location->_redirect = std::map<int, std::string>();
 	location->_index = "";
+	location->_rootFolder = "";
+	location->_maxBodySize = 0;
 	location->_dirListing = false;
 
 	return static_cast<void *>(location);

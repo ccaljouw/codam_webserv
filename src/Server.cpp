@@ -201,6 +201,16 @@ std::string	Server::get_rootFolder(std::string host, std::string location) const
 	return root;
 }
 
+size_t	Server::get_maxBodySize(std::string host, std::string location) const {
+	size_t size;
+	struct LocationSettings* settings = get_locationSettings(host, location);
+	if (settings)
+		size = settings->_maxBodySize;
+	if (size == 0)
+		size = get_maxBodySize(host);
+	return size;
+}
+
 std::string	Server::get_uploadDir(std::string host, std::string location) const {
 	std::string dir;
 	struct LocationSettings* settings = get_locationSettings(host, location);

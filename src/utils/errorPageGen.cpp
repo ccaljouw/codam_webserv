@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/24 08:20:32 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/07 21:22:14 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/07 21:50:27 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ std::map<int, std::string> errorPages = {
 	{ 404, "Not found"},					//  The server has not found anything matching the URI given 
 	{ 405, "Method Not Allowed"},
 	{ 408, "Request Timeout"},
+	{ 413, "Content Too Large"},
 	{ 422, "Unprocessable Entity"}, 		// Indicates that the server understands the content type of the request entity, and the syntax of the request entity is correct, but it was unable to process the contained instructions. 
 	{ 429, "Too Many Requests"},
 	{ 500, "Internal Error"},				// The server encountered an unexpected condition which prevented it from fulfilling the request. 

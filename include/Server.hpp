@@ -59,6 +59,7 @@ class Server
 		bool						get_dirListing(std::string host, std::string location) const;
 		std::map<int, std::string>	get_redirect(std::string host, std::string location) const;
 		std::string					get_rootFolder(std::string host, std::string location) const;
+		size_t						get_maxBodySize(std::string host, std::string location) const;
 		std::string					get_uploadDir(std::string host, std::string location) const;
 		
 		// ============= setters ================

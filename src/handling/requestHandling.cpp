@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/07 19:36:01 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/07 21:50:38 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,7 @@ void	handleCGI(int epollFd, connection *conn, HttpRequest& request) {
 	std::cout << "\nin CGI\n" << std::endl;
 
 	// check content-length
-	size_t	maxContentLength		= conn->server->get_maxBodySize(request.headers->getHeaderValue("host"));
+	size_t	maxContentLength		= conn->server->get_maxBodySize(request.headers->getHeaderValue("host"), "/cgi-bin/");
 	size_t	actualContentLength		= request.getBody().size();
 	size_t	headerContentLength		= 0;
 	if (request.headers->isHeader("content-length")) {
@@ -152,8 +152,10 @@ void	handleCGI(int epollFd, connection *conn, HttpRequest& request) {
 		std::cout << "actual content len: " << actualContentLength << "\n";
 		std::cout << "max content len: " 	<< maxContentLength << "\n";
 	}
-	if (headerContentLength > maxContentLength || headerContentLength != actualContentLength) 
-		throw HttpRequest::parsingException(400, "content-length to big or wrong"); //todo check error thrown in this case
+	if (headerContentLength > maxContentLength) 
+		throw HttpRequest::parsingException(413, "Content Too Large"); //todo check error thrown in this case
+	if (headerContentLength != actualContentLength)
+		throw HttpRequest::parsingException(400, "Bad request"); //todo check error thrown in this case
 
 	//case error in cgi handler
 	if (cgiHandler(request, conn, epollFd) == 1 ) 

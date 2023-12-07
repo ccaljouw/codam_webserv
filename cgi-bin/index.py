@@ -6,12 +6,26 @@ status = 200
 message = ""
 files = []
 
+def is_prefix(path, target_path) -> bool:
+
+	# Check if the path is a prefix of target_path
+	target_resolved = pathlib.Path(target_path).resolve()
+	path_resolved = pathlib.Path(path).resolve()
+	if path_resolved == target_resolved:
+		return False
+	if path_resolved.parts == target_resolved.parts[:len(path_resolved.parts)]:
+		return True
+	return False
+
 def listFiles(path) -> (int, str):
 
 	# Check if the path exists
 	if path.exists() == False:
 		return (404, "Location not found")
 
+	# Check if the path is outside the root directory
+	if is_prefix(path, os.environ["PATH_INFO"]) == True:
+		return (403, "Forbidden")
 	# Loop through the items in the directory
 	for f in path.iterdir():
 		print(f, file=sys.stderr)
@@ -24,21 +38,26 @@ def listFiles(path) -> (int, str):
 
 def listDirs() -> (int, str):
 
+	root = os.environ.get("PATH_INFO")
+	query = os.environ.get("QUERY_STRING")
+
 	# Check if the server sent the root path
-	if os.environ.get("PATH_INFO") != None:
+	if root != None:
 
 		# Check if the server sent the query string
 		# else list the files in the root directory
-		if os.environ.get("QUERY_STRING") != None:
-			value = os.environ.get("QUERY_STRING")
+		if query != None:
+			value = query.split("&")[0]
 			if "=" in value:
 				value = value.split("=")[1]
 			if value == "/cgi-bin/":
 				return listFiles(pathlib.Path("./cgi-bin"))
+			elif root.split("/")[-1] == value.strip("/"):
+				return listFiles(pathlib.Path(root))
 			else:
-				return listFiles(pathlib.Path(os.environ.get("PATH_INFO")+"/"+value))
+				return listFiles(pathlib.Path(root+"/"+value))
 		else:
-			status , message = listFiles(pathlib.Path(os.environ.get("PATH_INFO")))
+			status , message = listFiles(pathlib.Path(root))
 			if status == 200:
 				return listFiles(pathlib.Path("./cgi-bin"))
 			else:
