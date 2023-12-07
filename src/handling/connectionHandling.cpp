@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/12/07 15:02:08 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/12/07 16:14:12 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 void	newConnection(int epollFd, int serverFd, Server *server) 
 {
 	int	fd;
-
+	
 	std::cout << "new connection request" << std::endl; // for testing
 	try {
 		if ((fd = accept(serverFd, nullptr, nullptr)) == -1)
@@ -39,7 +39,7 @@ void readData(connection *conn)
 	// std::cout << "readData" << "\tfd = " << conn->fd << std::endl; //for testing
 	// std::cout << "nr of requests: " << conn->nr_of_requests << " max: " << conn->server->get_maxNrOfRequests() << std::endl;
 	if (conn->nr_of_requests == conn->server->get_maxNrOfRequests()) {
-		std::cout << CYAN << "Too many requests on open socket, closing connection" << RESET << std::endl;
+		std::cout << RED << "Too many requests on open socket, closing connection" << RESET << std::endl;
 		setErrorResponse(conn, 429);
 		return;
 	}
@@ -94,6 +94,7 @@ void readCGI(int epollFd, connection *conn)
 			epoll_ctl(epollFd, EPOLL_CTL_DEL, conn->cgiFd, nullptr);
 			conn->state = WRITING;
 	}
+	conn->request.clear();
 }
 
 void writeData(connection *conn) 
@@ -102,9 +103,9 @@ void writeData(connection *conn)
 	
 	// std::cout << "writeData" << "\tfd = " << conn->fd << std::endl; //for testing
 	len = std::min(static_cast<int>(conn->response.length()), BUFFER_SIZE);
-	std::cout << "before send" << std::endl;
-    len = send(conn->fd, conn->response.c_str(), len, MSG_DONTWAIT);
-	std::cout << "after send on fd " << conn->fd << std::endl;
+	// std::cout << "before send" << std::endl;
+    len = send(conn->fd, conn->response.c_str(), len, MSG_NOSIGNAL | MSG_DONTWAIT);
+	// std::cout << "after send on fd " << conn->fd << std::endl;
 	// std::cout << PURPLE << conn->response.substr(0, len) << RESET << std::endl; //for testing
 	// std::cout << "bytes send: " << len << " response len: " << conn->response.size() << std::endl;
 	if (len == -1)

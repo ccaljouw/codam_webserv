@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/12/07 14:44:27 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/12/07 15:47:31 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,6 @@ void	handleDIR(int epollFd, connection *conn, bool dirListing, HttpRequest& requ
 		if (cgiHandler(request, conn, epollFd) == 1 ) 
 			setErrorResponse(conn, 500);	
 		else {
-			conn->request.clear();
 			conn->state = IN_CGI;
 		}
 	}
@@ -160,7 +159,6 @@ void	handleCGI(int epollFd, connection *conn, HttpRequest& request) {
 	if (cgiHandler(request, conn, epollFd) == 1 ) 
 		setErrorResponse(conn, 500);	
 	else {
-		conn->request.clear();
 		conn->state = IN_CGI;
 	}
 }
