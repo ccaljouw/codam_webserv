@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 21:57:55 by carlo             #+#    #+#             */
-/*   Updated: 2023/12/07 15:03:25 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/12/07 16:17:49 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,8 +92,7 @@ int	checkTimeout(connection *conn)
 		{
 			case READING:
 				std::cerr << CYAN << "request timeout" << RESET << std::endl;
-				// setErrorResponse(conn, 408);
-				conn->state = CLOSING; //testing
+				setErrorResponse(conn, 408);
 				return 1;
 			case IN_CGI:
 				std::cerr << CYAN << "timeout in cgi" << RESET << std::endl;
@@ -101,13 +100,11 @@ int	checkTimeout(connection *conn)
 					close(conn->cgiPID);
 					kill(conn->cgiPID, SIGTERM);
 				}
-				// setErrorResponse(conn, 504);
-				conn->state = CLOSING; //testing
+				setErrorResponse(conn, 504);
 				return 1;
 			case HANDLING:
 				std::cerr << CYAN << "timout in processing" << RESET << std::endl;
-				// setErrorResponse(conn, 500);
-				conn->state = CLOSING; //testing
+				setErrorResponse(conn, 500);
 				return 1;
 			case WRITING:
 				std::cerr << CYAN << "stuck in writing" << RESET << std::endl;
