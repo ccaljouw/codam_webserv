@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/12/07 13:48:16 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/12/07 17:57:04 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,6 +214,8 @@ void	Config::printServers() const
 			std::cout << PURPLE << "Location ID: " << location->_locationId << RESET << std::endl;
 			std::cout << "dirListing: " << (location->_dirListing ? "on":"off") << std::endl;
 			std::cout << "index: " << location->_index << std::endl;
+			std::cout << "max body size: " << location->_maxBodySize << std::endl;
+			std::cout << "root folder: " << location->_rootFolder << std::endl;
 			for (const auto& redirect : location->_redirect)
 				std::cout << "redirect: " << redirect.first << " " << redirect.second << std::endl;
 			for (const auto& method : location->_allowedMethods)

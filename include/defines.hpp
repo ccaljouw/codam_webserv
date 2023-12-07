@@ -52,35 +52,36 @@ struct connection
 {
 	int							fd;
 	int							cgiFd;
-	pid_t						cgiPID; 
-	states						state;
-	std::string					request;
-	std::string					response;
-	Server						*server;
-	std::time_t					time_last_request;
 	int							nr_of_requests;
 	bool						close_after_response;
+	pid_t						cgiPID; 
+	states						state;
+	Server						*server;
+	std::string					request;
+	std::string					response;
+	std::time_t					time_last_request;
 };
 
 struct LocationSettings
 {
+	bool									_dirListing;
+	size_t									_maxBodySize;
 	std::string								_locationId;
 	std::string								_index;
 	std::string								_rootFolder;
 	std::string								_uploadDir;
-	bool									_dirListing;
 	std::set<std::string>					_allowedMethods;
 	std::map<int, std::string>				_redirect;
 };
 
 struct ServerSettings
 {
+	size_t									_maxBodySize;
+	uint16_t								_port;
 	std::string								_serverName;
 	std::string								_rootFolder;
 	std::string								_uploadDir;
 	std::string								_index;
-	uint16_t								_port;
-	size_t									_maxBodySize;
 	std::list<struct LocationSettings *>	_locations;
 	std::map<int, std::string>*				_errorPages;
 };
