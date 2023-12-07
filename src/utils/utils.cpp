@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 21:57:55 by carlo             #+#    #+#             */
-/*   Updated: 2023/12/07 16:17:49 by ccaljouw         ###   ########.fr       */
+/*   Updated: 2023/12/07 16:19:10 by ccaljouw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ int	checkTimeout(connection *conn)
 				std::cerr << CYAN << "request timeout" << RESET << std::endl;
 				setErrorResponse(conn, 408);
 				return 1;
-			case IN_CGI:
+			case IN_CGI: 
 				std::cerr << CYAN << "timeout in cgi" << RESET << std::endl;
 				if (conn->cgiPID) {
 					close(conn->cgiPID);

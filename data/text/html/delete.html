@@ -7,31 +7,11 @@
     <title>Delete File</title>
 </head>
 <body>
-
-<h2>Delete File</h2>
-
-<form id="deleteForm">
-    <label for="filename">Enter Filename:</label>
-    <input type="text" id="filename" name="filename" required>
-    <button type="button" onclick="deleteFile()">Delete File</button>
-</form>
-
-<script>
-    function deleteFile() {
-        const filename = document.getElementById('filename').value;
-
-        // Construct the delete URL with the filename as a query parameter
-        const deleteUrl = `/cgi-bin/delete.sh?filename=${encodeURIComponent(filename)}`;
-
-        // Send a DELETE request to the delete CGI script
-        let response = fetch(deleteUrl, { method: 'DELETE' })
-            .then(response => response.text())
-            .then(data => {
-                // Replace the entire body with the response content
-                document.body.innerHTML = data;
-            })
-    }
-</script>
-
+    <h2>Delete File</h2>
+    <form action="../cgi-bin/delete.sh" method="delete" accept-charset="utf-8">
+        <p><input type="name" name="filename"/></p>
+        <p><input type="submit" value="Delete" /></p>
+    </form>
+    <p>Want to go back <a href="index.html">home</a>?</p>
 </body>
 </html>
