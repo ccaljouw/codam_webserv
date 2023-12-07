@@ -5,8 +5,6 @@ message=""
 filename=""
 dir=""
 
-PATH_INFO="./data"
-UPLOAD_DIR="uploads"
 
 # checks if the query string is empty and if no argument was given
 if [[ -z "$QUERY_STRING"  && -z "$1" ]]
