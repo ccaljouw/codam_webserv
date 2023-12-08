@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/08 13:41:02 by carlo         ########   odam.nl         */
+/*   Updated: 2023/12/08 13:42:14 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,9 @@ const HttpRequest& HttpRequest::operator=(const HttpRequest& rhs) {
 	return *this;
 }
 
-HttpRequest::~HttpRequest() {}
+HttpRequest::~HttpRequest() {
+	_environVars.clear();
+}
 
 
 //========= Getters ===============================
