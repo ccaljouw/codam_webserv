@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/05 07:26:51 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/08 09:23:52 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void	readData(connection *conn);
 void	readCGI(int epollFd, connection *conn);
 void	writeData(connection *conn);
 void	closeConnection(int epollFd, connection *conn);
+void	closeCGIpipe(int epollFd, connection *conn);
 
 // requestHandling.cpp
 void		handleRequest(int epollFd, connection *conn);

@@ -28,7 +28,7 @@ def listFiles(path) -> (int, str):
 		return (403, "Forbidden")
 	# Loop through the items in the directory
 	for f in path.iterdir():
-		print(f, file=sys.stderr)
+		# print(f, file=sys.stderr)
 		if f.is_file():
 			files.append(str(f))
 		elif f.is_dir():

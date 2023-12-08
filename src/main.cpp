@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 11:16:40 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/12/07 15:01:40 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   main.cpp                                           :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
+/*   Updated: 2023/12/08 09:24:46 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,16 +56,20 @@ int main(int argc, char **argv) {
 				readCGI(epollFd, conn);
 			if (events[i].events & EPOLLOUT && conn->state == WRITING)
 				writeData(conn);
-			if (events[i].events & EPOLLERR || conn->state == CLOSING)
+			if (events[i].events & EPOLLERR || conn->state == CLOSING) {
+				closeCGIpipe(epollFd, conn);
 				closeConnection(epollFd, conn);
+			}
 		}
 	}
 	std::cout << CYAN << "\nclean up" << RESET << std::endl;
 	int numEvents = epoll_wait(epollFd, events, MAX_EVENTS, 0);
 	for (int i = 0; i < numEvents; i++) {
 		connection *conn = static_cast<connection *>(events[i].data.ptr);
-		if (events[i].events && conn->state != LISTENING)
+		if (events[i].events && conn->state != LISTENING) {
+			closeCGIpipe(epollFd, conn);
 			closeConnection(epollFd, conn);
+		}
 	}
 	close (epollFd);
     return 0;

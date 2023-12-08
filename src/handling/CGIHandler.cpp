@@ -73,8 +73,9 @@ int cgiHandler(const HttpRequest& req, connection *conn, int epollFd)
 		cgi.closeFds();
 		return (1);
 	}
-	else if (pid == 0)
+	else if (pid == 0) {
 		execChild(req, cgi, fd[0]);
+	}
 	else
 	{
 		conn->cgiPID = pid;
