@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/08 13:42:14 by carlo         ########   odam.nl         */
+/*   Updated: 2023/12/08 14:04:37 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,8 @@ const HttpRequest& HttpRequest::operator=(const HttpRequest& rhs) {
 
 HttpRequest::~HttpRequest() {
 	_environVars.clear();
+	if (headers != nullptr)
+		delete headers;
 }
 
 
@@ -148,15 +150,15 @@ char**	HttpRequest::getEnvArray(void) const {
 
 	std::vector<char*> envArray;
 	
+	//process  _enrironVars
 	for (const auto& pair : _environVars) {
 		std::string keyValue = pair.first + "=" + pair.second;
 		char* envString = new char[keyValue.length() + 1];
 		std::strcpy(envString, keyValue.c_str());
-		envString[keyValue.length()] = '\0';
 		envArray.push_back(envString);
 	}
 
-	//add headers to array
+	//process  headers
 	std::vector<char*> headerVector = HttpRequest::headers->getHeaderVector();
 	for (const auto& pair : headerVector)
 		envArray.push_back(pair);
