@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/08 15:11:18 by carlo         ########   odam.nl         */
+/*   Updated: 2023/12/08 15:14:17 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,6 +182,11 @@ void	handleGET(connection *conn, HttpRequest& request, std::string location, std
 		std::string pathToCheck = request.uri.getPath();
 		if (!pathToCheck.empty() && pathToCheck[0] == '/')
         	pathToCheck.erase(0, 1);
+
+		//check if css
+		if (contentType == "text/css")
+		 	location = location.substr(location.rfind("/"));
+
 		if (validPath(pathToCheck))
 			fullPath = pathToCheck;
 		else	
