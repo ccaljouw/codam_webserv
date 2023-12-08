@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/08 09:44:24 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/08 14:26:45 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 // function signatures
 void	handleGET(connection *conn, HttpRequest& request, std::string location, std::string cookieValue, std::string root, std::string contentType);
-void	handleCGI(int epollFd, connection *conn, HttpRequest& request);
+void	handleCGI(int epollFd, connection *conn, HttpRequest& request, std::string host, std::string location);
 void	handleDIR(int epollFd, connection *conn, bool dirListing, HttpRequest& request, std::string location, std::string index, std::string contentType, std::string cookieValue, std::string root);
 void	handlePOST(connection *conn, HttpRequest& request);
 void	handleDELETE(connection *conn, HttpRequest& request);
@@ -72,7 +72,7 @@ void	handleRequest(int epollFd, connection *conn) {
 					
 		// handle CGI
 		else if (request.uri.getExecutable() == "cgi-bin") {
-			handleCGI(epollFd, conn, request);
+			handleCGI(epollFd, conn, request, host, location);
 		}
 		
 		//handle GET
@@ -135,13 +135,13 @@ void	handleDIR(int epollFd, connection *conn, bool dirListing, HttpRequest& requ
 }
 
 
-void	handleCGI(int epollFd, connection *conn, HttpRequest& request) {
+void	handleCGI(int epollFd, connection *conn, HttpRequest& request, std::string host, std::string location) {
 
 	//**testprint**
 	// std::cout << "\nin CGI\n" << std::endl;
 
 	// check content-length
-	size_t	maxContentLength		= conn->server->get_maxBodySize(request.headers->getHeaderValue("host"), "/cgi-bin/");
+	size_t	maxContentLength		= conn->server->get_maxBodySize(host, location);
 	size_t	actualContentLength		= request.getBody().size();
 	size_t	headerContentLength		= 0;
 	if (request.headers->isHeader("content-length")) {
@@ -153,9 +153,9 @@ void	handleCGI(int epollFd, connection *conn, HttpRequest& request) {
 		// std::cout << "max content len: " 	<< maxContentLength << "\n";
 	}
 	if (headerContentLength > maxContentLength) 
-		throw HttpRequest::parsingException(413, "Content Too Large"); //todo check error thrown in this case
+		throw HttpRequest::parsingException(413, "Content Too Large");
 	if (headerContentLength != actualContentLength)
-		throw HttpRequest::parsingException(400, "Bad request"); //todo check error thrown in this case
+		throw HttpRequest::parsingException(400, "Bad request");
 
 	//case error in cgi handler
 	if (cgiHandler(request, conn, epollFd) == 1 ) 
