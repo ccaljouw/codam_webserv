@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/08 16:15:39 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/08 21:29:08 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,52 +26,20 @@ std::string getTimeStamp() {
     std::strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S GMT", timeInfoGmt);
     return buffer;
 }
-	
 
 void	setErrorResponse(connection *conn, int error)
 {
 	HttpRequest		request(conn->server);
 	HttpResponse	response(request);
-	std::string		errorHtmlPath;
 
-	response.setStatusCode(error);
-	
 	// check for error pages set in config
-	if (!conn->request.empty()) {
-		std::string		host = request.uri.getHost();
-		std::map<int, std::string> *providedErrorPages = conn->server->get_errorPages(host);
-		if (providedErrorPages->size() != 0) {
-			for (const auto& pair : *providedErrorPages) {
-				if (pair.first == error) {
-					std::cout << RED << "directed to error page set in config with nr: " << error <<  RESET << std::endl;
-					errorHtmlPath = "data/text/html" + pair.second;
-					break;
-				}
-				else
-					errorHtmlPath = generateErrorPage(error);
-			}
-		}
-		else
-			errorHtmlPath = generateErrorPage(error);
-		//check if path is ok
-		std::ifstream f(errorHtmlPath);
-		if (f.good())
-			response.reSetBody(errorHtmlPath, false);
-		f.close();
-	}
-	if (error == 408 || error == 429 || error == 500 || error == 504) {
-		conn->close_after_response = 1;
-		response.headers->setHeader("Connection", "close");		
-	}
-	setResponse(conn, response);
-}
-
-
-void	setResponse(connection *conn, HttpResponse resp)
-{
-	conn->response = resp.serializeResponse();
-	conn->request.clear();
-	conn->state = WRITING;
+	std::string errorHtmlPath = getErrorPage(conn, error);
+	std::ifstream f(errorHtmlPath);
+	if (f.good())
+		response.reSetBody(errorHtmlPath, false);
+	f.close();
+	response.setStatusCode(error);
+	response.setResponse(conn);
 }
 
 

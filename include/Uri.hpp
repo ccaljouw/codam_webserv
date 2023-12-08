@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:12:15 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/05 06:43:56 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/08 20:10:56 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,6 @@
 
 #include "defines.hpp"
 #include <regex>
-
-extern	std::map<std::string, std::string> acceptedExtensions; // todo: can we use this?
-extern	std::vector<std::string> binaryExtensions;			   // todo: can we use this?
 
 class Uri {
 

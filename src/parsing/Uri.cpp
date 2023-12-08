@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Uri.cpp                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 12:17:27 by carlo             #+#    #+#             */
-/*   Updated: 2023/12/07 14:42:12 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Uri.cpp                                            :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
+/*   Updated: 2023/12/08 20:09:20 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,19 +244,18 @@ bool	Uri::isValidExtension() {
 	return false;
 }
 
+// //define accepted extensions
+// std::map<std::string, std::string> acceptedExtensions = {
+// 	{	".txt", "text/plain"	},
+// 	{	".html", "text/html"	},
+// 	{	".css", "text/css"		},
+// 	{	".jpeg", "image/jpeg"	},
+// 	{	".jpg", "image/jpg"		},
+// 	{	".png", "image/png"		},
+// 	{	".gif", "image/gif"		},
+// 	{	".bmp", "image/bmp"		},
+// 	{	".ico", "image/x-icon"	}
+// };
 
-//define accepted extensions
-std::map<std::string, std::string> acceptedExtensions = {
-	{	".txt", "text/plain"	},
-	{	".html", "text/html"	},
-	{	".css", "text/css"		},
-	{	".jpeg", "image/jpeg"	},
-	{	".jpg", "image/jpg"		},
-	{	".png", "image/png"		},
-	{	".gif", "image/gif"		},
-	{	".bmp", "image/bmp"		},
-	{	".ico", "image/x-icon"	}
-};
-
-//define binary extensions for write
-std::vector<std::string> binaryExtensions = { 	".png", ".ico" , ".bmp", ".jpg", ".jpeg", ".gif", ",bmp" };
+// //define binary extensions for write
+// std::vector<std::string> binaryExtensions = { 	".png", ".ico" , ".bmp", ".jpg", ".jpeg", ".gif", ",bmp" };

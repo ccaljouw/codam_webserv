@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/24 08:20:32 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/08 14:23:37 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/08 21:30:38 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,3 +97,26 @@ std::string htmlContent = R"(
 	}
 	return path;
 }
+
+std::string	getErrorPage(connection *conn, int error) {
+	std::string		errorHtmlPath;
+	Uri				uri;
+	std::string		host = uri.getHost();
+	std::map<int, std::string> *providedErrorPages = conn->server->get_errorPages(host);
+	if (providedErrorPages->size() != 0) {
+		for (const auto& pair : *providedErrorPages) {
+			if (pair.first == error) {
+				// std::cout << RED << "directed to error page set in config with nr: " << error <<  RESET << std::endl;
+				errorHtmlPath = "data/text/html" + pair.second; // can this be handled better?
+				break;
+			}
+			else
+				errorHtmlPath = generateErrorPage(error);
+		}
+	}
+	else
+		errorHtmlPath = generateErrorPage(error);
+	return errorHtmlPath;
+}
+
+

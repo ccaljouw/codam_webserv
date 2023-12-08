@@ -11,7 +11,8 @@
 #include <ctime>
 #include <iostream>
 #include <exception>
-#include <cstdint>
+// #include <cstdint> //@Carlo, deze moet je waarschijnlijk weer aan zetten, 
+					  //wil je me even laten weten waar deze include voor nodig is?
 
 
 // HTTP
@@ -87,5 +88,22 @@ struct ServerSettings
 	std::list<struct LocationSettings *>	_locations;
 	std::map<int, std::string>*				_errorPages;
 };
+
+//define accepted extensions
+const std::map<std::string, std::string> acceptedExtensions = {
+	{	".txt", "text/plain"	},
+	{	".html", "text/html"	},
+	{	".css", "text/css"		},
+	{	".jpeg", "image/jpeg"	},
+	{	".jpg", "image/jpg"		},
+	{	".png", "image/png"		},
+	{	".gif", "image/gif"		},
+	{	".bmp", "image/bmp"		},
+	{	".ico", "image/x-icon"	}
+};
+
+//define binary extensions for write
+const std::vector<std::string> binaryExtensions = { 	".png", ".ico" , ".bmp", ".jpg", ".jpeg", ".gif", ",bmp" };
+
 #endif
 

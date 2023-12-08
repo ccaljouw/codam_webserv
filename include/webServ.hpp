@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/08 15:06:16 by carlo         ########   odam.nl         */
+/*   Updated: 2023/12/08 23:19:21 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,12 @@ void	closeCGIpipe(int epollFd, connection *conn);
 
 // requestHandling.cpp
 void		handleRequest(int epollFd, connection *conn);
+void		handleRedirect(int epollFd, connection *conn, HttpRequest& request);
+void		handleCGI(int epollFd, connection *conn, HttpRequest& request);
+void		handleDIR(int epollFd, connection *conn, HttpRequest& request);
+void		handleGET(int epollfd, connection *conn, HttpRequest& request);
+void		handlePOST(int epollfd, connection *conn, HttpRequest& request);
+void		handleDELETE(int epollfd, connection *conn, HttpRequest& request);
 std::string replaceCookiePng(std::string location, std::string cookieValue);
 
 // CGIHandling.cpp
@@ -59,7 +65,7 @@ extern	int g_shutdown_flag;
 
 // utils.cpp
 int				checkTimeout(connection *conn);
-void			setResponse(connection *conn, HttpResponse resp);
+std::string		getErrorPage(connection *conn, int error);
 void			setErrorResponse(connection *conn, int error);
 std::string		checkAndSetCookie(connection* conn, HttpRequest& request);
 std::string		removeWhitespaces(std::string str);

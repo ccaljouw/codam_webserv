@@ -108,6 +108,17 @@ void		HttpResponse::fillStandardHeaders() {
 	headers->setHeader("Content-Length", std::to_string(_body.length()));
 }
 
+void		HttpResponse::setResponse(connection *conn){
+	std::set<int> setClose{408, 429, 500, 504};
+	
+	if (setClose.find(getStatusCode()) != setClose.end()) {
+		conn->close_after_response = 1;
+		headers->setHeader("Connection", "close");		
+	}
+	conn->response = serializeResponse();
+	conn->request.clear();
+	conn->state = WRITING;
+}
 
 std::string	HttpResponse::serializeResponse() {
 	std::string serializedResponse;

@@ -6,91 +6,57 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/08 16:28:54 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/08 23:38:28 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webServ.hpp"
 #include <fstream>
+// #include <functional>
 
-// function signatures
-void	handleGET(connection *conn, HttpRequest& request, std::string location, std::string cookieValue, std::string root, std::string contentType);
-void	handleCGI(int epollFd, connection *conn, HttpRequest& request, std::string host, std::string location);
-void	handleDIR(int epollFd, connection *conn, bool dirListing, HttpRequest& request, std::string location, std::string index, std::string contentType, std::string cookieValue, std::string root);
-void	handlePOST(connection *conn, HttpRequest& request);
-void	handleDELETE(connection *conn, HttpRequest& request);
+using RequestHandler = std::function<void(int, connection*, HttpRequest&)>;
 
+std::string	getHandler(connection *conn, HttpRequest& request) {
+	std::string	host		= request.uri.getHost();
+	std::string location	= request.uri.getPath();
+	
+	std::map<int, std::string> redirect_location_header = conn->server->get_redirect(host, location);
+	if (!redirect_location_header.empty())
+		return "REDIRECT";
+	if (request.uri.isDir())
+		return "DIRLISTTING";
+	if (request.uri.getExecutable() == "cgi-bin")
+		return "CGI";
+	if (request.getMethod() == "GET")
+		return "GET";
+	if (request.getMethod() == "POST")
+		return "POST";
+	if (request.getMethod() == "DELETE")
+		return "DELETE";
+	return "";
+}
 
 void	handleRequest(int epollFd, connection *conn) {
 
+	const std::map<std::string, RequestHandler> methodHandlers = {
+    {"GET", handleGET},
+    {"POST", handlePOST},
+    {"DELETE", handleDELETE},
+	{"REDIRECT", handleRedirect},
+	{"DIRLISTING", handleDIR},
+	{"CGI", handleCGI},
+	};
+	
 	// std::cout << "in handleRequest:" << "\tfd = " << conn->fd << std::endl; //for testing
 	
 	try {
 		// Process the request data
 		HttpRequest request(conn->request, conn->server);
-
-		// Handle parsing error
-		if (request.getRequestStatus() != 200)  {
-			setErrorResponse(conn, request.getRequestStatus());
-			return ;
-		}
-	
-		//set variables
-		std::string extension		= request.uri.getExtension();
-		std::string contentType		= request.uri.getMime(extension);
-		std::string host			= request.uri.getHost();
-		std::string location		= request.uri.getPath();
-		std::string root 			= conn->server->get_rootFolder(host, location);
-		std::string index			= conn->server->get_index(host, location);
-		bool dirListing				= conn->server->get_dirListing(host, location);
-		
-		//**testprint**
-		// std::cout << BLUE << "variables set in handleRequest:\nextension: " << extension << "\ncontentType: " << contentType << "\nhost: " << host << "\nlocation: " 
-		// 	<< location << "\nindex: " << index << "\nroot: " << root << "\ndirListing: " << dirListing << "\nlocation: " << location << RESET << std::endl;
-
-		//check and set cookie
-		std::string cookieValue = checkAndSetCookie(conn, request);
-		
-		//handle redirect
-		std::map<int, std::string> redirect_location_header = conn->server->get_redirect(host, location);
-		if (!redirect_location_header.empty()) {
-			
-			//**testprint**
-			std::cout << BLUE << "\ntarget is redirected to: " << redirect_location_header.begin()->second << RESET << std::endl;
-
-			request.headers->addHeader("location", redirect_location_header.begin()->second);
-			HttpResponse response(request);
-			response.setStatusCode(redirect_location_header.begin()->first);
-			setResponse(conn, response);
-		return;
-		}
-		
-		//handle default for directories
-		if (request.uri.isDir()) {
-			handleDIR(epollFd, conn, dirListing,  request,  location,  index,  contentType,  cookieValue,  root);
-		}
-					
-		// handle CGI
-		else if (request.uri.getExecutable() == "cgi-bin") {
-			handleCGI(epollFd, conn, request, host, location);
-		}
-		
-		//handle GET
-		else if (request.getMethod() == "GET") {
-			handleGET(conn, request, location, cookieValue, root, contentType);
-		}
-
-		//handle POST
-		else if (request.getMethod() == "POST") {
-			handlePOST(conn, request);
-		}
-
-		// handle DELETE
-		else if (request.getMethod() == "DELETE") {
-			handleDELETE(conn, request);
-		}
-		
-		// handle unsupported methods
+		if (request.getRequestStatus() != 200)
+			throw HttpRequest::parsingException(request.getRequestStatus(), "Parsing error");
+		auto it = methodHandlers.find(getHandler(conn, request));
+		if (it != methodHandlers.end())
+			it->second(epollFd, conn, request);
 		else
 			throw HttpRequest::parsingException(405, "METHOD or Extension not supported");
 
@@ -98,15 +64,33 @@ void	handleRequest(int epollFd, connection *conn) {
 		std::cerr << RED << "Error: " + std::to_string(exception.getErrorCode()) << " " << exception.what() << RESET << std::endl;
 		setErrorResponse(conn, exception.getErrorCode());
 	}
-	// std::cout << "end of handleRequest" << std::endl; //testing
 }
 
+void	handleRedirect(int epollFd, connection *conn, HttpRequest& request) {
+	(void)epollFd;
+	std::string host			= request.uri.getHost();
+	std::string location		= request.uri.getPath();
+	std::map<int, std::string> redirect_location_header = conn->server->get_redirect(host, location);
+	// //**testprint**
+	// std::cout << BLUE << "\ntarget is redirected to: " << redirect_location_header.begin()->second << RESET << std::endl;
+	request.headers->addHeader("location", redirect_location_header.begin()->second);
+	HttpResponse response(request);
+	response.setStatusCode(redirect_location_header.begin()->first);
+	response.setResponse(conn);
+}
 
-void	handleDIR(int epollFd, connection *conn, bool dirListing, HttpRequest& request, std::string location, std::string index, std::string contentType, std::string cookieValue, std::string root) {
+void	handleDIR(int epollFd, connection *conn, HttpRequest& request) {
 
 	//**testprint**
 	// std::cout << BLUE << "\ntarget is a directory and its dirlisting = " << dirListing << RESET << std::endl;
-			
+	std::string cookieValue = checkAndSetCookie(conn, request);
+	std::string host			= request.uri.getHost();
+	std::string location		= request.uri.getPath();
+	std::string root 			= conn->server->get_rootFolder(host, location);
+	std::string index			= conn->server->get_index(host, location);
+	bool dirListing				= conn->server->get_dirListing(host, location);
+	std::string contentType		= request.uri.getMime(request.uri.getExtension());
+	
 	if (dirListing == true) {
 		HttpResponse response(request);
 		request.uri.setPath("/cgi-bin/index.py");
@@ -128,15 +112,15 @@ void	handleDIR(int epollFd, connection *conn, bool dirListing, HttpRequest& requ
 		response.reSetBody(bodyPath, false);
 		response.headers->addHeader("Content-type", contentType);
 		response.headers->setHeader("Set-Cookie", cookieValue);
-		setResponse(conn, response);
+		response.setResponse(conn);
 	}
 	else
 		throw HttpRequest::parsingException(404, "Path not found");
 }
 
-
-void	handleCGI(int epollFd, connection *conn, HttpRequest& request, std::string host, std::string location) {
-
+void	handleCGI(int epollFd, connection *conn, HttpRequest& request) {
+	std::string host			= request.uri.getHost();
+	std::string location		= request.uri.getPath();
 	//**testprint**
 	// std::cout << "\nin CGI\n" << std::endl;
 
@@ -165,18 +149,18 @@ void	handleCGI(int epollFd, connection *conn, HttpRequest& request, std::string 
 	}
 }
 
-
-void	handleGET(connection *conn, HttpRequest& request, std::string location, std::string cookieValue, std::string root, std::string contentType) {
+void	handleGET(int epollfd, connection *conn, HttpRequest& request) {
 	
 	//**testprint**
 	// std::cout << "\nin GET handler\n" << std::endl;
-
+	(void)epollfd;
+	std::string contentType		= request.uri.getMime(request.uri.getExtension());
 	if (!contentType.empty()) {
 		
-		std::string fullPath; 
-		
-		//check cookie.png
-		location = replaceCookiePng(location, cookieValue);
+		std::string fullPath;
+		std::string host			= request.uri.getHost();
+		std::string location		= request.uri.getPath();
+		std::string cookieValue 	= checkAndSetCookie(conn, request);
 		
 		//check if target exists
 		std::string pathToCheck = request.uri.getPath();
@@ -185,11 +169,13 @@ void	handleGET(connection *conn, HttpRequest& request, std::string location, std
 
 		if (validPath(pathToCheck))
 			fullPath = pathToCheck;
-		else	
-			fullPath = root + "/" + contentType + location;
+		else {
+			//check cookie.png
+			location = replaceCookiePng(location, cookieValue);
+			fullPath = conn->server->get_rootFolder(host, location) + "/" + contentType + location;
+		}	
 
 		std::ifstream f(fullPath);
-
 		if (f.good())
 			request.uri.setPath(fullPath);
 		else
@@ -199,27 +185,28 @@ void	handleGET(connection *conn, HttpRequest& request, std::string location, std
 		response.reSetBody(request.uri.getPath(), request.uri.getIsBinary());
 		response.headers->addHeader("Content-type", contentType);
 		response.headers->setHeader("Set-Cookie", cookieValue);
-		setResponse(conn, response);
+		response.setResponse(conn);
 	} 
 	else
 		throw HttpRequest::parsingException(404, "Page not found in request handler");
+	// std::cout << "\nend of GET handler\n" << std::endl;
 }
 
-
-void	handlePOST(connection *conn, HttpRequest& request) { 
+void	handlePOST(int epollfd, connection *conn, HttpRequest& request) { 
 	//**testprint**
 	// std::cout << "\nin POST handler\n" << std::endl;
 	
+	(void)epollfd;
 	HttpResponse response(request);
 	response.reSetBody("data/text/html/upload.html", false);
-	setResponse(conn, response);
+	response.setResponse(conn);
 }
 
-void	handleDELETE(connection *conn, HttpRequest& request) { 
+void	handleDELETE(int epollfd, connection *conn, HttpRequest& request) { 
 	//**testprint**
 	// std::cout << "\nin DELETE handler\n" << std::endl;
-	
+	(void)epollfd;
 	HttpResponse response(request);
 	response.reSetBody("data/text/html/418.html", false);
-	setResponse(conn, response);
+	response.setResponse(conn);
 }

@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/08 16:16:38 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/08 21:25:38 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,9 @@ class HttpResponse {
 		// ============= Setters ================
 		void				setProtocol(const std::string& protocol);
 		void				setStatusCode(int status);
-		void				reSetBody(const std::string& filePath, bool isBinary); //why reset?
-		void				fillStandardHeaders(void); //todo: get from config
+		void				reSetBody(const std::string& filePath, bool isBinary);
+		void				fillStandardHeaders(void);
+		void				setResponse(connection *conn);
 
 		// =========== Other ===============
 		std::string			serializeResponse(void);
