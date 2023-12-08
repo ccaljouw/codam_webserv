@@ -22,7 +22,7 @@
 #define BUFFER_SIZE 4000
 #define TIMEOUT	5
 #define CGI_TIMEOUT 3
-#define	MAX_NR_REQUESTS 10
+#define	MAX_NR_REQUESTS 50
 
 // config
 #define LETTERS "abcdefghijklmnopqrstuvwxyz" //todo: change to standard c++ function?

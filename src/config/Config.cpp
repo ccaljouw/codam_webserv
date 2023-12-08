@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/12/08 10:00:42 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/08 10:03:29 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ Config::Config(int argc, char** argv) : _error(false), _lineNr(1)
 			std::cerr << CYAN << "\nToo many arguments, Ignoring all but first" << RESET << std::endl;
 		}
 	}
-	std::cout << GREEN << "\nConfig: " << _filename << " loading...." << RESET << std::endl;
+	std::cout << CYAN << "Config: " << _filename << " loading...." << RESET << std::endl;
 	try
 	{
 		_servers = std::list<struct ServerSettings*>();
