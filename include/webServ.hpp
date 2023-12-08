@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/08 13:30:03 by carlo         ########   odam.nl         */
+/*   Updated: 2023/12/08 15:06:16 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include "HttpRequest.hpp"
 #include "HttpResponse.hpp"
 #include "CGI.hpp"
+#include <sys/stat.h>
 #include <sys/epoll.h>
 #include <cstdint>
 
@@ -63,6 +64,8 @@ void			setErrorResponse(connection *conn, int error);
 std::string		checkAndSetCookie(connection* conn, HttpRequest& request);
 std::string		removeWhitespaces(std::string str);
 void 			handleSignal(int signal);
+bool			validPath(std::string path);
+
 
 //errorPageGen
 std::string		generateErrorPage(int e);

@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/08 09:52:24 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/08 15:09:21 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,9 +134,18 @@ std::string replaceCookiePng(std::string location, std::string cookieValue) {
 	return location;
 }
 
-void handleSignal(int signal) {
+void	handleSignal(int signal) {
 	// if (signal == SIGPIPE)
 	// 	std::cout << CYAN << "Ignoring SIGPIPE signal" << std::endl;
 	// else
 		g_shutdown_flag = signal;
+}
+
+//checks is a path exists
+bool	validPath(std::string path) {
+
+	if (!path.empty() && path[0] == '/')
+        	path.erase(0, 1);
+    struct stat info;
+    return (stat(path.c_str(), &info) == 0);
 }

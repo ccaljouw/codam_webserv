@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/08 14:26:45 by carlo         ########   odam.nl         */
+/*   Updated: 2023/12/08 15:11:18 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,16 +173,24 @@ void	handleGET(connection *conn, HttpRequest& request, std::string location, std
 
 	if (!contentType.empty()) {
 		
+		std::string fullPath; 
+		
 		//check cookie.png
 		location = replaceCookiePng(location, cookieValue);
 		
 		//check if target exists
-		// if (contentType == "text/css")
-		// 	location = location.substr(location.rfind("/"));
-		std::string fullPath = root + "/" + contentType + location;
-		// std::cout << "full path: " << fullPath << std::endl;
+		std::string pathToCheck = request.uri.getPath();
+		if (!pathToCheck.empty() && pathToCheck[0] == '/')
+        	pathToCheck.erase(0, 1);
+		if (validPath(pathToCheck))
+			fullPath = pathToCheck;
+		else	
+			fullPath = root + "/" + contentType + location;
+
+		//***test print		
+			std::cout << "full path: " << fullPath << std::endl;
 		std::ifstream f(fullPath);
-		
+
 		if (f.good())
 			request.uri.setPath(fullPath);
 		else
@@ -192,7 +200,6 @@ void	handleGET(connection *conn, HttpRequest& request, std::string location, std
 		response.reSetBody(request.uri.getPath(), request.uri.getIsBinary());
 		response.headers->addHeader("Content-type", contentType);
 		response.headers->setHeader("Set-Cookie", cookieValue);
-		// response.headers->printHeaders();
 		setResponse(conn, response);
 	} 
 	else
