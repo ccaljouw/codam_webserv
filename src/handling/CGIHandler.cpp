@@ -33,11 +33,11 @@ void	execChild(const HttpRequest& req, CGI &cgi, int oldFd)
 
 int	writeBody(const HttpRequest& req, int *fd)
 {
-	
 	std::string	body = req.getBody() + "\0";
 	while (1)
 	{
-		if (write(fd[1], body.c_str(), BUFFER_SIZE) == -1)
+		size_t	size = body.length() > BUFFER_SIZE ? BUFFER_SIZE : body.length();
+		if (write(fd[1], body.c_str(), size) == -1)
 		{
 			std::cerr << strerror(errno) << std::endl;
 			close(fd[0]);
@@ -45,7 +45,7 @@ int	writeBody(const HttpRequest& req, int *fd)
 			return (-1);
 		}
 		if (body.length() > BUFFER_SIZE)
-			body = body.substr(BUFFER_SIZE, body.npos);
+			body = body.substr(size, body.npos);
 		else
 			break;
 	}
