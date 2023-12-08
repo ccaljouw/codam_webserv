@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 16:57:19 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/08 09:23:52 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/08 13:30:03 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include "HttpResponse.hpp"
 #include "CGI.hpp"
 #include <sys/epoll.h>
+#include <cstdint>
 
 
 //main.cpp

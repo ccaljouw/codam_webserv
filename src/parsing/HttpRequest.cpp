@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   HttpRequest.cpp                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/01 14:21:11 by carlo             #+#    #+#             */
-/*   Updated: 2023/12/07 14:45:35 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   HttpRequest.cpp                                    :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
+/*   Updated: 2023/12/08 13:41:02 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,8 @@ const HttpRequest& HttpRequest::operator=(const HttpRequest& rhs) {
 		_body			= rhs._body;
 		_requestStatus	= rhs._requestStatus;
 		_server			= rhs._server;
+		_environVars.clear();
+		_environVars	= rhs._environVars;
 		_settings		= rhs._settings;
 		
 	}
