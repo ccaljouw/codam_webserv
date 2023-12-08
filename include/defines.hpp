@@ -11,6 +11,8 @@
 #include <ctime>
 #include <iostream>
 #include <exception>
+#include <cstdint>
+
 
 // HTTP
 #define LINE_END "\r\n"

@@ -16,11 +16,10 @@
 
 std::string getTimeStamp();
 
-HttpResponse::HttpResponse() :  headers(), _protocol(HTTP_PROTOCOL), _statusCode(), _body() {
-	headers = new Header();
-	fillStandardHeaders();
-}
-
+// HttpResponse::HttpResponse() :  headers(), _protocol(HTTP_PROTOCOL), _statusCode(), _body() {
+// 	headers = new Header();
+// 	fillStandardHeaders();
+// }
 
 HttpResponse::HttpResponse(const HttpRequest& request) {
 	headers				= request.headers;

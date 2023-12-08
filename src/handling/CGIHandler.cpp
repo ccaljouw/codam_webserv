@@ -17,7 +17,6 @@ void	execChild(const HttpRequest& req, CGI &cgi, int oldFd)
 	char	**env = req.getEnvArray();
 	getProgramPath(req.uri, program);
 
-
 	// std::cout << "cgi fd = " << cgi.getFdIn() << std::endl;
 	if (dup2(cgi.getFdOut(), STDOUT_FILENO) == -1 || dup2(oldFd, STDIN_FILENO) == -1)
 	{
@@ -33,6 +32,7 @@ void	execChild(const HttpRequest& req, CGI &cgi, int oldFd)
 
 int	writeBody(const HttpRequest& req, int *fd)
 {
+	
 	std::string	body = req.getBody() + "\0";
 	while (1)
 	{

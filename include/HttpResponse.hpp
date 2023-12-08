@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/05 06:58:04 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/08 16:16:38 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 class HttpResponse {
 
 	public:
-		HttpResponse(void);
+		HttpResponse(void) = delete;
 		HttpResponse(const HttpRequest& request);
 	 	HttpResponse(const HttpResponse& origin);
 	 	const HttpResponse& operator=(const HttpResponse& rhs);

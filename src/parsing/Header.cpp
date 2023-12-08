@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Header.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/13 09:46:19 by carlo             #+#    #+#             */
-/*   Updated: 2023/12/07 13:06:20 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   Header.cpp                                         :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/13 09:46:19 by carlo         #+#    #+#                 */
+/*   Updated: 2023/12/08 14:14:35 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,8 @@ const Header& Header::operator=(const Header& rhs) {
 
 Header::~Header(void) {
 	_headerMap.clear();
+	for (char* str : _headerVector)
+		free(str);
 	_headerVector.clear();
 }
 
