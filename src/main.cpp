@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 11:16:40 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/08 09:24:46 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/08 09:52:13 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,12 @@ int main(int argc, char **argv) {
 	std::list<Server>	servers;
 
 	signal(SIGINT, handleSignal);
-	signal(SIGPIPE, handleSignal); // what to do?
+	// signal(SIGPIPE, handleSignal);
 
 	Config conf(argc, argv);
 	if (conf.getError() == true)
 		return 1;
-	conf.printServers(); // to remove later, only used for testing purposes
+	// conf.printServers(); // to remove later, only used for testing purposes
 	try {
 		if ((epollFd = epoll_create(1)) == -1)
 			throw std::runtime_error("epoll_create: " + std::string(strerror(errno)));

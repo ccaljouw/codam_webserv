@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/07 21:50:38 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/08 09:44:24 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	handleDELETE(connection *conn, HttpRequest& request);
 
 void	handleRequest(int epollFd, connection *conn) {
 
-	std::cout << "in handleRequest:" << "\tfd = " << conn->fd << std::endl; //for testing
+	// std::cout << "in handleRequest:" << "\tfd = " << conn->fd << std::endl; //for testing
 	
 	try {
 		// Process the request data
@@ -95,10 +95,10 @@ void	handleRequest(int epollFd, connection *conn) {
 			throw HttpRequest::parsingException(405, "METHOD or Extension not supported");
 
 	} catch (const HttpRequest::parsingException& exception) {
-		std::cout << RED << "Error: " + std::to_string(exception.getErrorCode()) << " " << exception.what() << RESET << std::endl;
+		std::cerr << RED << "Error: " + std::to_string(exception.getErrorCode()) << " " << exception.what() << RESET << std::endl;
 		setErrorResponse(conn, exception.getErrorCode());
 	}
-	std::cout << "end of handleRequest" << std::endl; //testing
+	// std::cout << "end of handleRequest" << std::endl; //testing
 }
 
 
@@ -138,7 +138,7 @@ void	handleDIR(int epollFd, connection *conn, bool dirListing, HttpRequest& requ
 void	handleCGI(int epollFd, connection *conn, HttpRequest& request) {
 
 	//**testprint**
-	std::cout << "\nin CGI\n" << std::endl;
+	// std::cout << "\nin CGI\n" << std::endl;
 
 	// check content-length
 	size_t	maxContentLength		= conn->server->get_maxBodySize(request.headers->getHeaderValue("host"), "/cgi-bin/");
@@ -148,9 +148,9 @@ void	handleCGI(int epollFd, connection *conn, HttpRequest& request) {
 		headerContentLength = std::stoi(request.headers->getHeaderValue("content-length"));
 		
 		//**test print
-		std::cout << "header content len: " << headerContentLength << "\n";
-		std::cout << "actual content len: " << actualContentLength << "\n";
-		std::cout << "max content len: " 	<< maxContentLength << "\n";
+		// std::cout << "header content len: " << headerContentLength << "\n";
+		// std::cout << "actual content len: " << actualContentLength << "\n";
+		// std::cout << "max content len: " 	<< maxContentLength << "\n";
 	}
 	if (headerContentLength > maxContentLength) 
 		throw HttpRequest::parsingException(413, "Content Too Large"); //todo check error thrown in this case
@@ -169,7 +169,7 @@ void	handleCGI(int epollFd, connection *conn, HttpRequest& request) {
 void	handleGET(connection *conn, HttpRequest& request, std::string location, std::string cookieValue, std::string root, std::string contentType) {
 	
 	//**testprint**
-	std::cout << "\nin GET handler\n" << std::endl;
+	// std::cout << "\nin GET handler\n" << std::endl;
 
 	if (!contentType.empty()) {
 		
@@ -180,7 +180,7 @@ void	handleGET(connection *conn, HttpRequest& request, std::string location, std
 		// if (contentType == "text/css")
 		// 	location = location.substr(location.rfind("/"));
 		std::string fullPath = root + "/" + contentType + location;
-		std::cout << "full path: " << fullPath << std::endl;
+		// std::cout << "full path: " << fullPath << std::endl;
 		std::ifstream f(fullPath);
 		
 		if (f.good())
@@ -202,7 +202,7 @@ void	handleGET(connection *conn, HttpRequest& request, std::string location, std
 
 void	handlePOST(connection *conn, HttpRequest& request) { 
 	//**testprint**
-	std::cout << "\nin POST handler\n" << std::endl;
+	// std::cout << "\nin POST handler\n" << std::endl;
 	
 	HttpResponse response(request);
 	response.reSetBody("data/text/html/upload.html", false);
@@ -211,7 +211,7 @@ void	handlePOST(connection *conn, HttpRequest& request) {
 
 void	handleDELETE(connection *conn, HttpRequest& request) { 
 	//**testprint**
-	std::cout << "\nin DELETE handler\n" << std::endl;
+	// std::cout << "\nin DELETE handler\n" << std::endl;
 	
 	HttpResponse response(request);
 	response.reSetBody("data/text/html/418.html", false);

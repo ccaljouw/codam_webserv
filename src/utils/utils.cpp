@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   utils.cpp                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/22 21:57:55 by carlo             #+#    #+#             */
-/*   Updated: 2023/12/07 16:19:10 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   utils.cpp                                          :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/22 21:57:55 by carlo         #+#    #+#                 */
+/*   Updated: 2023/12/08 09:52:24 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ void	setErrorResponse(connection *conn, int error)
 			response.reSetBody(errorHtmlPath, false);
 		f.close();
 	}
-	
 	if (error == 408 || error == 429 || error == 500 || error == 504) {
 		conn->close_after_response = 1;
 		response.headers->setHeader("Connection", "close");		
@@ -80,10 +79,9 @@ void	setResponse(connection *conn, HttpResponse resp)
 // others (eg safari) do not close the connection themselves
 int	checkTimeout(connection *conn)
 {
-	// smaller timeout value for internal timeouts?
 	double timeout;
 
-	if (conn->state == IN_CGI || conn->state == WRITING)
+	if (conn->state == IN_CGI || conn->state == WRITING || conn->state == HANDLING)
 		timeout = CGI_TIMEOUT;
 	else
 		timeout = conn->server->get_timeout();
@@ -91,23 +89,24 @@ int	checkTimeout(connection *conn)
 		switch(conn->state)
 		{
 			case READING:
-				std::cerr << CYAN << "request timeout" << RESET << std::endl;
+				// std::cerr << CYAN << "request timeout" << RESET << std::endl;
 				setErrorResponse(conn, 408);
 				return 1;
 			case IN_CGI: 
-				std::cerr << CYAN << "timeout in cgi" << RESET << std::endl;
+				// std::cerr << CYAN << "timeout in cgi" << RESET << std::endl;
 				if (conn->cgiPID) {
 					close(conn->cgiPID);
+					conn->cgiFd = 0;
 					kill(conn->cgiPID, SIGTERM);
 				}
 				setErrorResponse(conn, 504);
 				return 1;
 			case HANDLING:
-				std::cerr << CYAN << "timout in processing" << RESET << std::endl;
+				// std::cerr << CYAN << "timout in processing" << RESET << std::endl;
 				setErrorResponse(conn, 500);
 				return 1;
 			case WRITING:
-				std::cerr << CYAN << "stuck in writing" << RESET << std::endl;
+				// std::cerr << CYAN << "stuck in writing" << RESET << std::endl;
 				return 1;
 			default:
 				return 0;
@@ -136,8 +135,8 @@ std::string replaceCookiePng(std::string location, std::string cookieValue) {
 }
 
 void handleSignal(int signal) {
-	if (signal == SIGPIPE)
-		std::cout << CYAN << "Ignoring SIGPIPE signal" << std::endl;
-	else
+	// if (signal == SIGPIPE)
+	// 	std::cout << CYAN << "Ignoring SIGPIPE signal" << std::endl;
+	// else
 		g_shutdown_flag = signal;
 }

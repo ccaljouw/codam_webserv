@@ -18,7 +18,7 @@ void	execChild(const HttpRequest& req, CGI &cgi, int oldFd)
 	getProgramPath(req.uri, program);
 
 
-	std::cout << "cgi fd = " << cgi.getFdIn() << std::endl;
+	// std::cout << "cgi fd = " << cgi.getFdIn() << std::endl;
 	if (dup2(cgi.getFdOut(), STDOUT_FILENO) == -1 || dup2(oldFd, STDIN_FILENO) == -1)
 	{
 		cgi.closeFds();

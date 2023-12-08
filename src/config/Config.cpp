@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 15:17:36 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/12/07 17:57:04 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/12/08 10:00:42 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,14 @@ Config::Config(int argc, char** argv) : _error(false), _lineNr(1)
 {
 	if (argc == 1) {
 		_filename = std::string("./config/default.conf");
-		std::cout << GREEN << "default config loading...." << RESET << std::endl;
 	}
-	else if (argc >= 2)
-	{
+	else if (argc >= 2) {
 		_filename = std::string(argv[1]);
-		if (argc > 2)
-		{
-			std::cerr << "Too many arguments... Ignoring all but first" << std::endl;
+		if (argc > 2) {
+			std::cerr << CYAN << "\nToo many arguments, Ignoring all but first" << RESET << std::endl;
 		}
 	}
+	std::cout << GREEN << "\nConfig: " << _filename << " loading...." << RESET << std::endl;
 	try
 	{
 		_servers = std::list<struct ServerSettings*>();

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   registerEvents.cpp                                 :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 23:48:35 by cariencaljo       #+#    #+#             */
-/*   Updated: 2023/12/07 14:57:10 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   registerEvents.cpp                                 :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/03 23:48:35 by cariencaljo   #+#    #+#                 */
+/*   Updated: 2023/12/08 09:42:54 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,6 @@ int	register_CGI(int epollFd, int cgiFd, connection *conn)
 		conn->cgiFd = 0;
 		return 1;
 	}
-	std::cout << GREEN << "cgi registered for " << conn->cgiFd << " state: " << conn->state << RESET <<std::endl;  //testing
+	// std::cout << GREEN << "cgi registered for " << conn->cgiFd << " state: " << conn->state << RESET <<std::endl;  //testing
 	return 0;
 }

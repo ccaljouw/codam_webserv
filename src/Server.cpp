@@ -94,7 +94,6 @@ int	Server::checkClientId(std::string id, struct connection* conn) {
 		{
 			if (conn->nr_of_requests == 1) 
 				pair.second += 1;
-			std::cout << "user_id :"<< id << " has visited us " << pair.second << " times!" << std::endl; //for testing
 			return  1;
 		}
 	}
@@ -163,11 +162,11 @@ size_t	Server::get_maxBodySize(std::string host) const {
 std::string	Server::get_index(std::string host, std::string location) const {
 	struct LocationSettings* settings = get_locationSettings(host, location);
 	if (settings && settings->_locationId == location) {
-		std::cout << "sending location: " << settings->_index << std::endl;
+		// std::cout << "sending location: " << settings->_index << std::endl;
 		return settings->_index;
 	}
 	else {
-		std::cout << "sending empty location" << std::endl;
+		// std::cout << "sending empty location" << std::endl;
 		return "";
 	}
 }
@@ -185,7 +184,7 @@ std::map<int, std::string>	Server::get_redirect(std::string host, std::string lo
 	if (settings)
 		return settings->_redirect;
 	else {
-		std::cout << "sending empty redirect" << std::endl;
+		// std::cout << "sending empty redirect" << std::endl;
 		std::map<int, std::string> map;
 		return map;
 	}

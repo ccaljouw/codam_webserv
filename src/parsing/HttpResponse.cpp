@@ -82,7 +82,7 @@ void			HttpResponse::reSetBody(const std::string& filePath, bool isBinary)	{
 		inputFile.open(filePath, std::ifstream::binary);
 	else {
 		inputFile.open(filePath);
-		std::cout << "input file opened: " << filePath << std::endl;
+		// std::cout << "input file opened: " << filePath << std::endl;
 	}
 	if (inputFile.good()) {
 		inputFile.seekg(0, inputFile.end);
