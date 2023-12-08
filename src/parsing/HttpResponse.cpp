@@ -48,7 +48,7 @@ const HttpResponse& HttpResponse::operator=(const HttpResponse& rhs) {
 }
 
 
-HttpResponse::~HttpResponse() {}
+HttpResponse::~HttpResponse()	{	delete headers;	}
 
 
 // ============= Getters ================
@@ -118,7 +118,6 @@ std::string	HttpResponse::serializeResponse() {
 		if (pair.first == _statusCode)
 			reason = pair.second;
 	}
-
 	serializedResponse += _protocol + " " + std::to_string(_statusCode) + " " + reason + LINE_END + headers->serializeHeaders() + LINE_END + _body + LINE_END;
 	return serializedResponse;
 }

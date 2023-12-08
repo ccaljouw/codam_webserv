@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   HttpRequest.cpp                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/01 14:21:11 by carlo             #+#    #+#             */
-/*   Updated: 2023/12/07 14:45:35 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   HttpRequest.cpp                                    :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
+/*   Updated: 2023/12/08 12:35:10 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,12 +105,14 @@ const HttpRequest& HttpRequest::operator=(const HttpRequest& rhs) {
 		_requestStatus	= rhs._requestStatus;
 		_server			= rhs._server;
 		_settings		= rhs._settings;
-		
 	}
 	return *this;
 }
 
-HttpRequest::~HttpRequest() {}
+HttpRequest::~HttpRequest()	{
+	_environVars.clear();
+	delete headers;
+}
 
 
 //========= Getters ===============================
@@ -150,6 +152,7 @@ char**	HttpRequest::getEnvArray(void) const {
 		std::strcpy(envString, keyValue.c_str());
 		envString[keyValue.length()] = '\0';
 		envArray.push_back(envString);
+		delete envString;
 	}
 
 	//add headers to array
