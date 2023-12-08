@@ -15,17 +15,6 @@ void	execChild(const HttpRequest& req, CGI &cgi, int oldFd)
 	char	program[req.uri.getPath().size() + 2];
 	char	*argv[] = {program, NULL};
 	char	**env = req.getEnvArray();
-	int		envCount = 0;
-	
-	while (env[envCount] != NULL)
-		envCount++;
-	
-	char *envCopy[envCount];
-	for (int i = 0; i < envCount; i++)
-		strcpy(env[i], envCopy[i]);
-	envCopy[envCount] = NULL;
-	delete env;
-
 	getProgramPath(req.uri, program);
 
 
