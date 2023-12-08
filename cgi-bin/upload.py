@@ -72,8 +72,8 @@ body = f"""<!DOCTYPE html>
 			<li><a href="/upload.html">Upload</a></li>
 			<li><a href="/delete.html">Delete</a></li>
 			<li><a href="/other.html">Cookies</a></li>
-			<li><a href="sockets.html">Sockets</a></li>
-			<li><a href="epoll.html">Epoll</a></li>
+			<li><a href="/sockets.html">Sockets</a></li>
+			<li><a href="/epoll.html">Epoll</a></li>
 			</ul>
 		</nav>
 		<div class="container">

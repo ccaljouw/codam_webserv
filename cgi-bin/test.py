@@ -7,7 +7,6 @@ date = x.strftime("%a, %d %b %Y %H:%M:%S GMT")
 body = """<!DOCTYPE html>
 <html>
 	<head>
-		<link rel="icon" href="data:,">
 		<title>Python Test</title>
 	</head>
 	<body>

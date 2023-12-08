@@ -12,18 +12,18 @@
 			<li><a href="/upload.html">Upload</a></li>
 			<li><a href="/delete.html">Delete</a></li>
 			<li><a href="/other.html">Cookies</a></li>
-			<li><a href="sockets.html">Sockets</a></li>
-			<li><a href="epoll.html">Epoll</a></li>
+			<li><a href="/sockets.html">Sockets</a></li>
+			<li><a href="/epoll.html">Epoll</a></li>
 		</ul>
 	</nav>
-	<div class="container">
+	<div>
 		<h1>Delete File</h2>
 		<form action="../cgi-bin/delete.sh" method="delete" accept-charset="utf-8">
 			<p><input type="name" name="filename"/></p>
 			<p><input type="submit" value="Delete" /></p>
 		</form>
 	</div>
-	<div class="index"></div>
+	<div class="container index"></div>
 </body>
 <script>
 	const url = `/cgi-bin/index.py?file=delete`;

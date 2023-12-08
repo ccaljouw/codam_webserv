@@ -6,7 +6,6 @@ date=`date -u +"%a, %d %b %Y %H:%M:%S GMT"`
 body="<!DOCTYPE html>
 <html>
 	<head>
-		<link rel=\"icon\" href=\"data:,\">
 		<title>Bash Test</title>
 	</head>
 	<body>

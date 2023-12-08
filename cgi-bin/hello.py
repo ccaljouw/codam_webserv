@@ -34,7 +34,6 @@ date = x.strftime("%a, %d %b %Y %H:%M:%S GMT")
 body = f"""<!DOCTYPE html>
 <html>
 	<head>
-		<link rel="icon" href="data:,">
 		<title>Hello!</title>
 	</head>
 	<body>

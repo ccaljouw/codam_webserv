@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/24 08:20:32 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/07 21:50:27 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/08 14:23:37 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,8 @@ std::string htmlContent = R"(
 			<li><a href="/upload.html">Upload</a></li>
 			<li><a href="/delete.html">Delete</a></li>
 			<li><a href="/other.html">Cookies</a></li>
-			<li><a href="sockets.html">Sockets</a></li>
-			<li><a href="epoll.html">Epoll</a></li>
+			<li><a href="/sockets.html">Sockets</a></li>
+			<li><a href="/epoll.html">Epoll</a></li>
 			</ul>
 	</nav>
 	<div class="container">

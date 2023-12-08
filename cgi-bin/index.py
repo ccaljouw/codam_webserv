@@ -88,8 +88,8 @@ body_start = """<!DOCTYPE html>
 		  <li><a href="/upload.html">Upload</a></li>
 		  <li><a href="/delete.html">Delete</a></li>
 		  <li><a href="/other.html">Cookies</a></li>
-		  <li><a href="sockets.html">Sockets</a></li>
-		  <li><a href="epoll.html">Epoll</a></li>
+		  <li><a href="/sockets.html">Sockets</a></li>
+		  <li><a href="/epoll.html">Epoll</a></li>
 		</ul>
 	</nav>
 	<div class="container overflow-columns">
@@ -125,5 +125,3 @@ Server: {os.environ.get("SERVER")}\r\n\r"""
 print(header)
 print(body)
 print("\0")
-
-cgi.print_environ()

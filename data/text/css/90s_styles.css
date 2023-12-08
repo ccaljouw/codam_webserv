@@ -102,6 +102,7 @@ a:hover {
     background-color: #333;
     color: #fff;
     padding: 20px;
+	margin-right: 20px;
     box-sizing: border-box;
     display: flex; /* Maak het menu een flex-container */
     flex-direction: column; /* Stapel de items verticaal op in het menu */
@@ -133,7 +134,12 @@ a:hover {
 .overflow-columns {
 	column-count: 2; /* Set the number of columns */
 	column-gap: 10px; /* Optional: Set the gap between columns */
-	max-width: 100%; /* Ensure the element doesn't exceed the width of its container */
+	max-width: 50%; /* Ensure the element doesn't exceed the width of its container */
 	margin-top: 40px;
     margin-bottom: 40px;
+  }
+
+.index {
+	column-count: 1; /* Set the number of columns */
+	max-width: 50%; /* Ensure the element doesn't exceed the width of its container */
   }
