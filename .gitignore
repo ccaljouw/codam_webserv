@@ -8,3 +8,4 @@ webserv
 uploads/*
 uploads
 Dockerfile
+tmp
