@@ -4,6 +4,7 @@ import pathlib, datetime, os, sys
 
 status = 200
 message = ""
+value=""
 files = []
 
 def is_prefix(path, target_path) -> bool:
@@ -28,9 +29,11 @@ def listFiles(path) -> (int, str):
 		return (403, "Forbidden")
 	# Loop through the items in the directory
 	for f in path.iterdir():
-		# print(f, file=sys.stderr)
 		if f.is_file():
-			files.append(str(f))
+			if "cgi-bin/" in str(f):
+				files.append(str(f))
+			else:
+				files.append(str(f)[len(os.environ.get("PATH_INFO"))-1:])
 		elif f.is_dir():
 			listFiles(f)
 
@@ -46,12 +49,15 @@ def listDirs() -> (int, str):
 
 		# Check if the server sent the query string
 		# else list the files in the root directory
+		global value
 		if query != None:
 			value = query.split("&")[0]
 			if "=" in value:
 				value = value.split("=")[1]
 			if value == "/cgi-bin/":
 				return listFiles(pathlib.Path("./cgi-bin"))
+			elif value == "delete":
+				return listFiles(pathlib.Path(os.environ.get("UPLOAD_DIR")))
 			elif root.split("/")[-1] == value.strip("/"):
 				return listFiles(pathlib.Path(root))
 			else:
@@ -97,10 +103,15 @@ body_middle = f"		<h1>{message}</h1>\n"
 if status == 200:
 	for f in files:
 		if f.startswith("cgi-bin"):
-			p = "http://" + os.environ['HOST'] + "/"+ f
+			p = f"http://{os.environ['HOST']}/{f}"
+		elif value == "delete":
+			dir = "".join(os.environ.get("UPLOAD_DIR").split("/")[2:])
+			p = f"http://{os.environ['HOST']}/{dir}/{f.split('/')[-1]}"
 		else:
-			p = "http://" + os.environ['HOST'] + "/" + f.split("/")[-1]
-		body_middle = body_middle + f"		<a href={p}> /{f} </a><br>\n"
+			p = f"http://{os.environ['HOST']}/{f.split('/')[-1]}"
+		body_middle += f"		<a href={p}> /{f} </a><br>"
+	if len(files) == 0:
+		body_middle += f"		<h1> Empty Directory </h1>\n"
 
 body = body_start + body_middle + body_end
 
@@ -114,3 +125,5 @@ Server: {os.environ.get("SERVER")}\r\n\r"""
 print(header)
 print(body)
 print("\0")
+
+cgi.print_environ()
