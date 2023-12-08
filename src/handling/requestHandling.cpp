@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/08 15:14:17 by carlo         ########   odam.nl         */
+/*   Updated: 2023/12/08 15:15:02 by carlo         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,8 +192,6 @@ void	handleGET(connection *conn, HttpRequest& request, std::string location, std
 		else	
 			fullPath = root + "/" + contentType + location;
 
-		//***test print		
-			std::cout << "full path: " << fullPath << std::endl;
 		std::ifstream f(fullPath);
 
 		if (f.good())
