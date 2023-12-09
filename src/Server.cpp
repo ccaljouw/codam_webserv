@@ -246,15 +246,24 @@ struct LocationSettings*	Server::get_locationSettings(std::string host, std::str
 	// std::cout << "getting location for host: " << host << " and location: " << location << std::endl;
 	struct ServerSettings		*hostSettings = get_hostSettings(host);
 	struct LocationSettings		*locationSettings = nullptr;
-	std::string					find = location;
+	std::string					toFind = location;
 
-	while (!find.empty())
+	while (!toFind.empty())
 	{
 		// find location
 		for (auto& loc : hostSettings->_locations) {
-			if (loc->_locationId == find) {
+			if (loc->_locationId == toFind) {
 				locationSettings = loc;
 				break;
+			}
+			else {
+				size_t pos = toFind.find('.');
+				if (pos != toFind.npos) {
+					if (loc->_locationId.substr(1) == toFind.substr(pos)) {
+						locationSettings = loc;
+						break;
+					}
+				}
 			}
 		}
 
@@ -265,22 +274,22 @@ struct LocationSettings*	Server::get_locationSettings(std::string host, std::str
 			// std::cout << "root: " << locationSettings->_rootFolder << "\nuploadDir: " << locationSettings->_uploadDir << std::endl;
 			// std::cout << "index: " << locationSettings->_index << "\bbodySize: " << locationSettings->_maxBodySize << std::endl;
 			if (locationSettings->_rootFolder.empty())
-				locationSettings->_rootFolder = inherrit_rootFolder(hostSettings, find);
+				locationSettings->_rootFolder = inherrit_rootFolder(hostSettings, toFind);
 			if (locationSettings->_uploadDir.empty())
-				locationSettings->_uploadDir = inherrit_uploadDir(hostSettings, find);
+				locationSettings->_uploadDir = inherrit_uploadDir(hostSettings, toFind);
 			if (locationSettings->_index.empty())
-				locationSettings->_index = inherrit_index(hostSettings, find);
+				locationSettings->_index = inherrit_index(hostSettings, toFind);
 			if (!locationSettings->_maxBodySize)
-				locationSettings->_maxBodySize = inherrit_maxBodySize(hostSettings, find);
+				locationSettings->_maxBodySize = inherrit_maxBodySize(hostSettings, toFind);
 			if (locationSettings->_allowedMethods.empty())
-				locationSettings->_allowedMethods = inherrit_allowedMethods(hostSettings, find);
+				locationSettings->_allowedMethods = inherrit_allowedMethods(hostSettings, toFind);
 			// std::cout << "\nid: " << locationSettings->_locationId << "\nmethods: " << locationSettings->_allowedMethods.size() << std::endl;
 			// std::cout << "root: " << locationSettings->_rootFolder << "\nuploadDir: " << locationSettings->_uploadDir << std::endl;
 			// std::cout << "index: " << locationSettings->_index << "\bbodySize: " << locationSettings->_maxBodySize << std::endl;
 			break;
 		}
 		// find next bext match to check for location
-		find = findNextBestMatch(find);
+		toFind = findNextBestMatch(toFind);
 	}
 	if (!locationSettings)
 		std::cerr << RED << "Error\nincorrect configuration " << hostSettings->_serverName << RESET << std::endl;

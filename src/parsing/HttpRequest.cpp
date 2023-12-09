@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/09 12:42:13 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/09 22:09:33 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,15 +67,15 @@ HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri
 		// if (_settings->_allowedMethods.find(_method) == _settings->_allowedMethods.end())
 		// 	throw parsingException(405, "Method not Allowed");
 
-	// === set environ vars === 
-		std::string host = getHostname();
-		std::string location = uri.getPath();
-		addEnvironVar("REQUEST_METHOD", getMethod());
-		addEnvironVar("QUERY_STRING", getQueryString());
-		addEnvironVar("REMOTE_HOST", host);
-		addEnvironVar("BODY", getBody());
-		addEnvironVar("PATH_INFO", _server->get_rootFolder(host, location));
-		addEnvironVar("UPLOAD_DIR", _server->get_uploadDir(host, location));
+	// // === set environ vars === moved to handleCGI
+	// 	std::string host = getHostname();
+	// 	std::string location = uri.getPath();
+	// 	addEnvironVar("REQUEST_METHOD", getMethod());
+	// 	addEnvironVar("QUERY_STRING", getQueryString());
+	// 	addEnvironVar("REMOTE_HOST", host);
+	// 	addEnvironVar("BODY", getBody());
+	// 	addEnvironVar("PATH_INFO", _server->get_rootFolder(host, location));
+	// 	addEnvironVar("UPLOAD_DIR", _server->get_uploadDir(host, location));
 }
 //catch block	
 catch (const parsingException& exception) {

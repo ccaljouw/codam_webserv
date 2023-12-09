@@ -94,7 +94,7 @@ body_start = """<!DOCTYPE html>
 	</nav>
 	<div>
 		<h1>Delete File from upload folder</h2>
-		<form action="../cgi-bin/delete.sh" method="delete" accept-charset="utf-8">\n"""		
+		<form action="/delete.sh" method="delete" accept-charset="utf-8">\n"""		
 body_end = """
 		<br><input type="submit" value="Delete file"/><br><br>
 		</form>
