@@ -121,27 +121,170 @@ struct ServerSettings*		Server::get_hostSettings(std::string host) const {
 	return hostSettings;
 }
 
-struct LocationSettings*	Server::get_locationSettings(std::string host, std::string location) const {
-	// std::cout << "getting location for host: " << host << " and location: " << location << std::endl;
-	struct ServerSettings *hostSettings = get_hostSettings(host);
-	// std::cout << "found settings for host: " << hostSettings->_serverName << std::endl;
-	while (!location.empty())
+std::string	Server::inherrit_rootFolder(struct ServerSettings *hostSettings, std::string location) const {
+	std::string find = findNextBestMatch(location);
+	while (!find.empty())
 	{
+		// find location
 		for (auto& loc : hostSettings->_locations) {
-			// std::cout << "checking location: " << location << " with: " << loc->_locationId << std::endl;
-			if (loc->_locationId == location) {
-				// std::cout << "returning settings for: " <<  loc->_locationId << std::endl;
-				return (loc);
+			if (loc->_locationId == find) {
+				if (!loc->_rootFolder.empty())
+					return (loc->_rootFolder);
+				break;
 			}
 		}
-		size_t pos = location.rfind('/');
-		if (pos == 0 || pos > location.length())
-			location = "/";
-		else
-			location.resize(pos);
-	}	
-	std::cerr << RED << "Error\nincorrect configuration " << hostSettings->_serverName << RESET << std::endl;
-	return (nullptr);
+		// if no rootfolder set in location blocks
+		if (find == "/")
+			break;
+
+		// find next bext match to check for location
+		find = findNextBestMatch(find);
+	}
+	return hostSettings->_rootFolder;
+}
+
+std::string	Server::inherrit_uploadDir(struct ServerSettings *hostSettings, std::string location) const {
+	std::string find = findNextBestMatch(location);
+	while (!find.empty())
+	{
+		// find location
+		for (auto& loc : hostSettings->_locations) {
+			if (loc->_locationId == find) {
+				if (!loc->_uploadDir.empty())
+					return (loc->_uploadDir);
+				break;
+			}
+		}
+		// if no rootfolder set in location blocks
+		if (find == "/")
+			break;
+
+		// find next bext match to check for location
+		find = findNextBestMatch(find);
+	}
+	return hostSettings->_uploadDir;
+}
+
+
+std::string	Server::inherrit_index(struct ServerSettings *hostSettings, std::string location) const {
+	std::string find = findNextBestMatch(location);
+	while (!find.empty())
+	{
+		// find location
+		for (auto& loc : hostSettings->_locations) {
+			if (loc->_locationId == find) {
+				if (!loc->_index.empty())
+					return (loc->_index);
+				break;
+			}
+		}
+		// if no rootfolder set in location blocks
+		if (find == "/")
+			break;
+
+		// find next bext match to check for location
+		find = findNextBestMatch(find);
+	}
+	return hostSettings->_index;
+}
+
+size_t	Server::inherrit_maxBodySize(struct ServerSettings *hostSettings, std::string location) const {
+	std::string find = findNextBestMatch(location);
+	while (!find.empty())
+	{
+		// find location
+		for (auto& loc : hostSettings->_locations) {
+			if (loc->_locationId == find) {
+				if (loc->_maxBodySize)
+					return (loc->_maxBodySize);
+				break;
+			}
+		}
+		// if no rootfolder set in location blocks
+		if (find == "/")
+			break;
+
+		// find next bext match to check for location
+		find = findNextBestMatch(find);
+	}
+	return hostSettings->_maxBodySize;
+}
+
+std::set<std::string> Server::inherrit_allowedMethods(struct ServerSettings *hostSettings, std::string location) const {
+	std::string find = findNextBestMatch(location);
+	while (!find.empty())
+	{
+		// find location
+		for (auto& loc : hostSettings->_locations) {
+			if (loc->_locationId == find) {
+				if (!loc->_allowedMethods.empty())
+					return (loc->_allowedMethods);
+				break;
+			}
+		}
+		// if no rootfolder set in location blocks
+		if (find == "/") {
+			break;
+		}
+		// find next bext match to check for location
+		find = findNextBestMatch(find);
+	}
+	std::set<std::string> empty;
+	return empty;
+}
+
+std::string	Server::findNextBestMatch(std::string location) const {
+	size_t pos = location.rfind('/');
+	if (pos == 0 || pos > location.length())
+		location = "/";
+	else
+		location.resize(pos);
+	return location;
+}
+
+struct LocationSettings*	Server::get_locationSettings(std::string host, std::string location) const {
+	// std::cout << "getting location for host: " << host << " and location: " << location << std::endl;
+	struct ServerSettings		*hostSettings = get_hostSettings(host);
+	struct LocationSettings		*locationSettings = nullptr;
+	std::string					find = location;
+
+	while (!find.empty())
+	{
+		// find location
+		for (auto& loc : hostSettings->_locations) {
+			if (loc->_locationId == find) {
+				locationSettings = loc;
+				break;
+			}
+		}
+
+		// check for missing values that should be inherited
+		if (locationSettings) {
+			// std::cout << "\nlocation: " << location << std::endl;
+			// std::cout << "id: " << locationSettings->_locationId << "\nmethods: " << locationSettings->_allowedMethods.size() << std::endl;
+			// std::cout << "root: " << locationSettings->_rootFolder << "\nuploadDir: " << locationSettings->_uploadDir << std::endl;
+			// std::cout << "index: " << locationSettings->_index << "\bbodySize: " << locationSettings->_maxBodySize << std::endl;
+			if (locationSettings->_rootFolder.empty())
+				locationSettings->_rootFolder = inherrit_rootFolder(hostSettings, find);
+			if (locationSettings->_uploadDir.empty())
+				locationSettings->_uploadDir = inherrit_uploadDir(hostSettings, find);
+			if (locationSettings->_index.empty())
+				locationSettings->_index = inherrit_index(hostSettings, find);
+			if (!locationSettings->_maxBodySize)
+				locationSettings->_maxBodySize = inherrit_maxBodySize(hostSettings, find);
+			if (locationSettings->_allowedMethods.empty())
+				locationSettings->_allowedMethods = inherrit_allowedMethods(hostSettings, find);
+			// std::cout << "\nid: " << locationSettings->_locationId << "\nmethods: " << locationSettings->_allowedMethods.size() << std::endl;
+			// std::cout << "root: " << locationSettings->_rootFolder << "\nuploadDir: " << locationSettings->_uploadDir << std::endl;
+			// std::cout << "index: " << locationSettings->_index << "\bbodySize: " << locationSettings->_maxBodySize << std::endl;
+			break;
+		}
+		// find next bext match to check for location
+		find = findNextBestMatch(find);
+	}
+	if (!locationSettings)
+		std::cerr << RED << "Error\nincorrect configuration " << hostSettings->_serverName << RESET << std::endl;
+	return locationSettings;
 }
 
 std::string	Server::get_serverName(std::string host) const { 
@@ -166,14 +309,9 @@ size_t	Server::get_maxBodySize(std::string host) const {
 
 std::string	Server::get_index(std::string host, std::string location) const {
 	struct LocationSettings* settings = get_locationSettings(host, location);
-	if (settings) {
-		// std::cout << "sending location: " << settings->_index << std::endl;
+	if (settings)
 		return settings->_index;
-	}
-	else {
-		// std::cout << "sending empty location" << std::endl;
-		return "";
-	}
+	return "";
 }
 
 bool Server::get_dirListing(std::string host, std::string location) const {
@@ -186,7 +324,7 @@ bool Server::get_dirListing(std::string host, std::string location) const {
 
 std::map<int, std::string>	Server::get_redirect(std::string host, std::string location) const {
 	struct LocationSettings* settings = get_locationSettings(host, location);
-	if (settings)
+	if (settings && settings->_locationId == location)
 		return settings->_redirect;
 	else {
 		// std::cout << "sending empty redirect" << std::endl;
@@ -196,33 +334,24 @@ std::map<int, std::string>	Server::get_redirect(std::string host, std::string lo
 }
 
 std::string	Server::get_rootFolder(std::string host, std::string location) const {
-	std::string root;
 	struct LocationSettings* settings = get_locationSettings(host, location);
 	if (settings)
-		root = settings->_rootFolder;
-	if (root.empty())
-		root = get_rootFolder(host);
-	return root;
+		return settings->_rootFolder;
+	return "";
 }
 
 size_t	Server::get_maxBodySize(std::string host, std::string location) const {
-	size_t size;
 	struct LocationSettings* settings = get_locationSettings(host, location);
 	if (settings)
-		size = settings->_maxBodySize;
-	if (size == 0)
-		size = get_maxBodySize(host);
-	return size;
+		return settings->_maxBodySize;
+	return 0;
 }
 
 std::string	Server::get_uploadDir(std::string host, std::string location) const {
-	std::string dir;
 	struct LocationSettings* settings = get_locationSettings(host, location);
 	if (settings)
-		dir = settings->_uploadDir;
-	if (dir.empty())
-		dir = get_uploadDir(host);
-	return dir;
+		return settings->_uploadDir;
+	return "";
 }
 
 std::set<std::string> Server::get_allowedMethods(std::string host, std::string location) const {
@@ -230,7 +359,6 @@ std::set<std::string> Server::get_allowedMethods(std::string host, std::string l
 	if (settings)
 		return settings->_allowedMethods;
 	else {
-		// std::cout << "sending empty set of methods" << std::endl;
 		std::set<std::string> empty;
 		return empty;
 	}

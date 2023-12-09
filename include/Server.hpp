@@ -40,13 +40,9 @@ class Server
 
 		// ============= getters ================
 		uint16_t							get_port(void) const;
-		int									get_FD() const;
-		struct sockaddr_in					get_serverAddr() const;
 		double								get_timeout() const;
 		int									get_maxNrOfRequests() const;
 		std::map<std::string, int>			get_knownClientIds() const;
-		std::list<struct ServerSettings *>	get_settings() const;
-		struct connection*					get_connection() const;
 
 		std::map<int, std::string>*			get_errorPages(std::string host) const;
 		
@@ -75,13 +71,24 @@ class Server
 	
 	private:
 		
+		int									get_FD() const;
+		struct sockaddr_in					get_serverAddr() const;
+		struct connection*					get_connection() const;
+		std::list<struct ServerSettings *>	get_settings() const;
 		struct ServerSettings*				get_hostSettings(std::string host) const;
 		std::string							get_serverName(std::string host) const;
 		size_t								get_maxBodySize(std::string host) const;
-		
-		struct LocationSettings*			get_locationSettings(std::string host, std::string location) const;
 		std::string							get_rootFolder(std::string host) const;
 		std::string							get_uploadDir(std::string host) const;
+		
+		struct LocationSettings*			get_locationSettings(std::string host, std::string location) const;
+		
+		std::string							inherrit_rootFolder(struct ServerSettings *hostSettings, std::string location) const;
+		std::string							inherrit_uploadDir(struct ServerSettings *hostSettings, std::string location) const;
+		std::set<std::string>				inherrit_allowedMethods(struct ServerSettings *hostSettings, std::string location) const;
+		std::string							inherrit_index(struct ServerSettings *hostSettings, std::string location) const;
+		size_t								inherrit_maxBodySize(struct ServerSettings *hostSettings, std::string location) const;
+		std::string							findNextBestMatch(std::string location) const;
 
 		int 								_fd;
 		struct sockaddr_in					_serverAddr;
