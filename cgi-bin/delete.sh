@@ -7,7 +7,7 @@ dir=""
 
 
 # checks if the query string is empty and if no argument was given
-if [[ -z "$QUERY_STRING"  && -z "$1" ]]
+if [ -z "$QUERY_STRING" ]  && [ -z "$1" ]
 then
 	message="No file specified"
 	status="400"
@@ -29,7 +29,7 @@ else
 fi
 
 # checks if the server sent the upload directory
-if [[ -z "$status" && -z "$UPLOAD_DIR" ]]
+if [ -z "$status" ] && [ -z "$UPLOAD_DIR" ]
 then
 	message="Internal Server Error"
 	status="500"
