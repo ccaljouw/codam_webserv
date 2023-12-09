@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/09 12:38:36 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/09 14:40:00 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,20 +22,16 @@ std::string	getHandler(connection *conn, HttpRequest& request) {
 	std::string location 	= request.uri.getPath();
 	std::cout << "method: " << method << " host: " << host << " location: " << location << std::endl;
 	
-	// std::cout << "in getHandler:" << "\tfd = " << conn->fd << std::endl;
-	// dirListing: only if specified for specific location
-	// allowd methods: best match
-	// index: best match
-	// root: best match
-	// maxBodySize: best match
 	if (!conn->server->get_redirect(host, location).empty())
 		return "REDIRECT";
 	//check allowed methods
 	std::set<std::string> allowedMethods = conn->server->get_allowedMethods(host, location);
 	if (allowedMethods.find(method) == allowedMethods.end())
 		throw HttpRequest::parsingException(405, "Method not Allowed");
-	if (request.uri.isDir())
-		return "DIRLISTTING";
+	if (request.uri.isDir()) {
+		// std::cout << "going to handleDIR" << std::endl;
+		return "DIRLISTING"; 
+	}
 	if (request.uri.getExecutable() == "cgi-bin") {
 		//todo: (check maxBodySize);
 		// std::cout << "going to handleCGI" << std::endl;
