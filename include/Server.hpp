@@ -31,12 +31,12 @@ class Server
 		~Server();
 
 		// ============= methods ================
-		int		assign_name();
-		int		set_to_listen(int backlog);
-		int		initServer(struct ServerSettings *settings, int epollFd, double timeout, int maxNrOfRequests);
-		int		checkClientId(std::string id, struct connection* conn);
-		void	addClientId(std::string newCookieValue);
-		void	addSubDomain(struct ServerSettings *settings);
+		int									assign_name();
+		int									set_to_listen(int backlog);
+		int									initServer(struct ServerSettings *settings, int epollFd, double timeout, int maxNrOfRequests);
+		int									checkClientId(std::string id, struct connection* conn);
+		void								addClientId(std::string newCookieValue);
+		void								addSubDomain(struct ServerSettings *settings);
 
 		// ============= getters ================
 		uint16_t							get_port(void) const;
@@ -46,13 +46,13 @@ class Server
 
 		std::map<int, std::string>*			get_errorPages(std::string host) const;
 		
-		std::string					get_index(std::string host, std::string location) const;
-		bool						get_dirListing(std::string host, std::string location) const;
-		std::map<int, std::string>	get_redirect(std::string host, std::string location) const;
-		std::string					get_rootFolder(std::string host, std::string location) const;
-		size_t						get_maxBodySize(std::string host, std::string location) const;
-		std::string					get_uploadDir(std::string host, std::string location) const;
-		std::set<std::string>		get_allowedMethods(std::string host, std::string location) const;
+		std::string							get_index(std::string host, std::string location) const;
+		bool								get_dirListing(std::string host, std::string location) const;
+		std::map<int, std::string>			get_redirect(std::string host, std::string location) const;
+		std::string							get_rootFolder(std::string host, std::string location) const;
+		size_t								get_maxBodySize(std::string host, std::string location) const;
+		std::string							get_uploadDir(std::string host, std::string location) const;
+		std::set<std::string>				get_allowedMethods(std::string host, std::string location) const;
 		
 		// ============= setters ================
 		void	set_connection(struct connection *conn);
@@ -66,11 +66,11 @@ class Server
 				const char*	what() const noexcept override		{	return _message.c_str();	}
 
 			private:
-				std::string						_message;
+				std::string					_message;
 		};
 	
 	private:
-		
+
 		int									get_FD() const;
 		struct sockaddr_in					get_serverAddr() const;
 		struct connection*					get_connection() const;

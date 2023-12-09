@@ -6,11 +6,13 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/26 18:20:33 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/12/07 17:56:05 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/12/09 21:43:47 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
+
+static bool	isvalid(char c) { return (std::isalnum(c) || c == '_' || c == '.'); }
 
 int	parseServer(std::string line, struct ServerSettings *server)
 {
@@ -21,7 +23,7 @@ int	parseServer(std::string line, struct ServerSettings *server)
 	
 	if (key == "server_name")
 	{
-		if (value.find_first_not_of(std::string(LETTERS) + std::string(NUMBERS) + std::string("_")) != std::string::npos)
+		if (!std::all_of(value.begin(), value.end(), ::isvalid))
 			return 1;
 		server->_serverName = value;
 	}
@@ -35,25 +37,27 @@ int	parseServer(std::string line, struct ServerSettings *server)
 		server->_uploadDir = value;
 	else if (key == "listen")
 	{
-		if (value.length() >= 10 || value.find_first_not_of(NUMBERS) != std::string::npos)
+		if (value.length() >= 10 || !std::all_of(value.begin(), value.end(), ::isdigit))
 			return 1;
-		try { server->_port = std::stol(value); }
-		catch (const std::exception& e)
-		{ return 1; }
+		try {
+			server->_port = std::stol(value); }
+		catch (const std::exception& e) {
+			return 1; }
 	}
 	else if (key == "index")
 	{
-		if (value.find_first_not_of(std::string(LETTERS) + std::string(NUMBERS) + std::string("_/.")) != std::string::npos)
+		if (!std::all_of(value.begin(), value.end(), ::isvalid))
 			return 1;
 		server->_index = value;
 	}
 	else if (key == "client_max_body_size")
 	{
-		if (value.length() >= 10 || value.find_first_not_of(NUMBERS) != std::string::npos)
+		if (value.length() >= 10 || !std::all_of(value.begin(), value.end(), ::isdigit))
 			return 1;
-		try { server->_maxBodySize = std::stol(value); }
-		catch (const std::exception& e)
-		{ return 1; }
+		try {
+			server->_maxBodySize = std::stol(value); }
+		catch (const std::exception& e) {
+			return 1; }
 	}
 	else
 		return 1;
@@ -82,7 +86,7 @@ int	parseLocation(std::string line, struct LocationSettings *location)
 	}
 	else if (key == "index")
 	{
-		if (value.find_first_not_of(std::string(LETTERS) + std::string(NUMBERS) + std::string("_/.")) != std::string::npos)
+		if (!std::all_of(value.begin(), value.end(), ::isvalid))
 			return 1;
 		location->_index = value;
 	}
@@ -97,28 +101,27 @@ int	parseLocation(std::string line, struct LocationSettings *location)
 	}
 	else if (key == "client_max_body_size")
 	{
-		if (value.length() >= 10 || value.find_first_not_of(NUMBERS) != std::string::npos)
+		if (value.length() >= 10 || !std::all_of(value.begin(), value.end(), ::isdigit))
 			return 1;
-		try { location->_maxBodySize = std::stol(value); }
-		catch (const std::exception& e)
-		{ return 1; }
+		try {
+			location->_maxBodySize = std::stol(value); }
+		catch (const std::exception& e) {
+			return 1; }
 	}
 	else if (key == "return")
 	{
 		std::string code = value.substr(0, value.find_first_of(WHITE_SPACE));
 		std::string uri = value.substr(value.find_first_of(WHITE_SPACE) + 1);
 		
-		if (code.empty() || uri.empty() || uri.find_first_of(WHITE_SPACE) != std::string::npos)
+		if (code.empty() || uri.empty() || std::all_of(uri.begin(), uri.end(), ::isspace))
 			return 1;
-		if (code.length() != 3 || code.find_first_not_of(NUMBERS) != std::string::npos)
+		if (code.length() != 3 || !std::all_of(code.begin(), code.end(), ::isdigit))
 			return 1;
-
 		try {
 			int errcode = std::stoi(code);
-			location->_redirect[errcode] = uri;
-		}
-		catch (const std::exception& e)
-		{ return 1; }
+			location->_redirect[errcode] = uri; }
+		catch (const std::exception& e) {
+			return 1; }
 	}
 	else
 		return 1;
@@ -130,17 +133,15 @@ int	parseErrorPage(std::string line, std::map<int, std::string> *errorPages)
 	std::string key = line.substr(0, line.find_first_of(WHITE_SPACE));
 	std::string value = line.substr(line.find_first_of(WHITE_SPACE) + 1);
 
-	if (key.empty() || value.empty() || value.find_first_of(WHITE_SPACE) != std::string::npos)
+	if (key.empty() || value.empty() || std::all_of(value.begin(), value.end(), ::isspace))
 		return 1;
-	if (key.length() != 3 || key.find_first_not_of(NUMBERS) != std::string::npos || value[0] != '/')
+	if (key.length() != 3 || !std::all_of(key.begin(), key.end(), ::isdigit) || value[0] != '/')
 		return 1;
-	
 	try {
 		int code = std::stoi(key);
-		(*errorPages)[code] = value;
-	}
-	catch (const std::exception& e)
-	{ return 1; }
+		(*errorPages)[code] = value; }
+	catch (const std::exception& e) {
+		return 1; }
 
 	return 0;
 }
@@ -191,3 +192,4 @@ void	deleteBlock(const configBlock& currentBlock, void *currentBlockPtr)
 	}
 	currentBlockPtr = nullptr;
 }
+

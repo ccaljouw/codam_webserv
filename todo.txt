@@ -24,7 +24,6 @@ TODO:
 
 - Research how to test
 
-- change scripts with root -Bruno
 - cookie script -Bruno
 
 - cleanup includes
@@ -35,6 +34,7 @@ DONE:
 - Error pages - add check on defined error pages for server 
 - change scripts with root -Bruno
 - add PID to connection (Bruno)
+- change scripts with root -Bruno
 
 ERROR CODES TO CONSIDER:
 408 Request Timeout

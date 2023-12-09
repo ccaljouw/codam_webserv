@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/09 14:02:40 by bfranco       #+#    #+#                 */
-/*   Updated: 2023/12/05 06:41:40 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/09 21:33:16 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 
 #include "defines.hpp"
 #include <unistd.h>
+#include <algorithm>
 #include <fstream>
 
 enum configBlock
@@ -29,6 +30,12 @@ enum configBlock
 class Config
 {
 	public:
+		Config(int argc, char **argv);
+		~Config();
+		Config( const Config& src );
+		Config&	operator=( Config const & rhs );
+
+	// ============= exception ================
 		class NoSuchFileException : public std::exception
 		{
 			virtual const char *	what() const throw() {
@@ -61,15 +68,13 @@ class Config
 					return (_msg.c_str());
 				}
 		};
-	
-		Config(int argc, char **argv);
-		~Config();
-		Config( const Config& src );
-		Config&	operator=( Config const & rhs );
-		
+
+	// ============= getters ================
 		std::list<struct ServerSettings*>	getServers() const;
 		std::map<int, std::string>*			getErrorPages() const;
 		bool								getError() const;
+
+	// ============= testing ================
 		void								printServers() const;
 	
 	private:
@@ -78,17 +83,19 @@ class Config
 		bool								_error;
 		unsigned int						_lineNr;
 
+	// ============= methods =================
 		void								_readConfigFile();
 		int									_handleBlockEnd(configBlock *currentBlock, void *currentBlockPtr);
 		int									_handleBlockContent(std::string line, configBlock currentBlock, void *currentBlockPtr);
 		void								_checkMandatoryParameters(const struct ServerSettings *server);
 };
 
-int		parseServer(std::string line, struct ServerSettings *server);
-int		parseLocation(std::string line, struct LocationSettings *location);
-int		parseErrorPage(std::string line, std::map<int, std::string> *errorPages);
-void	deleteBlock(const configBlock& currentBlock, void *currentBlockPtr);
-void	*initServerBlock();
-void	*initLocationBlock(std::string line);
+// ============= utils =================
+int											parseServer(std::string line, struct ServerSettings *server);
+int											parseLocation(std::string line, struct LocationSettings *location);
+int											parseErrorPage(std::string line, std::map<int, std::string> *errorPages);
+void										deleteBlock(const configBlock& currentBlock, void *currentBlockPtr);
+void										*initServerBlock();
+void										*initLocationBlock(std::string line);
 
 #endif

@@ -25,10 +25,6 @@
 #define CGI_TIMEOUT 3
 #define	MAX_NR_REQUESTS 50
 
-// config
-#define LETTERS "abcdefghijklmnopqrstuvwxyz" //todo: change to standard c++ function?
-#define NUMBERS "0123456789"				 //todo: change to standard c++ function?
-
 //colors
 #define RESET	"\033[0m"
 #define RED		"\033[31;1m"
@@ -37,7 +33,6 @@
 #define BLUE	"\033[34;1m"
 #define PURPLE	"\033[35;1m"
 #define CYAN	"\033[36;1m"
-
 
 enum	states {
 	LISTENING,
@@ -51,16 +46,16 @@ enum	states {
 class Server;
 struct connection
 {
-	int							fd;
-	int							cgiFd;
-	int							nr_of_requests;
-	bool						close_after_response;
-	pid_t						cgiPID; 
-	states						state;
-	Server						*server;
-	std::string					request;
-	std::string					response;
-	std::time_t					time_last_request;
+	int										fd;
+	int										cgiFd;
+	int										nr_of_requests;
+	bool									close_after_response;
+	pid_t									cgiPID; 
+	states									state;
+	Server									*server;
+	std::string								request;
+	std::string								response;
+	std::time_t								time_last_request;
 };
 
 struct LocationSettings
@@ -101,7 +96,6 @@ const std::map<std::string, std::string> acceptedExtensions = {
 };
 
 //define binary extensions for write
-const std::vector<std::string> binaryExtensions = { 	".png", ".ico" , ".bmp", ".jpg", ".jpeg", ".gif", ",bmp" };
+const std::vector<std::string> binaryExtensions = {	".png", ".ico" , ".bmp", ".jpg", ".jpeg", ".gif", ",bmp"	};
 
 #endif
-

@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:12:15 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/08 20:10:56 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/09 21:26:14 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ class Uri {
 		std::string							getPathInfo(void) const;
 		bool								isDir(void);
 
-		
 		// ========== Setters ===========
 		void								mapQueries(void);
 		void								setExtension(void);

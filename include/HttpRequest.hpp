@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/09 12:16:08 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/09 21:25:28 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ class HttpRequest {
 		Header*									headers;
 
 	// ============= Getters ================
-		
 		std::string								getHostname(void) const;
 		std::string								getMethod(void) const;
 		std::string								getProtocol(void) const;
