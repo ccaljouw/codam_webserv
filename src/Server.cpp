@@ -122,12 +122,17 @@ struct ServerSettings*		Server::get_hostSettings(std::string host) const {
 }
 
 struct LocationSettings*	Server::get_locationSettings(std::string host, std::string location) const {
+	// std::cout << "getting location for host: " << host << " and location: " << location << std::endl;
 	struct ServerSettings *hostSettings = get_hostSettings(host);
+	// std::cout << "found settings for host: " << hostSettings->_serverName << std::endl;
 	while (!location.empty())
 	{
 		for (auto& loc : hostSettings->_locations) {
-			if (loc->_locationId == location) 
+			// std::cout << "checking location: " << location << " with: " << loc->_locationId << std::endl;
+			if (loc->_locationId == location) {
+				// std::cout << "returning settings for: " <<  loc->_locationId << std::endl;
 				return (loc);
+			}
 		}
 		size_t pos = location.rfind('/');
 		if (pos == 0 || pos > location.length())
@@ -161,7 +166,7 @@ size_t	Server::get_maxBodySize(std::string host) const {
 
 std::string	Server::get_index(std::string host, std::string location) const {
 	struct LocationSettings* settings = get_locationSettings(host, location);
-	if (settings && settings->_locationId == location) {
+	if (settings) {
 		// std::cout << "sending location: " << settings->_index << std::endl;
 		return settings->_index;
 	}
@@ -173,7 +178,7 @@ std::string	Server::get_index(std::string host, std::string location) const {
 
 bool Server::get_dirListing(std::string host, std::string location) const {
 	struct LocationSettings* settings = get_locationSettings(host, location);
-	if (settings)
+	if (settings && settings->_locationId == location)
 		return settings->_dirListing;
 	else
 		return false;
@@ -218,6 +223,17 @@ std::string	Server::get_uploadDir(std::string host, std::string location) const 
 	if (dir.empty())
 		dir = get_uploadDir(host);
 	return dir;
+}
+
+std::set<std::string> Server::get_allowedMethods(std::string host, std::string location) const {
+	struct LocationSettings* settings = get_locationSettings(host, location);
+	if (settings)
+		return settings->_allowedMethods;
+	else {
+		// std::cout << "sending empty set of methods" << std::endl;
+		std::set<std::string> empty;
+		return empty;
+	}
 }
 
 // ============= setters ================

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   cookieGen.cpp                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ccaljouw <ccaljouw@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/24 08:20:32 by carlo             #+#    #+#             */
-/*   Updated: 2023/12/07 14:45:58 by ccaljouw         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   cookieGen.cpp                                      :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2023/11/24 08:20:32 by carlo         #+#    #+#                 */
+/*   Updated: 2023/12/09 12:47:14 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ std::string		checkAndSetCookie(connection* conn, HttpRequest& request) {
 	std::string	cookieName;
 	std::string	cookieId;
 	std::string	cookieTrigger = "cookie";
-	std::string host = conn->server->get_serverName(request.headers->getHeaderValue("host"));
-	std::string cookieValue	= request.headers->getHeaderValue("cookie"); //returns the value part of the cookie
+	std::string host = request.getHostname();
+	std::string cookieValue	= request.headers->getHeaderValue("cookie");
 
 	size_t ourCookieStart = cookieValue.find("name=" + host);
 	if (ourCookieStart != 0 && ourCookieStart != std::string::npos)

@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/09 11:24:32 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/09 12:42:13 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,8 @@ HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri
 		std::string HeaderBlock = request.substr(headersStart, headersEnd - headersStart);
 		headers = new Header(HeaderBlock);
 		fillStandardHeaders();
-
+		_hostname = headers->getHeaderValue("host").substr(0, headers->getHeaderValue("host").find(":"));
+		
 	// === parse body ===
 		_body = request.substr(headersEnd + 4);
 
@@ -67,7 +68,7 @@ HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri
 		// 	throw parsingException(405, "Method not Allowed");
 
 	// === set environ vars === 
-		std::string host = headers->getHeaderValue("host");
+		std::string host = getHostname();
 		std::string location = uri.getPath();
 		addEnvironVar("REQUEST_METHOD", getMethod());
 		addEnvironVar("QUERY_STRING", getQueryString());
@@ -98,6 +99,7 @@ const HttpRequest& HttpRequest::operator=(const HttpRequest& rhs) {
 		_server			= rhs._server;
 		_environVars.clear();
 		_environVars	= rhs._environVars;
+		_hostname		= rhs._hostname;
 		// _settings		= rhs._settings;
 		
 	}
@@ -111,10 +113,7 @@ HttpRequest::~HttpRequest() {
 
 
 //========= Getters ===============================
-// const Server*				HttpRequest::getServer(void) const 			{	return _server;								}
-// std::set<std::string>		HttpRequest::getAllowedMethods(void) const	{	return (this->_settings->_allowedMethods);	}
-// std::string					HttpRequest::getLocationId(void) const		{	return (this->_settings->_locationId);		}
-// std::map<int, std::string>	HttpRequest::getRedirect(void) const		{	return (this->_settings->_redirect);		}
+std::string					HttpRequest::getHostname(void) const		{	return _hostname;							}
 std::string					HttpRequest::getMethod(void) const			{	return _method;								}
 std::string					HttpRequest::getProtocol(void) const		{	return _protocol;							}
 std::string					HttpRequest::getBody(void) const			{	return _body;								}
@@ -183,7 +182,7 @@ void	HttpRequest::fillStandardHeaders() {
 	std::string timeout = std::to_string(_server->get_timeout());
 	// headers->addHeader("Keep-Alive", "timeout=" + timeout + ", max=3"); //todo from config
 	headers->addHeader("Date", getTimeStamp());
-	headers->addHeader("Server", _server->get_serverName(uri.getHost()));
+	headers->addHeader("Server", getHostname());
 	headers->addHeader("Last-Modified", getTimeStamp());
 	headers->addHeader("Content-Length", std::to_string(_body.length()));
 }

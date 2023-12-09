@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/09 11:27:01 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/09 12:38:36 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,24 +18,33 @@ using RequestHandler = std::function<void(int, connection*, HttpRequest&)>;
 
 std::string	getHandler(connection *conn, HttpRequest& request) {
 	std::string	method		= request.getMethod();
+	std::string host 		= request.getHostname() ;
+	std::string location 	= request.uri.getPath();
+	std::cout << "method: " << method << " host: " << host << " location: " << location << std::endl;
 	
+	// std::cout << "in getHandler:" << "\tfd = " << conn->fd << std::endl;
 	// dirListing: only if specified for specific location
 	// allowd methods: best match
 	// index: best match
 	// root: best match
 	// maxBodySize: best match
-	if (!conn->server->get_redirect(request.uri.getHost(), request.uri.getPath()).empty())
+	if (!conn->server->get_redirect(host, location).empty())
 		return "REDIRECT";
 	//check allowed methods
-	// const struct LocationSettings settings = conn->server->get_locationSettings(); // change to get allowd methods
-	// if (settings->_allowedMethods.find(method) == settings->_allowedMethods.end())
-	// 	throw HttpRequest::parsingException(405, "Method not Allowed");
+	std::set<std::string> allowedMethods = conn->server->get_allowedMethods(host, location);
+	if (allowedMethods.find(method) == allowedMethods.end())
+		throw HttpRequest::parsingException(405, "Method not Allowed");
 	if (request.uri.isDir())
 		return "DIRLISTTING";
-	if (request.uri.getExecutable() == "cgi-bin") //todo: (check maxBodySize);
+	if (request.uri.getExecutable() == "cgi-bin") {
+		//todo: (check maxBodySize);
+		// std::cout << "going to handleCGI" << std::endl;
 		return "CGI";
-	if (method == "GET")
+	}
+	if (method == "GET") {
+		// std::cout << "going to handleGET" << std::endl;
 		return "GET";
+	}
 	if (method == "POST")
 		return "POST";
 	if (method == "DELETE")
@@ -60,8 +69,9 @@ void	handleRequest(int epollFd, connection *conn) {
 		if (request.getRequestStatus() != 200)
 			throw HttpRequest::parsingException(request.getRequestStatus(), "Parsing error");
 		auto it = methodHandlers.find(getHandler(conn, request));
-		if (it != methodHandlers.end())
+		if (it != methodHandlers.end()) {
 			it->second(epollFd, conn, request);
+		}
 		else
 			throw HttpRequest::parsingException(405, "METHOD or Extension not supported");
 
@@ -69,6 +79,7 @@ void	handleRequest(int epollFd, connection *conn) {
 		std::cerr << RED << "Error: " + std::to_string(exception.getErrorCode()) << " " << exception.what() << RESET << std::endl;
 		setErrorResponse(conn, exception.getErrorCode());
 	}
+	// std::cout << "end of handleRequest" << std::endl;
 }
 
 void	handleRedirect(int epollFd, connection *conn, HttpRequest& request) {
@@ -166,7 +177,7 @@ void	handleGET(int epollfd, connection *conn, HttpRequest& request) {
 	if (!contentType.empty()) {
 		
 		std::string fullPath;
-		std::string host			= request.uri.getHost();
+		std::string host			= request.getHostname();
 		std::string location		= request.uri.getPath();
 		
 		//check if target exists

@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 10:27:35 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/09 11:24:49 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/09 12:16:08 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,7 @@ class HttpRequest {
 
 	// ============= Getters ================
 		
-		// std::set<std::string>					getAllowedMethods(void) const;
-		// std::string								getLocationId(void) const;
-		// std::map<int, std::string>				getRedirect(void) const;
-		// const Server*							getServer(void) const;
-
+		std::string								getHostname(void) const;
 		std::string								getMethod(void) const;
 		std::string								getProtocol(void) const;
 		std::string								getBody(void) const;
@@ -76,6 +72,7 @@ class HttpRequest {
 		std::string								_body;
 		int										_requestStatus;
 		const Server*							_server;
+		std::string								_hostname;
 		// const struct LocationSettings*			_settings;
 };
 
