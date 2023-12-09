@@ -20,7 +20,6 @@ Content-Length: $content_length\r
 Content-type: text/html; charset=utf-8\r
 Date: $date\r
 Last-Modified: $date\r
-Connection: close\r
 Server: $SERVER\r\n\r"
 
 echo "$header"

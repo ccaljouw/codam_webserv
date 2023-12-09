@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/08 23:38:28 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/09 11:27:01 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,40 +17,45 @@
 using RequestHandler = std::function<void(int, connection*, HttpRequest&)>;
 
 std::string	getHandler(connection *conn, HttpRequest& request) {
-	std::string	host		= request.uri.getHost();
-	std::string location	= request.uri.getPath();
+	std::string	method		= request.getMethod();
 	
-	std::map<int, std::string> redirect_location_header = conn->server->get_redirect(host, location);
-	if (!redirect_location_header.empty())
+	// dirListing: only if specified for specific location
+	// allowd methods: best match
+	// index: best match
+	// root: best match
+	// maxBodySize: best match
+	if (!conn->server->get_redirect(request.uri.getHost(), request.uri.getPath()).empty())
 		return "REDIRECT";
+	//check allowed methods
+	// const struct LocationSettings settings = conn->server->get_locationSettings(); // change to get allowd methods
+	// if (settings->_allowedMethods.find(method) == settings->_allowedMethods.end())
+	// 	throw HttpRequest::parsingException(405, "Method not Allowed");
 	if (request.uri.isDir())
 		return "DIRLISTTING";
-	if (request.uri.getExecutable() == "cgi-bin")
+	if (request.uri.getExecutable() == "cgi-bin") //todo: (check maxBodySize);
 		return "CGI";
-	if (request.getMethod() == "GET")
+	if (method == "GET")
 		return "GET";
-	if (request.getMethod() == "POST")
+	if (method == "POST")
 		return "POST";
-	if (request.getMethod() == "DELETE")
+	if (method == "DELETE")
 		return "DELETE";
+	throw HttpRequest::parsingException(501, "Method not implemented"); //testen
 	return "";
 }
 
 void	handleRequest(int epollFd, connection *conn) {
 
-	const std::map<std::string, RequestHandler> methodHandlers = {
-    {"GET", handleGET},
-    {"POST", handlePOST},
-    {"DELETE", handleDELETE},
-	{"REDIRECT", handleRedirect},
-	{"DIRLISTING", handleDIR},
-	{"CGI", handleCGI},
-	};
-	
 	// std::cout << "in handleRequest:" << "\tfd = " << conn->fd << std::endl; //for testing
-	
+	const std::map<std::string, RequestHandler> methodHandlers = {
+		{"GET", handleGET},
+		{"POST", handlePOST},
+		{"DELETE", handleDELETE},
+		{"REDIRECT", handleRedirect},
+		{"DIRLISTING", handleDIR},
+		{"CGI", handleCGI},
+	};
 	try {
-		// Process the request data
 		HttpRequest request(conn->request, conn->server);
 		if (request.getRequestStatus() != 200)
 			throw HttpRequest::parsingException(request.getRequestStatus(), "Parsing error");
@@ -142,8 +147,10 @@ void	handleCGI(int epollFd, connection *conn, HttpRequest& request) {
 		throw HttpRequest::parsingException(400, "Bad request");
 
 	//case error in cgi handler
-	if (cgiHandler(request, conn, epollFd) == 1 ) 
+	if (cgiHandler(request, conn, epollFd) == 1 ) {
 		setErrorResponse(conn, 500);	
+		closeCGIpipe(epollFd, conn);
+	}
 	else {
 		conn->state = IN_CGI;
 	}
@@ -154,13 +161,13 @@ void	handleGET(int epollfd, connection *conn, HttpRequest& request) {
 	//**testprint**
 	// std::cout << "\nin GET handler\n" << std::endl;
 	(void)epollfd;
+	std::string	 cookieValue = checkAndSetCookie(conn, request);
 	std::string contentType		= request.uri.getMime(request.uri.getExtension());
 	if (!contentType.empty()) {
 		
 		std::string fullPath;
 		std::string host			= request.uri.getHost();
 		std::string location		= request.uri.getPath();
-		std::string cookieValue 	= checkAndSetCookie(conn, request);
 		
 		//check if target exists
 		std::string pathToCheck = request.uri.getPath();
@@ -168,7 +175,7 @@ void	handleGET(int epollfd, connection *conn, HttpRequest& request) {
         	pathToCheck.erase(0, 1);
 
 		if (validPath(pathToCheck))
-			fullPath = pathToCheck;
+			fullPath = pathToCheck; // does not work for cookies
 		else {
 			//check cookie.png
 			location = replaceCookiePng(location, cookieValue);

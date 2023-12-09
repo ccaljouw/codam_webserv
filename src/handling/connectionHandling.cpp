@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/08 09:53:27 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/08 23:42:15 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,11 +75,13 @@ void readCGI(int epollFd, connection *conn)
 	{
 		case -1:
 			std::cerr << RED << "Error\nproblem reading CGI" << RESET << std::endl;
+			closeCGIpipe(epollFd, conn);
 			setErrorResponse(conn, 500);
 			break;
 		case 0:
 			if (conn->response.empty()) {
 				std::cerr << RED << "Error\nnothing to read from CGI" << RESET << std::endl;
+				closeCGIpipe(epollFd, conn);
 				setErrorResponse(conn, 500);		
 			}
 			break;

@@ -88,7 +88,6 @@ Content-type: text/html; charset=utf-8\r
 Connection: close\r
 Date: {date}\r
 Last-Modified: {date}\r
-Connection: close\r
 Server: {os.environ.get("SERVER")}\r\n\r"""
 
 print(header)

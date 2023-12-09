@@ -61,6 +61,7 @@ class Server
 		std::string					get_rootFolder(std::string host, std::string location) const;
 		size_t						get_maxBodySize(std::string host, std::string location) const;
 		std::string					get_uploadDir(std::string host, std::string location) const;
+		std::set<std::string>		get_allowedMethods(std::string host, std::string location) const; //maken
 		
 		// ============= setters ================
 		void	set_connection(struct connection *conn);

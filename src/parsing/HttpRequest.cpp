@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/08 20:41:51 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/09 11:24:32 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 std::string getTimeStamp();
 
-HttpRequest::HttpRequest(const Server *server) : uri(), headers(), _method(), _protocol(), _environVars(), _body(), _requestStatus(200), _server(server), _settings()  {
+HttpRequest::HttpRequest(const Server *server) : uri(), headers(), _method(), _protocol(), _environVars(), _body(), _requestStatus(200), _server(server) {
 	headers = new Header();
 	fillStandardHeaders();
 }
@@ -29,16 +29,11 @@ HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri
 		if (RequestLineEnd == std::string::npos)
 			throw parsingException(400, "Bad request");
 			
-		std::string RequestLine = request.substr(0, RequestLineEnd);
-		
-		// std::cout << " request contructor" << std::endl;
-		std::stringstream RequestLineStream(RequestLine);
-		// if (!RequestLineStream.good())
-		// 	std::cout << "string stream error" << std::endl;
-		std::string tempUriString;
-		// std::cout << "before processing stream request contructor" << std::endl;
+		std::string 		RequestLine = request.substr(0, RequestLineEnd);		
+		std::stringstream	RequestLineStream(RequestLine);
+		std::string 		tempUriString;
 		RequestLineStream >> _method >> tempUriString >> _protocol;
-		// std::cout << "after processing stream request contructor" << std::endl;	
+
 		// === set uri object === 
 		uri = Uri(tempUriString);
 		
@@ -46,33 +41,32 @@ HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri
 		if (_protocol != HTTP_PROTOCOL)
 			throw parsingException(505, "Version not supported");
 
-		
 	//  === parse headers ===
 		//define block of all headers
 		std::size_t headersStart = RequestLineEnd + 2;
 		std::size_t headersEnd = request.find("\r\n\r\n", headersStart);
 		if (headersEnd == std::string::npos)
 			throw parsingException(400, "Bad request");
-
 		std::string HeaderBlock = request.substr(headersStart, headersEnd - headersStart);
-
 		headers = new Header(HeaderBlock);
+		fillStandardHeaders();
 
 	// === parse body ===
 		_body = request.substr(headersEnd + 4);
 
-	// === fetch location specific config settings === 
-		_settings = _server->get_locationSettings(headers->getHeaderValue("host"), uri.getPath());
-		if (_settings == nullptr)
-			throw parsingException(500, "Bad server settings");
+	// === fetch location specific config settings ===  
+		// error not possible with config checks. Not sensible to store _settings 
+		// because some variables inherrit others do not
+		
+		// _settings = _server->get_locationSettings(headers->getHeaderValue("host"), uri.getPath());
+		// if (_settings == nullptr)
+		// 	throw parsingException(500, "Bad server settings");
 
-		fillStandardHeaders();
+	// === check allowd methods ===  moved to requestHandling 
+		// if (_settings->_allowedMethods.find(_method) == _settings->_allowedMethods.end())
+		// 	throw parsingException(405, "Method not Allowed");
 
-		// check allowed method
-		if (_settings->_allowedMethods.find(_method) == _settings->_allowedMethods.end())
-			throw parsingException(405, "Method not Allowed");
-
-	// === set environ vars ===
+	// === set environ vars === 
 		std::string host = headers->getHeaderValue("host");
 		std::string location = uri.getPath();
 		addEnvironVar("REQUEST_METHOD", getMethod());
@@ -104,7 +98,7 @@ const HttpRequest& HttpRequest::operator=(const HttpRequest& rhs) {
 		_server			= rhs._server;
 		_environVars.clear();
 		_environVars	= rhs._environVars;
-		_settings		= rhs._settings;
+		// _settings		= rhs._settings;
 		
 	}
 	return *this;
@@ -117,10 +111,10 @@ HttpRequest::~HttpRequest() {
 
 
 //========= Getters ===============================
-const Server*				HttpRequest::getServer(void) const 			{	return _server;								}
-std::set<std::string>		HttpRequest::getAllowedMethods(void) const	{	return (this->_settings->_allowedMethods);	}
-std::string					HttpRequest::getLocationId(void) const		{	return (this->_settings->_locationId);		}
-std::map<int, std::string>	HttpRequest::getRedirect(void) const		{	return (this->_settings->_redirect);		}
+// const Server*				HttpRequest::getServer(void) const 			{	return _server;								}
+// std::set<std::string>		HttpRequest::getAllowedMethods(void) const	{	return (this->_settings->_allowedMethods);	}
+// std::string					HttpRequest::getLocationId(void) const		{	return (this->_settings->_locationId);		}
+// std::map<int, std::string>	HttpRequest::getRedirect(void) const		{	return (this->_settings->_redirect);		}
 std::string					HttpRequest::getMethod(void) const			{	return _method;								}
 std::string					HttpRequest::getProtocol(void) const		{	return _protocol;							}
 std::string					HttpRequest::getBody(void) const			{	return _body;								}

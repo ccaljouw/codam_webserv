@@ -11,9 +11,7 @@
 #include <ctime>
 #include <iostream>
 #include <exception>
-// #include <cstdint> //@Carlo, deze moet je waarschijnlijk weer aan zetten, 
-					  //wil je me even laten weten waar deze include voor nodig is?
-
+#include <cstdint> 
 
 // HTTP
 #define LINE_END "\r\n"
