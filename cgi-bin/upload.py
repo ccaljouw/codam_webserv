@@ -53,7 +53,10 @@ def uploadFile(form) -> (int, str) :
 		return (500, "No file was uploaded!!!")
 
 # Get the return values from the function
-status, message =  uploadFile(form)
+if os.environ.get("REQUEST_METHOD") == "POST":
+	status, message =  uploadFile(form)
+else:
+	status, message = (405, "Method not allowed")
 
 # Get the current date and time in readable format
 x = datetime.datetime.now()

@@ -25,7 +25,10 @@ def hello(form) -> (int, str) :
 		return (200, f"Hello {firstname} {lastname}, you have visited our website {cookie['id']} times")
 
 # Get the return values from the function
-status, message = hello(form)
+if os.environ.get("REQUEST_METHOD") == "GET":
+	status, message = hello(form)
+else:
+	status, message = (405, "Method not allowed")
 
 # Get the current date and time in readable format
 x = datetime.datetime.now()

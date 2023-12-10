@@ -71,7 +71,11 @@ def listDirs() -> (int, str):
 	else:
 		return (500 , "Internal Server Error")
 
-status, message = listDirs()
+if os.environ.get("REQUEST_METHOD") == "GET":
+	status, message = listDirs()
+else:
+	status, message = (405, "Method not allowed")
+
 
 x = datetime.datetime.now()
 date = x.strftime("%a, %d %b %Y %H:%M:%S GMT")
@@ -82,28 +86,27 @@ body_start = """<!DOCTYPE html>
 <head>
 <html>
 	<body>
-	<nav class="left-menu">
-		<ul>
-		  <li><a href="/index.html"><img class="small" src="/cookie.png"></a></li>
-		  <li><a href="/upload.html">Upload</a></li>
-		  <li><a href="/delete.html">Delete</a></li>
-		  <li><a href="/other.html">Cookies</a></li>
-		  <li><a href="/sockets.html">Sockets</a></li>
-		  <li><a href="/epoll.html">Epoll</a></li>
-		</ul>
-	</nav>
-	<div>
-		<h1>Delete File from upload folder</h2>
-		<form action="../cgi-bin/delete.sh" method="delete" accept-charset="utf-8">\n"""		
+		<nav class="left-menu">
+			<ul>
+			<li><a href="/index.html"><img class="small" src="/cookie.png"></a></li>
+			<li><a href="/upload.html">Upload</a></li>
+			<li><a href="/delete.html">Delete</a></li>
+			<li><a href="/other.html">Cookies</a></li>
+			<li><a href="/sockets.html">Sockets</a></li>
+			<li><a href="/epoll.html">Epoll</a></li>
+			</ul>
+		</nav>
+		<div>"""
 body_end = """
-		<br><input type="submit" value="Delete file"/><br><br>
-		</form>
-	</div>
+		</div>
 	</body>
 </html>"""
 body_middle = f"		<h1>{message}</h1>\n"
 
 if status == 200:
+	body_middle = f"""		<h1>Delete File from upload folder</h2>
+		<form onsubmit="deleteFile()" accept-charset="utf-8">\n"""
+
 	for f in files:
 		if f.startswith("cgi-bin"):
 			p = f"http://{os.environ['HOST']}/{f}"
@@ -112,9 +115,15 @@ if status == 200:
 			p = f"http://{os.environ['HOST']}/{dir}/{f.split('/')[-1]}"
 		else:
 			p = f"http://{os.environ['HOST']}/{f.split('/')[-1]}"
-		body_middle += f"		<input type=\"radio\" id=\"html\" name=\"file\" value={f.split('/')[-1]}>\n<label for=\"css\">{f.split('/')[-1]}</label><br>"
+
+		body_middle += f"		<input type=\"radio\" id=\"html\" name=\"filename\" value='{f.split('/')[-1]}'>\n<label for=\"css\">{f.split('/')[-1]}</label><br>"
+	
 	if len(files) == 0:
 		body_middle += f"		<h1> Empty Directory </h1>\n"
+	else:
+		body_middle += """			<br><input type="submit" value="Delete file"/><br><br>
+			</form>"""
+
 body = body_start + body_middle + body_end
 
 header = f"""HTTP/1.1 {status}\r

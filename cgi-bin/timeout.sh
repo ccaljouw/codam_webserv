@@ -1,8 +1,6 @@
 #!/usr/bin/env sh
 
 # Get the start time
-
-
 start_time=`date +%s`
 duration=60
 loops=0
@@ -22,4 +20,3 @@ while true; do
 	fi
 
 	done
-

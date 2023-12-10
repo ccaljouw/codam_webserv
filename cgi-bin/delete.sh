@@ -5,9 +5,15 @@ message=""
 filename=""
 dir=""
 
+# checks if request method is DELETE
+if [ "$REQUEST_METHOD" != "DELETE" ]
+then
+	message="Method Not Allowed"
+	status="405"
+fi
 
 # checks if the query string is empty and if no argument was given
-if [ -z "$QUERY_STRING" ]  && [ -z "$1" ]
+if [ -z "$status" ] && [ -z "$QUERY_STRING" ]  && [ -z "$1" ]
 then
 	message="No file specified"
 	status="400"

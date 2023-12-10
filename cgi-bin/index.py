@@ -71,7 +71,10 @@ def listDirs() -> (int, str):
 	else:
 		return (500 , "Internal Server Error")
 
-status, message = listDirs()
+if os.environ.get("REQUEST_METHOD") == "GET":
+	status, message = listDirs()
+else:
+	status, message = (405, "Method not allowed")
 
 x = datetime.datetime.now()
 date = x.strftime("%a, %d %b %Y %H:%M:%S GMT")
