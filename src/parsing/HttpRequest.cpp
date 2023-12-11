@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/11 11:49:03 by cwesseli      ########   odam.nl         */
+/*   Updated: 2023/12/11 17:34:39 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,27 +55,6 @@ HttpRequest::HttpRequest(const std::string& request, const Server *server) : uri
 	// === parse body ===
 		_body = request.substr(headersEnd + 4);
 
-	// === fetch location specific config settings ===  
-		// error not possible with config checks. Not sensible to store _settings 
-		// because some variables inherrit others do not
-		
-		// _settings = _server->get_locationSettings(headers->getHeaderValue("host"), uri.getPath());
-		// if (_settings == nullptr)
-		// 	throw parsingException(500, "Bad server settings");
-
-	// === check allowd methods ===  moved to requestHandling 
-		// if (_settings->_allowedMethods.find(_method) == _settings->_allowedMethods.end())
-		// 	throw parsingException(405, "Method not Allowed");
-
-	// // === set environ vars === moved to handleCGI
-	// 	std::string host = getHostname();
-	// 	std::string location = uri.getPath();
-	// 	addEnvironVar("REQUEST_METHOD", getMethod());
-	// 	addEnvironVar("QUERY_STRING", getQueryString());
-	// 	addEnvironVar("REMOTE_HOST", host);
-	// 	addEnvironVar("BODY", getBody());
-	// 	addEnvironVar("PATH_INFO", _server->get_rootFolder(host, location));
-	// 	addEnvironVar("UPLOAD_DIR", _server->get_uploadDir(host, location));
 }
 //catch block	
 catch (const parsingException& exception) {
@@ -113,12 +92,12 @@ HttpRequest::~HttpRequest() {
 
 
 //========= Getters ===============================
-std::string					HttpRequest::getHostname(void) const		{	return _hostname;							}
-std::string					HttpRequest::getMethod(void) const			{	return _method;								}
-std::string					HttpRequest::getProtocol(void) const		{	return _protocol;							}
-std::string					HttpRequest::getBody(void) const			{	return _body;								}
-std::string					HttpRequest::getUri(void)					{	return uri.serializeUri();					}
-int							HttpRequest::getRequestStatus(void) const	{	return _requestStatus;						}
+std::string		HttpRequest::getHostname(void) const		{	return _hostname;			}
+std::string		HttpRequest::getMethod(void) const			{	return _method;				}
+std::string		HttpRequest::getProtocol(void) const		{	return _protocol;			}
+std::string		HttpRequest::getBody(void) const			{	return _body;				}
+std::string		HttpRequest::getUri(void)					{	return uri.serializeUri();	}
+int				HttpRequest::getRequestStatus(void) const	{	return _requestStatus;		}
 
 
 std::string	HttpRequest::getQueryString(void) const {
@@ -180,9 +159,7 @@ void	HttpRequest::addEnvironVar(const std::string& key, const std::string& value
 void	HttpRequest::fillStandardHeaders() {
 
 	std::string timeout = std::to_string(_server->get_timeout());
-	// headers->addHeader("Keep-Alive", "timeout=" + timeout + ", max=3"); //todo from config
 	headers->addHeader("Date", getTimeStamp());
 	headers->addHeader("Server", getHostname());
 	headers->addHeader("Last-Modified", getTimeStamp());
-	// headers->addHeader("content-length", std::to_string(_body.length()));
 }
