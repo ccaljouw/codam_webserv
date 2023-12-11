@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/01 14:21:11 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/09 22:09:33 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/11 11:49:03 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,5 +184,5 @@ void	HttpRequest::fillStandardHeaders() {
 	headers->addHeader("Date", getTimeStamp());
 	headers->addHeader("Server", getHostname());
 	headers->addHeader("Last-Modified", getTimeStamp());
-	headers->addHeader("Content-Length", std::to_string(_body.length()));
+	// headers->addHeader("content-length", std::to_string(_body.length()));
 }

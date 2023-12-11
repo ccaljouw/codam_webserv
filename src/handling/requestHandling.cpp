@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/09 23:27:38 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/11 11:45:52 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,9 +144,10 @@ void	handleCGI(int epollFd, connection *conn, HttpRequest& request) {
 		headerContentLength = std::stoi(request.headers->getHeaderValue("content-length"));
 		
 		//**test print
-		// std::cout << "header content len: " << headerContentLength << "\n";
-		// std::cout << "actual content len: " << actualContentLength << "\n";
-		// std::cout << "max content len: " 	<< maxContentLength << "\n";
+		request.headers->printHeaders();
+		std::cout << "header content len: " << headerContentLength << "\n";
+		std::cout << "actual content len: " << actualContentLength << "\n";
+		std::cout << "max content len: " 	<< maxContentLength << "\n";
 	}
 	if (headerContentLength > maxContentLength) 
 		throw HttpRequest::parsingException(413, "Content Too Large");
@@ -217,21 +218,30 @@ void	handleGET(int epollfd, connection *conn, HttpRequest& request) {
 	// std::cout << "\nend of GET handler\n" << std::endl;
 }
 
-void	handlePOST(int epollfd, connection *conn, HttpRequest& request) { //dit gaat fout zou redirect naar deze pagina moeten zijn ipv de pagina zelf
+void	handlePOST(int epollfd, connection *conn, HttpRequest& request) {
 	//**testprint**
 	// std::cout << "\nin POST handler\n" << std::endl;
 	
-	(void)epollfd;
-	HttpResponse response(request);
-	response.reSetBody("data/text/html/upload.html", false);
-	response.setResponse(conn);
+	(void) epollfd;
+	(void) conn;
+	(void) request;
+	throw HttpRequest::parsingException(500, "configuration error");
+	
+	// HttpResponse response(request);
+	// response.reSetBody("data/text/html/upload.html", false);
+	// response.setResponse(conn);
 }
 
-void	handleDELETE(int epollfd, connection *conn, HttpRequest& request) {  //dit gaat fout zou redirect naar deze pagina moeten zijn ipv de pagina zelf
+void	handleDELETE(int epollfd, connection *conn, HttpRequest& request) {
 	//**testprint**
 	// std::cout << "\nin DELETE handler\n" << std::endl;
-	(void)epollfd;
-	HttpResponse response(request);
-	response.reSetBody("data/text/html/418.html", false);
-	response.setResponse(conn);
+	
+	(void) epollfd;
+	(void) conn;
+	(void) request;
+	throw HttpRequest::parsingException(500, "configuration error");
+
+	// HttpResponse response(request);
+	// response.reSetBody("data/text/html/418.html", false);
+	// response.setResponse(conn);
 }
