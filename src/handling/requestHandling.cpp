@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   requestHandling.cpp                                :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/09 23:27:38 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/11 15:26:26 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,10 @@ std::string	getHandler(connection *conn, HttpRequest& request) {
 	// std::cout << "was: " << request.uri.getPath() << std::endl;
 	// request.uri.setPath(root + request.uri.getPath());
 	// std::cout << "now: " << request.uri.getPath() << std::endl;
-	if (request.uri.getExecutable() == "cgi-bin" || (root.find("cgi-bin") != root.npos)) {
+	std::vector<std::string>ext = executableExtensions;
+	if (request.uri.getExecutable() == "cgi-bin" 
+	|| (std::find(ext.begin(), ext.end(), request.uri.getExtension()) != ext.end()))
+	{
 		// std::cout << "going to handleCGI" << std::endl;
 		return "CGI";
 	}
@@ -110,7 +113,8 @@ void	handleDIR(int epollFd, connection *conn, HttpRequest& request) {
 	
 	if (dirListing == true) {
 		HttpResponse response(request);
-		request.uri.setPath("/index.py");
+		request.uri.setPath("/cgi-bin/index.py");
+		request.uri.setQuery("folder="+root);
 		handleCGI(epollFd, conn, request);
 	}
 	else if (!index.empty()) {
@@ -144,12 +148,14 @@ void	handleCGI(int epollFd, connection *conn, HttpRequest& request) {
 		headerContentLength = std::stoi(request.headers->getHeaderValue("content-length"));
 		
 		//**test print
+		// request.headers->printHeaders();
 		// std::cout << "header content len: " << headerContentLength << "\n";
 		// std::cout << "actual content len: " << actualContentLength << "\n";
 		// std::cout << "max content len: " 	<< maxContentLength << "\n";
 	}
-	if (headerContentLength > maxContentLength) 
+	if (headerContentLength > maxContentLength) {
 		throw HttpRequest::parsingException(413, "Content Too Large");
+	}
 	if (headerContentLength != actualContentLength)
 		throw HttpRequest::parsingException(400, "Bad request");
 	
@@ -159,11 +165,13 @@ void	handleCGI(int epollFd, connection *conn, HttpRequest& request) {
 	request.addEnvironVar("REMOTE_HOST", host);
 	request.addEnvironVar("PATH_INFO", conn->server->get_rootFolder(host, location));
 	request.addEnvironVar("UPLOAD_DIR", conn->server->get_uploadDir(host, location));
+
 		
 	//call cgi handler
 	std::string root = conn->server->get_rootFolder(host, location);
-	request.uri.setPath(root.substr(1) + request.uri.getPath());
-	
+	if (request.uri.getPath().find("cgi-bin") == std::string::npos)
+ 		request.uri.setPath("/cgi-bin" + request.uri.getPath());
+
 	if (cgiHandler(request, conn, epollFd) == 1 ) {
 		setErrorResponse(conn, 500);	
 		closeCGIpipe(epollFd, conn);
@@ -217,21 +225,30 @@ void	handleGET(int epollfd, connection *conn, HttpRequest& request) {
 	// std::cout << "\nend of GET handler\n" << std::endl;
 }
 
-void	handlePOST(int epollfd, connection *conn, HttpRequest& request) { //dit gaat fout zou redirect naar deze pagina moeten zijn ipv de pagina zelf
+void	handlePOST(int epollfd, connection *conn, HttpRequest& request) {
 	//**testprint**
 	// std::cout << "\nin POST handler\n" << std::endl;
 	
-	(void)epollfd;
-	HttpResponse response(request);
-	response.reSetBody("data/text/html/upload.html", false);
-	response.setResponse(conn);
+	(void) epollfd;
+	(void) conn;
+	(void) request;
+	throw HttpRequest::parsingException(500, "configuration error");
+	
+	// HttpResponse response(request);
+	// response.reSetBody("data/text/html/upload.html", false);
+	// response.setResponse(conn);
 }
 
-void	handleDELETE(int epollfd, connection *conn, HttpRequest& request) {  //dit gaat fout zou redirect naar deze pagina moeten zijn ipv de pagina zelf
+void	handleDELETE(int epollfd, connection *conn, HttpRequest& request) {
 	//**testprint**
 	// std::cout << "\nin DELETE handler\n" << std::endl;
-	(void)epollfd;
-	HttpResponse response(request);
-	response.reSetBody("data/text/html/418.html", false);
-	response.setResponse(conn);
+	
+	(void) epollfd;
+	(void) conn;
+	(void) request;
+	throw HttpRequest::parsingException(500, "configuration error");
+
+	// HttpResponse response(request);
+	// response.reSetBody("data/text/html/418.html", false);
+	// response.setResponse(conn);
 }

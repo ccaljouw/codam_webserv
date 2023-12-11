@@ -50,7 +50,7 @@ def uploadFile(form) -> (int, str) :
 		except:
 			return (500, "Upload failed!!!")
 	else:
-		return (500, "No file was uploaded!!!")
+		return (200, "No file was uploaded!!!")
 
 # Get the return values from the function
 if os.environ.get("REQUEST_METHOD") == "POST":

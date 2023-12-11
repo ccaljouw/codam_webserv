@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   Uri.hpp                                            :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:12:15 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/09 21:26:14 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/12/11 13:34:25 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ class Uri {
 		// ========== Setters ===========
 		void								mapQueries(void);
 		void								setExtension(void);
+		void								setQuery(std::string query);
+		void								setFragment(std::string fragment);
 		void								setPath(std::string path);
 
 		// ========== other ==========

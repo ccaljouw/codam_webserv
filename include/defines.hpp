@@ -98,4 +98,7 @@ const std::map<std::string, std::string> acceptedExtensions = {
 //define binary extensions for write
 const std::vector<std::string> binaryExtensions = {	".png", ".ico" , ".bmp", ".jpg", ".jpeg", ".gif", ",bmp"	};
 
+
+const std::vector<std::string> executableExtensions = {	".py", ".sh" };
+
 #endif

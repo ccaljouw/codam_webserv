@@ -58,8 +58,8 @@ def listDirs() -> (int, str):
 				return listFiles(pathlib.Path("./cgi-bin"))
 			elif value == "delete":
 				return listFiles(pathlib.Path(os.environ.get("UPLOAD_DIR")))
-			elif root.split("/")[-1] == value.strip("/"):
-				return listFiles(pathlib.Path(root))
+			elif pathlib.Path(value).exists() and pathlib.Path(value).is_dir():
+				return listFiles(pathlib.Path(value))
 			else:
 				return listFiles(pathlib.Path(root+"/"+value))
 		else:

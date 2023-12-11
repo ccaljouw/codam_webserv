@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   Uri.cpp                                            :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
+/*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/08 20:09:20 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/11 13:36:38 by bfranco       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,7 @@ void	Uri::splitAuthority() {
 	}
 }
 
+
 std::string	Uri::serializeUri() {
 	
 	std::string serializedUri;
@@ -203,6 +204,7 @@ void Uri::mapQueries() {
 	}
 }
 
+
 std::string	Uri::getMime(std::string extension) const
 {
 	for (char& c : extension)
@@ -236,6 +238,16 @@ void	Uri::setPath(std::string path) {
 }
 
 
+void Uri::setQuery(std::string query) {
+	_query = query;
+	mapQueries();
+}
+
+
+void Uri::setFragment(std::string fragment) {
+	_fragment = fragment;
+}
+
 bool	Uri::isValidExtension() {
 	std::string actualExtension = getExtension();
 	for (const auto& pair : acceptedExtensions)
@@ -243,19 +255,3 @@ bool	Uri::isValidExtension() {
 			return true;
 	return false;
 }
-
-// //define accepted extensions
-// std::map<std::string, std::string> acceptedExtensions = {
-// 	{	".txt", "text/plain"	},
-// 	{	".html", "text/html"	},
-// 	{	".css", "text/css"		},
-// 	{	".jpeg", "image/jpeg"	},
-// 	{	".jpg", "image/jpg"		},
-// 	{	".png", "image/png"		},
-// 	{	".gif", "image/gif"		},
-// 	{	".bmp", "image/bmp"		},
-// 	{	".ico", "image/x-icon"	}
-// };
-
-// //define binary extensions for write
-// std::vector<std::string> binaryExtensions = { 	".png", ".ico" , ".bmp", ".jpg", ".jpeg", ".gif", ",bmp" };

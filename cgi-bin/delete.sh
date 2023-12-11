@@ -60,7 +60,7 @@ then
 		fi
 	else
 		message="File does not exist"
-		status="404"
+		status="200"
 	fi
 fi
 
