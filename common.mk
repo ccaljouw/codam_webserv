@@ -6,7 +6,7 @@
 #    By: ccaljouw <ccaljouw@student.42.fr>            +#+                      #
 #                                                    +#+                       #
 #    Created: 2023/07/19 17:26:03 by cwesseli      #+#    #+#                  #
-#    Updated: 2023/11/12 12:22:01 by cariencaljo   ########   odam.nl          #
+#    Updated: 2023/12/11 16:36:43 by cwesseli      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,8 +35,12 @@ debug:	re
 	@echo -e "$(YELLOW)\n!-DEBUG MODE-!\n$(RESET)"
 
 
+reval:	CFLAGS = -Wall -Wextra
+reval:	re
+	valgrind --leak-check=full --show-leak-kinds=all -s ./$(TARGET)
+
 val:	CFLAGS = -Wall -Wextra
-val:	re
+val:	
 	valgrind --leak-check=full --show-leak-kinds=all -s ./$(TARGET)
 
 #=============Other=============================================================#

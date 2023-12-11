@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 12:17:27 by carlo         #+#    #+#                 */
-/*   Updated: 2023/12/11 13:36:38 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/12/11 17:09:35 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,7 +214,7 @@ std::string	Uri::getMime(std::string extension) const
 		if (extension == pair.first)
 			return pair.second;
 	}
-	return "";
+	return ".txt";
 }
 
 

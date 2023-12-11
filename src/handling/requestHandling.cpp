@@ -6,7 +6,7 @@
 /*   By: bfranco <bfranco@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/11 15:26:26 by bfranco       ########   odam.nl         */
+/*   Updated: 2023/12/11 17:23:21 by cwesseli      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,9 @@ std::string	getHandler(connection *conn, HttpRequest& request) {
 	std::string	method		= request.getMethod();
 	std::string host 		= request.getHostname() ;
 	std::string location 	= request.uri.getPath();
+	std::string executable	= request.uri.getExecutable();
+
+	// //***testprint
 	// std::cout << "method: " << method << " host: " << host << " location: " << location << std::endl;
 	
 	if (!conn->server->get_redirect(host, location).empty())
@@ -36,8 +39,8 @@ std::string	getHandler(connection *conn, HttpRequest& request) {
 	// request.uri.setPath(root + request.uri.getPath());
 	// std::cout << "now: " << request.uri.getPath() << std::endl;
 	std::vector<std::string>ext = executableExtensions;
-	if (request.uri.getExecutable() == "cgi-bin" 
-	|| (std::find(ext.begin(), ext.end(), request.uri.getExtension()) != ext.end()))
+
+	if (executable == "cgi-bin" || (executable.empty() &&  std::find(ext.begin(), ext.end(), request.uri.getExtension()) != ext.end()))
 	{
 		// std::cout << "going to handleCGI" << std::endl;
 		return "CGI";
@@ -186,7 +189,7 @@ void	handleGET(int epollfd, connection *conn, HttpRequest& request) {
 	//**testprint**
 	// std::cout << "\nin GET handler\n" << std::endl;
 	(void)epollfd;
-	std::string	 cookieValue = checkAndSetCookie(conn, request);
+	std::string	 cookieValue	= checkAndSetCookie(conn, request);
 	std::string contentType		= request.uri.getMime(request.uri.getExtension());
 	if (!contentType.empty()) {
 		
@@ -198,9 +201,9 @@ void	handleGET(int epollfd, connection *conn, HttpRequest& request) {
 		std::string pathToCheck = request.uri.getPath();
 		if (!pathToCheck.empty() && pathToCheck[0] == '/')
         	pathToCheck.erase(0, 1);
-
 		if (validPath(pathToCheck))
 			fullPath = pathToCheck; // does not work for cookies
+
 		else {
 			//check cookie.png
 			location = replaceCookiePng(location, cookieValue);
