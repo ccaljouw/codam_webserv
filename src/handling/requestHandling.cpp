@@ -6,7 +6,7 @@
 /*   By: ccaljouw <ccaljouw@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/03 23:45:10 by cariencaljo   #+#    #+#                 */
-/*   Updated: 2023/12/09 14:40:00 by cariencaljo   ########   odam.nl         */
+/*   Updated: 2023/12/09 23:27:38 by cariencaljo   ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,10 @@ std::string	getHandler(connection *conn, HttpRequest& request) {
 	std::string	method		= request.getMethod();
 	std::string host 		= request.getHostname() ;
 	std::string location 	= request.uri.getPath();
-	std::cout << "method: " << method << " host: " << host << " location: " << location << std::endl;
+	// std::cout << "method: " << method << " host: " << host << " location: " << location << std::endl;
 	
 	if (!conn->server->get_redirect(host, location).empty())
 		return "REDIRECT";
-	//check allowed methods
 	std::set<std::string> allowedMethods = conn->server->get_allowedMethods(host, location);
 	if (allowedMethods.find(method) == allowedMethods.end())
 		throw HttpRequest::parsingException(405, "Method not Allowed");
@@ -32,8 +31,11 @@ std::string	getHandler(connection *conn, HttpRequest& request) {
 		// std::cout << "going to handleDIR" << std::endl;
 		return "DIRLISTING"; 
 	}
-	if (request.uri.getExecutable() == "cgi-bin") {
-		//todo: (check maxBodySize);
+	std::string root = conn->server->get_rootFolder(host, location);
+	// std::cout << "was: " << request.uri.getPath() << std::endl;
+	// request.uri.setPath(root + request.uri.getPath());
+	// std::cout << "now: " << request.uri.getPath() << std::endl;
+	if (request.uri.getExecutable() == "cgi-bin" || (root.find("cgi-bin") != root.npos)) {
 		// std::cout << "going to handleCGI" << std::endl;
 		return "CGI";
 	}
@@ -41,11 +43,14 @@ std::string	getHandler(connection *conn, HttpRequest& request) {
 		// std::cout << "going to handleGET" << std::endl;
 		return "GET";
 	}
-	if (method == "POST")
+	else if (method == "POST") {
+		// std::cout << "going to handlePOST" << std::endl;
 		return "POST";
-	if (method == "DELETE")
+	}
+	else if (method == "DELETE")
 		return "DELETE";
-	throw HttpRequest::parsingException(501, "Method not implemented"); //testen
+	else
+		throw HttpRequest::parsingException(501, "Method not implemented"); //testen
 	return "";
 }
 
@@ -69,7 +74,7 @@ void	handleRequest(int epollFd, connection *conn) {
 			it->second(epollFd, conn, request);
 		}
 		else
-			throw HttpRequest::parsingException(405, "METHOD or Extension not supported");
+			throw HttpRequest::parsingException(405, "Check what is happening, should not get here");
 
 	} catch (const HttpRequest::parsingException& exception) {
 		std::cerr << RED << "Error: " + std::to_string(exception.getErrorCode()) << " " << exception.what() << RESET << std::endl;
@@ -105,17 +110,12 @@ void	handleDIR(int epollFd, connection *conn, HttpRequest& request) {
 	
 	if (dirListing == true) {
 		HttpResponse response(request);
-		request.uri.setPath("/cgi-bin/index.py");
-		request.addEnvironVar("QUERY_STRING", location);
-	
-		if (cgiHandler(request, conn, epollFd) == 1 ) 
-			setErrorResponse(conn, 500);	
-		else {
-			conn->state = IN_CGI;
-		}
+		request.uri.setPath("/index.py");
+		handleCGI(epollFd, conn, request);
 	}
 	else if (!index.empty()) {
-		std::string bodyPath = root + "/text/html/" + index;
+		// std::string bodyPath = root + "/text/html/" + index;
+		std::string bodyPath = root + index;
 		
 		//**testprint**
 		// std::cout << BLUE << "index found: " << index << " | setting body to :" << bodyPath <<  RESET << std::endl;
@@ -152,8 +152,18 @@ void	handleCGI(int epollFd, connection *conn, HttpRequest& request) {
 		throw HttpRequest::parsingException(413, "Content Too Large");
 	if (headerContentLength != actualContentLength)
 		throw HttpRequest::parsingException(400, "Bad request");
-
-	//case error in cgi handler
+	
+	// === set environ vars === 
+	request.addEnvironVar("REQUEST_METHOD", request.getMethod());
+	request.addEnvironVar("QUERY_STRING", request.getQueryString());
+	request.addEnvironVar("REMOTE_HOST", host);
+	request.addEnvironVar("PATH_INFO", conn->server->get_rootFolder(host, location));
+	request.addEnvironVar("UPLOAD_DIR", conn->server->get_uploadDir(host, location));
+		
+	//call cgi handler
+	std::string root = conn->server->get_rootFolder(host, location);
+	request.uri.setPath(root.substr(1) + request.uri.getPath());
+	
 	if (cgiHandler(request, conn, epollFd) == 1 ) {
 		setErrorResponse(conn, 500);	
 		closeCGIpipe(epollFd, conn);
@@ -186,9 +196,10 @@ void	handleGET(int epollfd, connection *conn, HttpRequest& request) {
 		else {
 			//check cookie.png
 			location = replaceCookiePng(location, cookieValue);
-			fullPath = conn->server->get_rootFolder(host, location) + "/" + contentType + location;
-		}	
-
+			// fullPath = conn->server->get_rootFolder(host, location) + "/" + contentType + location;
+			fullPath = conn->server->get_rootFolder(host, location) + "/" + location;
+		}
+			
 		std::ifstream f(fullPath);
 		if (f.good())
 			request.uri.setPath(fullPath);
@@ -206,7 +217,7 @@ void	handleGET(int epollfd, connection *conn, HttpRequest& request) {
 	// std::cout << "\nend of GET handler\n" << std::endl;
 }
 
-void	handlePOST(int epollfd, connection *conn, HttpRequest& request) { 
+void	handlePOST(int epollfd, connection *conn, HttpRequest& request) { //dit gaat fout zou redirect naar deze pagina moeten zijn ipv de pagina zelf
 	//**testprint**
 	// std::cout << "\nin POST handler\n" << std::endl;
 	
@@ -216,7 +227,7 @@ void	handlePOST(int epollfd, connection *conn, HttpRequest& request) {
 	response.setResponse(conn);
 }
 
-void	handleDELETE(int epollfd, connection *conn, HttpRequest& request) { 
+void	handleDELETE(int epollfd, connection *conn, HttpRequest& request) {  //dit gaat fout zou redirect naar deze pagina moeten zijn ipv de pagina zelf
 	//**testprint**
 	// std::cout << "\nin DELETE handler\n" << std::endl;
 	(void)epollfd;

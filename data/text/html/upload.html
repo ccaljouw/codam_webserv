@@ -8,17 +8,17 @@
 <body>
 	<nav class="left-menu">
 		<ul>
-		  <li><a href="/index.html"><img class="small" src="cookie.png"></a></li>
+		  <li><a href="/index.html"><img class="small" src="/cookie.png"></a></li>
 		  <li><a href="/upload.html">Upload</a></li>
 		  <li><a href="/delete.html">Delete</a></li>
 		  <li><a href="/other.html">Cookies</a></li>
-		  <li><a href="/sockets.html">Sockets</a></li>
-		  <li><a href="/epoll.html">Epoll</a></li>
+		  <li><a href="sockets.html">Sockets</a></li>
+		  <li><a href="epoll.html">Epoll</a></li>
 		</ul>
 	</nav>
     <div class="container">
         <h1>Upload File</h1>
-        <form enctype="multipart/form-data" action="../cgi-bin/upload.py" method="post" accept-charset="utf-8">
+        <form enctype="multipart/form-data" action="/upload.py" method="post" accept-charset="utf-8">
             <p><input type="file" name="filename" /></p>
             <p><input type="submit" value="Upload" /></p>
         </form>
